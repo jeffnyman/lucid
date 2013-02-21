@@ -23,6 +23,10 @@ module Lucid
           combine_options[:options] = options
         end
         
+        opts.on('-t', '--tags TAGS', "Tags to include or exclude.") do |tags|
+          combine_options[:tags] = tags
+        end
+        
         opts.on('-v', '--version', "Display Lucid version information.") do
           puts Lucid::VERSION
           Kernel.exit(0)
@@ -65,7 +69,8 @@ module Lucid
           :spec_path => 'features',     # :feature_path
           :step_path => 'features/step_definitions',
           :requires  => [],
-          :print     => false
+          :print     => false,
+          :tags      => nil
         }
       end
       

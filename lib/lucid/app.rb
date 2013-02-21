@@ -1,4 +1,5 @@
 require "lucid/options"
+require "lucid/parser"
 
 module Lucid
   
@@ -9,6 +10,11 @@ module Lucid
       args ||= ARGV
       @project_options = Lucid::PROJECT_OPTIONS
       @options = Lucid::Options.parse(args)
+      
+      parser = Lucid::Parser.new(@options)
+      @tags = parser.tags
+      
+      puts "Tags: #{@tags}"
       
       @command = generate_command
     end
@@ -33,7 +39,7 @@ module Lucid
       command += " -r #{requires.join(' -r ')}" if requires.any?
       command += " #{specs.join(' ')}" if specs.any?
       
-      return "#{command}".gsub('  ', ' ')
+      return "#{command} #{@tags}".gsub('  ', ' ')
     end
     
   end
