@@ -12,7 +12,7 @@ module Lucid
     end
     
     def run
-      puts "Run method called."
+      
     end
     
   end

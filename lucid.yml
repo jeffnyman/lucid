@@ -1,1 +1,8 @@
 # Lucid Projects File
+command: bundle exec cucumber
+options: -p lucid
+spec_path: specs
+step_path: specs/steps
+requires:
+  - specs/lucid
+
