@@ -7,12 +7,21 @@ module Lucid
     def self.parse(args)
       default_options = self.get_options(:default)
       project_options = self.get_options(:project)
+      combine_options = default_options.merge(project_options)
       
       option_parser = OptionParser.new do |opts|
         opts.banner = ["Lucid: Test Description Language Execution Engine",
                        "Usage: lucid [options] PATTERN", ""].join("\n")
         
         opts.separator ''
+        
+        opts.on('-p', '--print', "Echo the Lucid command instead of executing it.") do
+          combine_options[:print] = true
+        end
+        
+        opts.on('-o', '--options OPTIONS', "Options to pass to the tool.") do |options|
+          combine_options[:options] = options
+        end
         
         opts.on('-v', '--version', "Display Lucid version information.") do
           puts Lucid::VERSION
@@ -26,6 +35,8 @@ module Lucid
       end
       
       option_parser.parse!(args)
+      
+      return self.establish(combine_options)
     end
     
   private
@@ -46,21 +57,44 @@ module Lucid
           end
         end
         
-        puts "**** Project Options: #{project_options}"
-        
         project_options
-      end
-      
-      if type == :default
+      else
         {
           :command   => 'cucumber',     # :cuke_command
           :options   => nil,            # :cucumber
           :spec_path => 'features',     # :feature_path
           :step_path => 'features/step_definitions',
-          :requires  => []
+          :requires  => [],
+          :print     => false
         }
       end
       
+    end
+    
+    def self.establish(options)
+      defaults = self.get_options(:default)
+      
+      current_set = options.dup  # tmp_options
+      
+      current_set[:spec_path] = current_set[:spec_path].gsub(/\\/, '/')
+      current_set[:spec_path] = current_set[:spec_path].sub(/\/$/, '')
+      
+      current_set[:step_path] = current_set[:step_path].gsub(/\\/, '/')
+      current_set[:step_path] = current_set[:step_path].sub(/\/$/, '')
+      
+      # Establish that the spec path and the step path are not the standard
+      # values that Cucumber would expect by default.
+      current_set[:non_standard_spec_path] = current_set[:spec_path] != defaults[:spec_path]
+      current_set[:non_standard_step_path] = current_set[:step_path] != defaults[:step_path]
+      
+      # If the values are set to nil, the following commands make sure to
+      # revert to the defaults.
+      current_set[:spec_path] ||= defaults[:spec_path]
+      current_set[:step_path] ||= defaults[:step_path]
+      current_set[:requires] ||= defaults[:requires]
+      current_set[:command] ||= defaults[:command]
+      
+      return current_set
     end
     
   end # class: Options
