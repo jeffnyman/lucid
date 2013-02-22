@@ -52,7 +52,7 @@ module Lucid
         if File.exist?(Lucid::PROJECT_OPTIONS)
           yaml_options = YAML.load_file(Lucid::PROJECT_OPTIONS)
           
-          ['command', 'options', 'spec_path', 'step_path', 'requires'].each do |key|
+          ['command', 'options', 'spec_path', 'step_path', 'requires', 'shared'].each do |key|
             begin
               project_options[key.to_sym] = yaml_options[key] if yaml_options.has_key?(key)
             rescue NoMethodError
@@ -64,13 +64,16 @@ module Lucid
         project_options
       else
         {
-          :command   => 'cucumber',     # :cuke_command
-          :options   => nil,            # :cucumber
-          :spec_path => 'features',     # :feature_path
-          :step_path => 'features/step_definitions',
-          :requires  => [],
-          :print     => false,
-          :tags      => nil
+          :command         => 'cucumber',     # :cuke_command
+          :options         => nil,            # :cucumber
+          :spec_path       => 'features',     # :feature_path
+          :step_path       => 'features/step_definitions',
+          :requires        => [],
+          :shared          => 'true',         # value was 'shared'
+          :print           => false,
+          :tags            => nil,
+          :spec_path_regex => nil,
+          :step_path_regex => nil,
         }
       end
       
@@ -92,12 +95,33 @@ module Lucid
       current_set[:non_standard_spec_path] = current_set[:spec_path] != defaults[:spec_path]
       current_set[:non_standard_step_path] = current_set[:step_path] != defaults[:step_path]
       
+      # Create a regular expression from the spec path and the step path.
+      # This is done so that Lucid can look at the paths dynamically, mainly
+      # when dealing with shared steps.
+      current_set[:spec_path_regex] = Regexp.new(current_set[:spec_path].gsub('/', '\/')) unless current_set[:spec_path_regex]
+      current_set[:step_path_regex] = Regexp.new(current_set[:step_path].gsub('/', '\/')) unless current_set[:step_path_regex]
+      
       # If the values are set to nil, the following commands make sure to
       # revert to the defaults.
       current_set[:spec_path] ||= defaults[:spec_path]
       current_set[:step_path] ||= defaults[:step_path]
       current_set[:requires] ||= defaults[:requires]
       current_set[:command] ||= defaults[:command]
+      
+      # The shared setting has to be something that Lucid can use.
+      shared = current_set[:shared].nil? ? 'true' : current_set[:shared].to_s.strip
+      shared = 'true' if shared.strip == ''
+      
+      # Here the shared value is established based on a few likely usage
+      # patterns for it. Note that if one of these usage patterns is not
+      # used, then shared will be kept at whatever setting it has.
+      if ['shared', 'yes', ''].include?(shared.downcase)
+        shared == true
+      elsif ['false', 'no'].include?(shared.downcase)
+        shared == false
+      end
+      
+      current_set[:shared] = shared
       
       return current_set
     end

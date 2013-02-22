@@ -14,8 +14,6 @@ module Lucid
       parser = Lucid::Parser.new(@options)
       @tags = parser.tags
       
-      puts "Tags: #{@tags}"
-      
       @command = generate_command
     end
     
