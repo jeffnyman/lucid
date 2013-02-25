@@ -50,7 +50,18 @@ module Lucid
         ##steps << @options[:step_path] if @options[:non_standard_step_path]
       end
       
-      specs << @options[:spec_path] if @options[:non_standard_spec_path]
+      need_root = nil
+      
+      specs.each do |spec|
+        start_path = spec[0..spec.index("/") - 1] unless spec.index("/").nil?
+        start_path = spec if spec.index("/").nil?
+        
+        if start_path != @options[:spec_path]
+          need_root = true
+        end
+      end
+      
+      specs << @options[:spec_path] if @options[:non_standard_spec_path] unless need_root.nil?
       steps << @options[:step_path] if @options[:non_standard_step_path]
       
       requires = (@options[:requires] + steps).compact.uniq
