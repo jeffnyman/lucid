@@ -40,6 +40,11 @@ module Lucid
       
       option_parser.parse!(args)
       
+      # This statement is necessary to get the spec execution pattern from
+      # the command line. This will not be a switch and so it will be the
+      # only actual command line argument.
+      combine_options[:pattern] = args.first if args.any?
+      
       return self.establish(combine_options)
     end
     
@@ -52,7 +57,8 @@ module Lucid
         if File.exist?(Lucid::PROJECT_OPTIONS)
           yaml_options = YAML.load_file(Lucid::PROJECT_OPTIONS)
           
-          ['command', 'options', 'spec_path', 'step_path', 'requires', 'shared'].each do |key|
+          # Do I need to pass spec_path_regex here? I thought I did due to
+          ['command', 'options', 'spec_path', 'step_path', 'requires', 'shared', 'spec_path_regex'].each do |key|
             begin
               project_options[key.to_sym] = yaml_options[key] if yaml_options.has_key?(key)
             rescue NoMethodError
@@ -74,6 +80,7 @@ module Lucid
           :tags            => nil,
           :spec_path_regex => nil,
           :step_path_regex => nil,
+          :pattern         => nil
         }
       end
       
@@ -89,6 +96,11 @@ module Lucid
       
       current_set[:step_path] = current_set[:step_path].gsub(/\\/, '/')
       current_set[:step_path] = current_set[:step_path].sub(/\/$/, '')
+      
+      unless current_set[:pattern].nil?
+        current_set[:pattern] = current_set[:pattern].gsub(/\\/, '/')
+        current_set[:pattern] = current_set[:pattern].sub(/\/$/, '')
+      end
       
       # Establish that the spec path and the step path are not the standard
       # values that Cucumber would expect by default.
@@ -122,6 +134,13 @@ module Lucid
       end
       
       current_set[:shared] = shared
+      
+      # The pattern that was specified must be handled to make sure it is
+      # something that can be worked with.
+      unless current_set[:pattern].nil?
+        current_set[:pattern] = current_set[:pattern].strip
+        current_set[:pattern] = nil unless current_set[:pattern] && !current_set[:pattern].empty?
+      end
       
       return current_set
     end

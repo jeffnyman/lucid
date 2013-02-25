@@ -5,6 +5,20 @@ module Lucid
       @options = options
     end
     
+    def specs
+      puts "In parser.specs, is @options[:pattern] nil? #{@options[:pattern].nil?}"
+      # Passing "lucid -p" will mean there is no pattern.
+      # Passing "lucid -p specs\lucid\lucid.feature" will mean there is a pattern.
+      
+      return [] if @options[:pattern].nil?
+      
+      set_of_specs = gather_specs_by_glob
+      
+      puts "In parser.specs, were there any specs? #{set_of_specs.any?}"
+      
+      return set_of_specs.any? ? set_of_specs : nil
+    end
+    
     def tags
       tags = {
         :or  => [],
@@ -68,6 +82,60 @@ module Lucid
       tag_builder.gsub!('@@', '@')
       tag_builder
     end # method: tags
+    
+  private
+  
+    def gather_specs_by_glob
+      only = []
+      except = []
+      specs_to_include = []
+      specs_to_exclude = []
+      
+      pattern = @options[:pattern].dup
+      
+      puts "In gather_specs_by_glob, pattern is: #{pattern}"
+      
+      # Determine if some specs were indicated to be excluded
+      # and mark those separately. This also handles when only
+      # specific specs are to be executed.
+      pattern.split(',').each do |f|
+        if f[0].chr == '~'
+          except << f[1..f.length]
+        else
+          only << f
+        end
+      end
+      
+      # If there are exceptions, then all specs should be
+      # gathered by default. Unless, that is, the command
+      # indicates that only certain specs should be run.
+      pattern = '**/*' if except.any?
+      pattern = nil if only.any?
+      
+      puts "In gather_specs_by_glob, pattern after only/except is nil?: #{pattern.nil?}"
+      puts "The @options[:spec_path] is: #{@options[:spec_path]}"      
+      
+      if only.any?
+        only.each do |f|
+          puts "There is an only and it is: #{f}"
+          
+          #specs_to_include += Dir.glob("#{@options[:spec_path]}/#{f}.feature")
+          specs_to_include += Dir.glob("#{f}")
+        end
+      else
+        specs_to_include += Dir.glob("#{@options[:spec_path]}/#{pattern}.feature")
+      end
+      
+      puts "After checking only, specs_to_include is: #{specs_to_include}"
+      
+      if except.any?
+        except.each do |f|
+          specs_to_exclude = Dir.glob("#{@options[:spec_path]}/#{f}.feature")
+        end
+      end
+      
+      (specs_to_include - specs_to_exclude).uniq
+    end
     
   end # class: Parser
 end # module: Lucid
