@@ -57,7 +57,6 @@ module Lucid
         if File.exist?(Lucid::PROJECT_OPTIONS)
           yaml_options = YAML.load_file(Lucid::PROJECT_OPTIONS)
           
-          # Do I need to pass spec_path_regex here? I thought I did due to
           ['command', 'options', 'spec_path', 'step_path', 'requires', 'shared', 'spec_path_regex'].each do |key|
             begin
               project_options[key.to_sym] = yaml_options[key] if yaml_options.has_key?(key)
