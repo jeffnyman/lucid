@@ -124,7 +124,7 @@ module Lucid
         specs_to_include += Dir.glob("#{@options[:spec_path]}/#{pattern}.feature")
       end
       
-      puts "[Parser.gather_specs_by_glob] After checking only, specs_to_include is: #{specs_to_include}"
+      #puts "[Parser.gather_specs_by_glob] After checking only, specs_to_include is: #{specs_to_include}"
       
       if except.any?
         except.each do |f|
