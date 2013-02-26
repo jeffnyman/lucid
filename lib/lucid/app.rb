@@ -14,9 +14,7 @@ module Lucid
       parser = Lucid::Parser.new(@options)
       
       @specs = parser.specs
-      
-      puts "[App.initialize] After calling parser for specs, I have: #{@specs.inspect}"
-      
+      #puts "[App.initialize] After calling parser for specs, I have: #{@specs.inspect}"
       @tags = parser.tags
       
       @message = "No specs were found matching the pattern '#{@options[:pattern]}'." and return unless @specs
@@ -83,7 +81,7 @@ module Lucid
     end
     
     def construct_spec_file(path, file, file_name)
-      puts "[App.construct_spec_file] Path = #{path} || File = #{file} || File name = #{file_name}"
+      #puts "[App.construct_spec_file] Path = #{path} || File = #{file} || File name = #{file_name}"
       
       construct = ""
       
@@ -101,7 +99,7 @@ module Lucid
         construct = "#{file_name}".gsub('//', '/')
       end
       
-      puts "[App.construct_spec_file] Construct = #{construct}"
+      #puts "[App.construct_spec_file] Construct = #{construct}"
       
       construct
     end
