@@ -5,6 +5,14 @@ require 'yaml'
 module Lucid
   class Options
     def self.parse(args)
+      orig_args = args.dup
+      name = nil
+      
+      if orig_args.index("--name")
+        name_loc = orig_args.index("--name") + 1
+        name = orig_args[name_loc]
+      end
+      
       default_options = self.get_options(:default)
       project_options = self.get_options(:project)
       combine_options = default_options.merge(project_options)
@@ -20,7 +28,11 @@ module Lucid
         end
         
         opts.on('-o', '--options OPTIONS', "Options to pass to the tool.") do |options|
-          combine_options[:options] = options
+          if options =~ (/^--name/)
+            combine_options[:c_options] = "#{options} \"#{name}\""
+          else
+            combine_options[:c_options] = options
+          end
         end
         
         opts.on('-t', '--tags TAGS', "Tags to include or exclude.") do |tags|
@@ -42,8 +54,12 @@ module Lucid
       
       # This statement is necessary to get the spec execution pattern from
       # the command line. This will not be a switch and so it will be the
-      # only actual command line argument.
-      combine_options[:pattern] = args.first if args.any?
+      # only actual command line argument. However, account must be taken
+      # of the potential of using the --name option, which means that the
+      # argument to that option will be the first argument and thus the
+      # second argument will be the spec execution pattern.
+      combine_options[:pattern] = args.first if args.count == 1
+      combine_options[:pattern] = args[1]    if args.count == 2
       
       return self.establish(combine_options)
     end
@@ -69,12 +85,12 @@ module Lucid
         project_options
       else
         {
-          :command         => 'cucumber',     # :cuke_command
-          :options         => nil,            # :cucumber
-          :spec_path       => 'features',     # :feature_path
+          :command         => 'cucumber',
+          :options         => nil,
+          :spec_path       => 'features',
           :step_path       => 'features/step_definitions',
           :requires        => [],
-          :shared          => 'true',         # value was 'shared'
+          :shared          => 'true',
           :print           => false,
           :tags            => nil,
           :spec_path_regex => nil,
@@ -86,9 +102,13 @@ module Lucid
     end
     
     def self.establish(options)
+      # The next statement makes sure that any project options and command
+      # line options are merged.
+      options[:options] += " #{options[:c_options]}"
+      
       defaults = self.get_options(:default)
       
-      current_set = options.dup  # tmp_options
+      current_set = options.dup
       
       current_set[:spec_path] = current_set[:spec_path].gsub(/\\/, '/')
       current_set[:spec_path] = current_set[:spec_path].sub(/\/$/, '')
