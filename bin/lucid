@@ -2,10 +2,10 @@
 app_lib = File.expand_path('../lib', File.dirname(__FILE__))
 $LOAD_PATH.unshift(app_lib) unless $LOAD_PATH.include?(app_lib)
 
-require 'lucid/app'
+require 'lucid/cli/app'
 
 begin
-  Lucid::App.new.run
+  Lucid::CLI::App.start(ARGV.dup)
 rescue SystemExit
   # noop
 rescue Exception => e
