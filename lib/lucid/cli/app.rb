@@ -18,7 +18,8 @@ module Lucid
 
       def run
         runtime = Runtime.new(configuration)
-        log.debug("Lucid::CLI::App - run")
+        log.debug("Runtime: #{runtime.inspect}")
+        runtime.run
       end
 
       def configuration

@@ -50,6 +50,10 @@ module Lucid
           end
         end.parse!
 
+        # This line grabs whatever is left over on the command line. That
+        # would have to be the spec repo
+        @options[:spec_source] = @args.dup
+
         self
       end
 
