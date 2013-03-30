@@ -4,10 +4,10 @@ module Lucid
   module CLI
     class Options
 
-      def initialize(out_stream = STDOUT, err_stream = STDERR)
+      def initialize(out_stream = STDOUT, err_stream = STDERR, options = {})
         @out_stream = out_stream
         @err_stream = err_stream
-        @options = {}
+        @options = default_options
       end
 
       def [](key)
@@ -26,6 +26,10 @@ module Lucid
         @args.options do |opts|
           opts.banner = ["Lucid: Test Description Language Execution Engine",
                          "Usage: lucid [options]"].join("\n")
+
+          opts.on("--spec-type TYPE", "The file type (extension) for Lucid specifications.") do |type|
+            @options[:spec_type] = type
+          end
 
           opts.separator ''
 
@@ -55,6 +59,12 @@ module Lucid
         @options[:spec_source] = @args.dup
 
         self
+      end
+
+      def default_options
+        {
+          :spec_type => ""
+        }
       end
 
     end

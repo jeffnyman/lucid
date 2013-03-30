@@ -33,7 +33,8 @@ module Lucid
         end.flatten
 
         files.reject! { |f| !File.file?(f) }
-        files.reject! { |f| File.extname(f) == '.spec' }
+        #files.reject! { |f| File.extname(f) == '.spec' }
+        files.reject! { |f| File.extname(f) == ".#{spec_type}" }
         files.sort
       end
 
@@ -51,6 +52,13 @@ module Lucid
         log.debug("Lucid::CLI::Configuration - spec_source")
         @options[:spec_source].empty? ? ['specs'] : @options[:spec_source]
         #@options[:spec_source]
+      end
+
+      # The "spec_type" refers to the file type (or extension) of spec files.
+      # This is how Lucid will recognize the files that should be treated as
+      # specs within a spec repository.
+      def spec_type
+        @options[:spec_type].empty? ? 'spec' : @options[:spec_type]
       end
 
       # The library context will store an array of all files that are found
