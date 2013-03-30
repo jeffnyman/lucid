@@ -5,13 +5,20 @@ module Lucid
     class Options
 
       def initialize(out_stream = STDOUT, err_stream = STDERR)
-        puts "Lucid::CLI::Options - initialize"
         @out_stream = out_stream
         @err_stream = err_stream
+        @options = {}
+      end
+
+      def [](key)
+        @options[key]
+      end
+
+      def []=(key, value)
+        @options[key] = value
       end
 
       def parse(args)
-        puts "Lucid::CLI::Options - parse"
         @args = args
 
         @args.extend(::OptionParser::Arguable)
@@ -19,6 +26,16 @@ module Lucid
         @args.options do |opts|
           opts.banner = ["Lucid: Test Description Language Execution Engine",
                          "Usage: lucid [options]"].join("\n")
+
+          opts.separator ''
+
+          opts.on("--verbose", "Show detailed information about Lucid execution.") do
+            @options[:verbose] = true
+          end
+
+          opts.on("--debug", "Show behind-the-scenes information about Lucid execution.") do
+            @options[:debug] = true
+          end
 
           opts.separator ''
 
@@ -33,6 +50,7 @@ module Lucid
           end
         end.parse!
 
+        self
       end
 
     end

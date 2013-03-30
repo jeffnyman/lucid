@@ -7,25 +7,31 @@ module Lucid
     class App
 
       def self.start(args)
-        puts "Lucid::CLI::App - start"
         new(args).run
       end
 
       def initialize(args, out_stream = STDOUT, err_stream = STDERR)
-        puts "Lucid::CLI::App - initialize"
         @args = args
         @out_stream = out_stream
         @err_stream = err_stream
       end
 
       def run
-        puts "Lucid::CLI::App - run"
         runtime = Runtime.new(configuration)
+        log.debug("Lucid::CLI::App - run")
       end
 
       def configuration
         @configuration = Configuration.new(@out_stream, @err_stream)
         @configuration.parse(@args)
+        Lucid.logger = @configuration.log
+        @configuration
+      end
+
+    private
+
+      def log
+        Lucid.logger
       end
 
     end
