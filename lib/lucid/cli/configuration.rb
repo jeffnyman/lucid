@@ -31,6 +31,8 @@ module Lucid
           File.directory?(path) ? Dir["#{path}/**/*"] : path
         end.flatten
 
+        extract_excluded_files(files)
+
         files.reject! { |f| !File.file?(f) }
         #files.reject! { |f| File.extname(f) == '.spec' }
         files.reject! { |f| File.extname(f) == ".#{spec_type}" }
@@ -106,6 +108,10 @@ module Lucid
       # TODO: Is this method really needed?
       def require_dirs
         spec_location
+      end
+
+      def extract_excluded_files(files)
+        files.reject! { |path| @options[:excludes].detect { |pattern| path =~ pattern } }
       end
     end
   end

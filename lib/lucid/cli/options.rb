@@ -35,6 +35,10 @@ module Lucid
             @options[:spec_type] = type
           end
 
+          opts.on("-e", "--exclude PATTERN", "Lucid will not use files that match the PATTERN.") do |pattern|
+            @options[:excludes] << Regexp.new(pattern)
+          end
+
           opts.separator ''
 
           opts.on("--verbose", "Show detailed information about Lucid execution.") do
@@ -68,7 +72,8 @@ module Lucid
       def default_options
         {
           :spec_type => "",
-          :library_path => ""
+          :library_path => "",
+          :excludes => []
         }
       end
 
