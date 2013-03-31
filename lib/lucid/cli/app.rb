@@ -1,4 +1,5 @@
 require "lucid"
+require "gherkin"
 require "lucid/runtime"
 require "lucid/cli/configuration"
 

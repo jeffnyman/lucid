@@ -44,6 +44,7 @@ module Lucid
       def load_file(file)
         if language = get_language_for(file)
           log.info("  * #{file}\n")
+          language.load_code_file(file)
         else
           log.info("  * #{file} [UNSUPPORTED]\n")
         end
