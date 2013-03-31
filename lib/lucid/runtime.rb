@@ -1,8 +1,11 @@
+require "lucid/runtime/orchestrator"
+
 module Lucid
   class Runtime
 
     def initialize(configuration)
       @configuration = configuration
+      @orchestrator = Orchestrator.new(self, @configuration)
     end
 
     def run
@@ -20,6 +23,7 @@ module Lucid
       #files = @configuration.support_to_load + @configuration.step_defs_to_load
       files = @configuration.library_context + @configuration.definition_context
       log.info("Runtime Load Execution Context: #{files}")
+      @orchestrator.load_files(files)
     end
 
     def log
