@@ -23,7 +23,6 @@ module Lucid
       # contains everything that Lucid will need, whether that be
       # test spec files or code files to support them.
       def spec_repo
-        log.debug("Lucid::CLI::Configuration - spec_repo")
         #TODO: Should I just call spec_location here?
         requires = require_dirs
         files = requires.map do |path|
@@ -40,7 +39,6 @@ module Lucid
 
       # A call to spec_location will return the location of a spec repository.
       def spec_location
-        log.debug("Lucid::CLI::Configuration - spec_location")
         spec_source.map { |f| File.directory?(f) ? f : File.dirname(f) }
       end
 
@@ -49,7 +47,6 @@ module Lucid
       # changed if a repository location is specified on the command line when
       # calling Lucid.
       def spec_source
-        log.debug("Lucid::CLI::Configuration - spec_source")
         @options[:spec_source].empty? ? ['specs'] : @options[:spec_source]
         #@options[:spec_source]
       end
@@ -61,12 +58,20 @@ module Lucid
         @options[:spec_type].empty? ? 'spec' : @options[:spec_type]
       end
 
+      # The "library_path" refers to the location within the spec repository
+      # that holds the logic that supports the basic operations of the
+      # execution. This value will default to 'lucid' but the value of
+      # library_path can be changed via a command line option.
+      def library_path
+        @options[:library_path].empty? ? 'lucid' : @options[:library_path]
+      end
+
       # The library context will store an array of all files that are found
       # in the library_path. This path defaults to 'lucid' but can be changed
       # via a command line option.
       def library_context
-        log.debug("Lucid::CLI::Configuration - library_context")
-        library_files = spec_repo.select { |f| f =~ %r{/lucid/} }
+        #library_files = spec_repo.select { |f| f =~ %r{/lucid/} }
+        library_files = spec_repo.select { |f| f =~ %r{/#{library_path}/} }
         log.info("Library Context: #{library_files}")
         library_files
       end
@@ -75,7 +80,8 @@ module Lucid
       # repository that are not spec files and that are not contained in the
       # library path.
       def definition_context
-        spec_repo.reject {|f| f =~ %r{/lucid/} }
+        #spec_repo.reject {|f| f =~ %r{/lucid/} }
+        spec_repo.reject { |f| f=~ %r{/#{library_path}/} }
       end
 
       def verbose?
@@ -99,7 +105,6 @@ module Lucid
 
       # TODO: Is this method really needed?
       def require_dirs
-        log.debug("Lucid::CLI::Configuration - require_dirs")
         spec_location
       end
     end

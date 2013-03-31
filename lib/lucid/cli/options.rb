@@ -27,6 +27,10 @@ module Lucid
           opts.banner = ["Lucid: Test Description Language Execution Engine",
                          "Usage: lucid [options]"].join("\n")
 
+          opts.on("--library-path PATH", "Location of spec project library files.") do |path|
+            @options[:library_path] = path
+          end
+
           opts.on("--spec-type TYPE", "The file type (extension) for Lucid specifications.") do |type|
             @options[:spec_type] = type
           end
@@ -63,7 +67,8 @@ module Lucid
 
       def default_options
         {
-          :spec_type => ""
+          :spec_type => "",
+          :library_path => ""
         }
       end
 
