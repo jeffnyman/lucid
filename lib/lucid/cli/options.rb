@@ -4,6 +4,16 @@ module Lucid
   module CLI
     class Options
 
+      LUCID_FORMATS = {
+          'html' => ['Lucid::Formatter::HTML', 'Generates an HTML report.'],
+          'standard' => ['Lucid::Formatter::Standard', 'Prints the spec as-is, using color if available.']
+      }
+
+      largest = LUCID_FORMATS.keys.map { |s| s.length }.max
+      FORMAT_LIST = LUCID_FORMATS.keys.sort.map do |key|
+        "  #{key}#{' ' * (largest - key.length)} : #{LUCID_FORMATS[key][1]}"
+      end
+
       def initialize(out_stream = STDOUT, err_stream = STDERR, options = {})
         @out_stream = out_stream
         @err_stream = err_stream
@@ -41,6 +51,22 @@ module Lucid
 
           opts.separator ''
 
+          opts.on("-f FORMAT", "--format FORMAT", "How Lucid will format spec execution output.",
+                  "(Default: standard) Available formats:",
+                  *FORMAT_LIST) do |format|
+            @options[:formats] << [format, @out_stream]
+          end
+
+          opts.on("-o", "--out [FILE|DIR]",
+                  "Write output to a file or directory instead of to standard console output.",
+                  "This option applies to any specified format option or to the default",
+                  "format if no formatter is specified.") do |output|
+            @options[:formats] << ['standard', nil] if @options[:formats].empty?
+            @options[:formats][-1][1] = output
+          end
+
+          opts.separator ''
+
           opts.on("--verbose", "Show detailed information about Lucid execution.") do
             @options[:verbose] = true
           end
@@ -73,7 +99,8 @@ module Lucid
         {
           :spec_type => "",
           :library_path => "",
-          :excludes => []
+          :excludes => [],
+          :formats => []
         }
       end
 

@@ -16,7 +16,7 @@ module Lucid
       end
 
       def build_tree(runtime)
-        Lucid::AST::TDLWalker.new(runtime, self)
+        Lucid::AST::TDLWalker.new(runtime, formatters(runtime), self)
       end
 
       # The spec_repo is used to get all of the files that are in the
@@ -138,6 +138,15 @@ module Lucid
       def extract_excluded_files(files)
         files.reject! { |path| @options[:excludes].detect { |pattern| path =~ pattern } }
       end
+
+      def formatters(runtime)
+        log.info("******** Options: #{@options.inspect}")
+        log.info("******** Formatters with #{@options[:formats]}")
+        @options[:formats].map do |format_and_out|
+          log.info("********** #{format_and_out}")
+        end
+      end
+
     end
   end
 end
