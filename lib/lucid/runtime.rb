@@ -1,4 +1,7 @@
+require "lucid/ast"
+require "lucid/spec_file"
 require "lucid/runtime/orchestrator"
+require "lucid/runtime/specs_loader"
 
 module Lucid
   class Runtime
@@ -10,6 +13,9 @@ module Lucid
 
     def run
       load_execution_context
+
+      tdl_walker = @configuration.build_tree(self)
+      tdl_walker.visit_specs(specs)
     end
 
   private
@@ -24,6 +30,16 @@ module Lucid
       files = @configuration.library_context + @configuration.definition_context
       log.info("Runtime Load Execution Context: #{files}")
       @orchestrator.load_files(files)
+    end
+
+    # The specs is used to begin loading the executable specs. This is as
+    # opposed to loading the execution context (code files), which was
+    # already handled. A SpecsLoader instance is created and this is what
+    # makes sure that a spec file can be turned into a code construct
+    # (a SpecFile instance) which in turn can be broken down into an AST.
+    def specs
+      @loader ||= Runtime::SpecsLoader.new(@configuration.spec_files)
+      @loader.specs
     end
 
     def log

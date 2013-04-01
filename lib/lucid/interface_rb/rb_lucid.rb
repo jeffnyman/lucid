@@ -13,7 +13,7 @@ module Lucid
       end
 
       def register_test_definition(regexp, symbol=nil, options={}, &proc)
-        
+
       end
     end
   end

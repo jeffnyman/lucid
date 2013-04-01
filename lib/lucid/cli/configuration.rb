@@ -15,6 +15,10 @@ module Lucid
         @options.parse(args)
       end
 
+      def build_tree(runtime)
+        Lucid::AST::TDLWalker.new(runtime, self)
+      end
+
       # The spec_repo is used to get all of the files that are in the
       # "spec source" location. This location defaults to 'specs' but can
       # be changed via a command line option. The spec repo will remove
@@ -37,6 +41,27 @@ module Lucid
         #files.reject! { |f| File.extname(f) == '.spec' }
         files.reject! { |f| File.extname(f) == ".#{spec_type}" }
         files.sort
+      end
+
+      # The spec files refer to any files found within the spec repository
+      # that match the specification file type. Note that this method is
+      # called from the specs action in a Runtime instance.
+      def spec_files
+        files = spec_source.map do |path|
+          path = path.gsub(/\\/, '/')  # convert \ to /
+          path = path.chomp('/')       # removing trailing /
+          if File.directory?(path)
+            Dir["#{path}/**/*.#{spec_type}"].sort
+          else
+            path
+          end
+        end.flatten
+
+        log.info("Spec Files: #{files}")
+
+        extract_excluded_files(files)
+
+        files
       end
 
       # A call to spec_location will return the location of a spec repository.
