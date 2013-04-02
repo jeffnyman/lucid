@@ -1,4 +1,5 @@
 require "optparse"
+require "lucid/cli/profile"
 
 module Lucid
   module CLI
@@ -18,6 +19,8 @@ module Lucid
         @out_stream = out_stream
         @err_stream = err_stream
         @options = default_options
+        @profiles = []
+        @default_profile = options[:default_profile]
       end
 
       def [](key)
@@ -92,8 +95,13 @@ module Lucid
         # would have to be the spec repo
         @options[:spec_source] = @args.dup
 
+        establish_profile
+        indicate_profile
+
         self
       end
+
+    private
 
       def default_options
         {
@@ -102,6 +110,35 @@ module Lucid
           :excludes => [],
           :formats => []
         }
+      end
+
+      def establish_profile
+        @profiles << @default_profile if using_default_profile?
+
+        #puts("***** In establish_profile, @profiles is #{@profiles.inspect}")
+        #puts("***** In establish_profile, @default_profile is #{@default_profile.inspect}")
+
+        @profiles.each do |profile|
+          puts("***** #{profile} from #{@profiles.inspect}")
+        end
+      end
+
+      def indicate_profile
+        return if @profiles.empty?
+      end
+
+      def using_default_profile?
+        # It may not be obvious what this is doing. The check here is for if
+        # the profiles are empty and there is a lucid file. If so, then check
+        # if the file has a profile called default. If it does, that will be
+        # as if a default profile was used.
+        @profiles.empty? &&
+          profile_loader.lucid_yml_defined? &&
+          profile_loader.has_profile?(@default_profile)
+      end
+
+      def profile_loader
+        @profile ||= Profile.new
       end
 
     end

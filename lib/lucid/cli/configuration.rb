@@ -1,18 +1,25 @@
+require "lucid/factory"
 require "lucid/cli/options"
 
 module Lucid
   module CLI
     class Configuration
+      include ObjectFactory
+
+      class YmlLoadError < StandardError; end
+      class ProfilesNotDefinedError < YmlLoadError; end
+      class ProfileNotFound < StandardError; end
 
       def initialize(out_stream = STDOUT, err_stream = STDERR)
         @out_stream = out_stream
         @err_stream = err_stream
-        @options = Options.new(@out_stream, @err_stream)
+        @options = Options.new(@out_stream, @err_stream, :default_profile => 'default')
       end
 
       def parse(args)
         @args = args
         @options.parse(args)
+        prepare_output_formatting
       end
 
       def build_tree(runtime)
@@ -119,6 +126,14 @@ module Lucid
         @options[:debug]
       end
 
+      def formatter_class(name)
+        if(lucid_format = Options::LUCID_FORMATS[name])
+          create_object_of(lucid_format[0])
+        else
+          create_object_of(name)
+        end
+      end
+
       def log
         logger = Logger.new(@out_stream)
         logger.level = Logger::WARN
@@ -140,11 +155,22 @@ module Lucid
       end
 
       def formatters(runtime)
-        log.info("******** Options: #{@options.inspect}")
-        log.info("******** Formatters with #{@options[:formats]}")
-        @options[:formats].map do |format_and_out|
-          log.info("********** #{format_and_out}")
+        @options[:formats].map do |format|
+          # The name will be a name, like 'standard'. The route will be the
+          # location where output is sent to, such as 'STDOUT'.
+          name = format[0]
+          route = format[1]
+          begin
+            formatter = formatter_class(name)
+          rescue Exception => e
+            e.message << "\nLucid is unable to create the formatter: #{name}"
+            raise e
+          end
         end
+      end
+
+      def prepare_output_formatting
+        @options[:formats] << ['standard', @out_stream] if @options[:formats].empty?
       end
 
     end
