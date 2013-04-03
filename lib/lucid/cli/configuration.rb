@@ -19,10 +19,12 @@ module Lucid
       def parse(args)
         @args = args
         @options.parse(args)
+        log.debug("Options: #{@options.inspect}")
         prepare_output_formatting
       end
 
-      def build_tree(runtime)
+      def establish_tdl_walker(runtime)
+        #TODO: Should this just go in the runtime class?
         Lucid::AST::TDLWalker.new(runtime, formatters(runtime), self)
       end
 
@@ -34,7 +36,7 @@ module Lucid
       # contains everything that Lucid will need, whether that be
       # test spec files or code files to support them.
       def spec_repo
-        #TODO: Should I just call spec_location here?
+        #TODO: Should I just call spec_location here instead of using requires?
         requires = require_dirs
         files = requires.map do |path|
           path = path.gsub(/\\/, '/')  # convert \ to /

@@ -14,7 +14,7 @@ module Lucid
     def run
       load_execution_context
 
-      tdl_walker = @configuration.build_tree(self)
+      tdl_walker = @configuration.establish_tdl_walker(self)
       tdl_walker.visit_specs(specs)
     end
 

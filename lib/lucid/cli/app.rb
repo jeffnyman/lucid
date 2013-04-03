@@ -27,6 +27,7 @@ module Lucid
         @configuration = Configuration.new(@out_stream, @err_stream)
         @configuration.parse(@args)
         Lucid.logger = @configuration.log
+        log.debug("Configuration: #{@configuration.inspect}")
         @configuration
       end
 

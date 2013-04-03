@@ -38,7 +38,11 @@ module Lucid
       end
 
       def send_to_all(message, *args)
-
+        @listeners.each do |listener|
+          if listener.respond_to?(message)
+            listener.__send__(message, *args)
+          end
+        end
       end
 
     end

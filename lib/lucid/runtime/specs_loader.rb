@@ -1,6 +1,9 @@
+require "lucid/formatter/duration"
+
 module Lucid
   class Runtime
     class SpecsLoader
+      include Formatter::Duration
 
       def initialize(spec_files)
         @spec_files = spec_files
@@ -24,6 +27,7 @@ module Lucid
         # It will contain a @specs instance variable that is going to contain
         # an specs found.
 
+        start = Time.new
         log.info("Specs:\n")
         @spec_files.each do |f|
           spec_file = SpecFile.new(f)
@@ -38,6 +42,8 @@ module Lucid
 
 
         end
+        duration = Time.now - start
+        log.info("Parsing spec files took #{format_duration(duration)}\n\n")
 
         @specs = specs
       end
