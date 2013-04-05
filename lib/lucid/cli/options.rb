@@ -54,16 +54,37 @@ module Lucid
 
           opts.separator ''
 
+          opts.on("-t TAGS", "--tags TAGS",
+                  "Lucid will only execute features or scenarios with tags that match the",
+                  "tag expression provided. A single tag expressions can have several tags",
+                  "separated by a comma, which represents a logical OR. If this option is",
+                  "provided more than once, this represents a logical AND. A tag expression",
+                  "can be prefaced with a ~ character, which represents a logical NOT."
+          ) do |tags|
+            @options[:tags] << tags
+          end
+
+          opts.on("-n NAME", "--name NAME",
+                  "Lucid will only execute features or abilities that match with the name",
+                  "provided. The match can be done on partial information. If this option",
+                  "is provided multiple times, then the match will be performed against",
+                  "each set of provided names."
+          ) do |name|
+            @options[:names] << /#{name}/
+          end
+
           opts.on("-f FORMAT", "--format FORMAT", "How Lucid will format spec execution output.",
                   "(Default: standard) Available formats:",
-                  *FORMAT_LIST) do |format|
+                  *FORMAT_LIST
+          ) do |format|
             @options[:formats] << [format, @out_stream]
           end
 
           opts.on("-o", "--out [FILE|DIR]",
                   "Write output to a file or directory instead of to standard console output.",
                   "This option applies to any specified format option or to the default",
-                  "format if no formatter is specified.") do |output|
+                  "format if no formatter is specified."
+          ) do |output|
             @options[:formats] << ['standard', nil] if @options[:formats].empty?
             @options[:formats][-1][1] = output
           end
@@ -101,6 +122,11 @@ module Lucid
         self
       end
 
+      # @see Lucid::CLI::Configuration.filters
+      def filters
+        @options.values_at(:names, :tags).select { |v| !v.empty? }.first || []
+      end
+
     private
 
       def default_options
@@ -108,7 +134,9 @@ module Lucid
           :spec_type => "",
           :library_path => "",
           :excludes => [],
-          :formats => []
+          :formats => [],
+          :names => [],
+          :tags => []
         }
       end
 

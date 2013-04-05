@@ -17,6 +17,7 @@ module Lucid
       # The orchestrator will load only the loadable execution context files.
       # This is how the orchestrator will, quite literally, orchestrate the
       # execution of specs with the code logic that supports those specs.
+      # @see Lucid::Runtime.load_execution_context
       def load_files(files)
         log.info("Orchestrator Load Files:\n")
         files.each do |file|
@@ -74,6 +75,7 @@ module Lucid
       def log
         Lucid.logger
       end
+
     end
   end
 end

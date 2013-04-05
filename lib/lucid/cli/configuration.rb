@@ -1,5 +1,6 @@
 require "lucid/factory"
 require "lucid/cli/options"
+require "gherkin/tag_expression"
 
 module Lucid
   module CLI
@@ -47,7 +48,6 @@ module Lucid
         extract_excluded_files(files)
 
         files.reject! { |f| !File.file?(f) }
-        #files.reject! { |f| File.extname(f) == '.spec' }
         files.reject! { |f| File.extname(f) == ".#{spec_type}" }
         files.sort
       end
@@ -55,6 +55,7 @@ module Lucid
       # The spec files refer to any files found within the spec repository
       # that match the specification file type. Note that this method is
       # called from the specs action in a Runtime instance.
+      # @see Lucid::Runtime.specs
       def spec_files
         files = spec_source.map do |path|
           path = path.gsub(/\\/, '/')  # convert \ to /
@@ -84,7 +85,6 @@ module Lucid
       # calling Lucid.
       def spec_source
         @options[:spec_source].empty? ? ['specs'] : @options[:spec_source]
-        #@options[:spec_source]
       end
 
       # The "spec_type" refers to the file type (or extension) of spec files.
@@ -105,6 +105,7 @@ module Lucid
       # The library context will store an array of all files that are found
       # in the library_path. This path defaults to 'lucid' but can be changed
       # via a command line option.
+      # @see Lucid::Runtime.load_execution_context
       def library_context
         #library_files = spec_repo.select { |f| f =~ %r{/lucid/} }
         library_files = spec_repo.select { |f| f =~ %r{/#{library_path}/} }
@@ -115,8 +116,8 @@ module Lucid
       # The definition context refers to any files that are found in the spec
       # repository that are not spec files and that are not contained in the
       # library path.
+      # @see Lucid::Runtime.load_execution_context
       def definition_context
-        #spec_repo.reject {|f| f =~ %r{/lucid/} }
         spec_repo.reject { |f| f=~ %r{/#{library_path}/} }
       end
 
@@ -126,6 +127,14 @@ module Lucid
 
       def debug?
         @options[:debug]
+      end
+
+      def filters
+        @options.filters
+      end
+
+      def tags
+        Gherkin::TagExpression.new(@options[:tags])
       end
 
       def formatter_class(name)

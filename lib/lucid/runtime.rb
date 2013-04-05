@@ -37,7 +37,11 @@ module Lucid
     # makes sure that a spec file can be turned into a code construct
     # (a SpecFile instance) which in turn can be broken down into an AST.
     def specs
-      @loader ||= Runtime::SpecsLoader.new(@configuration.spec_files)
+      @loader ||= Runtime::SpecsLoader.new(
+          @configuration.spec_files,
+          @configuration.filters,
+          @configuration.tags
+      )
       @loader.specs
     end
 

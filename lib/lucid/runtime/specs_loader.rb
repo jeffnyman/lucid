@@ -5,12 +5,15 @@ module Lucid
     class SpecsLoader
       include Formatter::Duration
 
-      def initialize(spec_files)
+      def initialize(spec_files, filters, tags)
         @spec_files = spec_files
+        @filters = filters
+        @tags = tags
       end
 
+      # @see Lucid::Runtime.specs
       def specs
-        load unless @specs
+        load unless (defined? @specs) and @specs
         @specs
       end
 
@@ -27,6 +30,7 @@ module Lucid
         # It will contain a @specs instance variable that is going to contain
         # an specs found.
 
+        tag_counts = {}
         start = Time.new
         log.info("Specs:\n")
         @spec_files.each do |f|
@@ -35,7 +39,7 @@ module Lucid
           # The "spec_file" will contain a Lucid::SpecFile instance, a
           # primary attribute of which will be a @location instance variable.
 
-          spec = spec_file.parse
+          spec = spec_file.parse(@filters, tag_counts)
 
           # The "spec" will contain an instance of Lucid::AST::Feature.
 

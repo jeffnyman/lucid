@@ -3,8 +3,22 @@ module Lucid
     # The TDL Builder conforms to the Gherkin event API.
     class TDLBuilder
 
+      class Builder
+        def initialize(node)
+          @node = node
+        end
+      end
+
+      class FeatureBuilder < Builder
+
+      end
+
       def initialize(path)
         @path = path
+      end
+
+      def language=(language)
+        @language = language
       end
 
       def eof
@@ -15,7 +29,7 @@ module Lucid
       end
 
       def feature(node)
-
+        @feature_builder = FeatureBuilder.new(node)
       end
 
       def scenario(node)

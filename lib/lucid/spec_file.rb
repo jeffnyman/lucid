@@ -1,10 +1,12 @@
 require "lucid/tdl_builder"
 require "gherkin/parser/parser"
+require "gherkin/formatter/filter_formatter"
+require "gherkin/formatter/tag_count_formatter"
 
 module Lucid
   class SpecFile
 
-    SPEC_PATTERN = /^([\w\W]*?):([\d:]+)$/
+    SPEC_PATTERN     = /^([\w\W]*?):([\d:]+)$/
     NON_EXEC_PATTERN = /^\s*#|^\s*$/
     DEFAULT_ENCODING = "UTF-8"
     ENCODING_PATTERN = /^\s*#\s*encoding\s*:\s*([^\s]+)/
@@ -21,18 +23,28 @@ module Lucid
 
     # The parse action will parse a specific spec source and will return
     # a the high level construct of the spec.
-    def parse
+    # @see Lucid::Runtime::SpecsLoader.load
+    def parse(specified_filters, tag_counts)
+      filters = @lines || specified_filters
+
       tdl_builder = Lucid::Parser::TDLBuilder.new(@path)
+      filter_formatter = filters.empty? ? tdl_builder : Gherkin::Formatter::FilterFormatter.new(tdl_builder, filters)
+      tag_count_formatter = Gherkin::Formatter::TagCountFormatter.new(filter_formatter, tag_counts)
 
       # Gherkin Parser parameters:
       # formatter, raise_on_error, machine_name, force_ruby
       # The machine name refers to a state machine table.
-      parser = Gherkin::Parser::Parser.new(tdl_builder, true, "root", false)
+      parser = Gherkin::Parser::Parser.new(tag_count_formatter, true, "root", false)
 
       begin
         # parse parameters:
         # gherkin, feature_uri, line_offset
         parser.parse(source, @path, 0)
+        tdl_builder.language = parser.i18n_language
+
+      rescue Gherkin::Lexer::LexingError, Gherkin::Parser::ParseError => e
+        e.message.insert(0, "#{@path}: ")
+        raise e
       end
     end
 
@@ -66,6 +78,7 @@ module Lucid
 
     def encoding_for(source)
       encoding = DEFAULT_ENCODING
+
       source.each_line do |line|
         break unless NON_EXEC_PATTERN =~ line
         if ENCODING_PATTERN =~ line
@@ -73,6 +86,7 @@ module Lucid
           break
         end
       end
+
       encoding
     end
 
