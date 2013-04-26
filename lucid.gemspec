@@ -3,7 +3,7 @@ lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 ###$LOAD_PATH.unshift File.expand_path("../lib", __FILE__)
-require "cucumber/platform"
+require "lucid/platform"
 
 Gem::Specification.new do |gem|
   gem.name        = 'lucid'

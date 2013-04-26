@@ -11,8 +11,8 @@ if(ENV['SIMPLECOV'] && RUBY_VERSION =~ /1\.9/)
   SimpleCov.start
 end
 
-require 'cucumber/rspec/disable_option_parser'
-require 'cucumber/cli/main'
+require 'lucid/rspec/disable_option_parser'
+require 'lucid/cli/main'
 
 # The dup is to keep ARGV intact, so that tools like ruby-debug can respawn.
 Cucumber::Cli::Main.new(ARGV.dup).execute!

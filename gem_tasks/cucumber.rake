@@ -1,5 +1,5 @@
-require 'cucumber/rake/task'
-require 'cucumber/platform'
+require 'lucid/rake/task'
+require 'lucid/platform'
 
 class Cucumber::Rake::Task
   def set_profile_for_current_ruby

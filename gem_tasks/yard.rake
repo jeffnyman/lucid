@@ -1,6 +1,6 @@
 require 'yard'
 require 'yard/rake/yardoc_task'
-require File.expand_path(File.dirname(__FILE__) + '/../lib/cucumber/platform')
+require File.expand_path(File.dirname(__FILE__) + '/../lib/lucid/platform')
 
 DOC_DIR      = File.expand_path(File.dirname(__FILE__) + '/../doc')
 SITE_DIR     = File.expand_path(File.dirname(__FILE__) + '/../../cucumber.github.com')

@@ -1,6 +1,6 @@
 require 'autotest'
 require 'tempfile'
-require 'cucumber'
+require 'lucid'
 require 'cucumber/cli/profile_loader'
 
 module Autotest::CucumberMixin

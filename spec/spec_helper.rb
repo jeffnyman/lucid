@@ -11,7 +11,7 @@ require 'rubygems'
 require 'bundler'
 Bundler.setup
 
-require 'cucumber'
+require 'lucid'
 
 RSpec.configure do |c|
   c.before do
