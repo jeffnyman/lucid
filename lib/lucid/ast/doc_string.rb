@@ -5,14 +5,14 @@ module Lucid
     #   Given the message
     #     """
     #     I like
-    #     Cucumber sandwich
+    #     Lucid testing
     #     """
     #
     # The text between the pair of <tt>"""</tt> is stored inside a DocString,
     # which is yielded to the StepDefinition block as the last argument.
     #
     # The StepDefinition can then access the String via the #to_s method. In the
-    # example above, that would return: <tt>"I like\nCucumber sandwich"</tt>
+    # example above, that would return: <tt>"I like\nLucid testing"</tt>
     #
     # Note how the indentation from the source is stripped away.
     #

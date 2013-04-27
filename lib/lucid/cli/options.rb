@@ -290,11 +290,11 @@ module Lucid
           opts.on(DRB_OPTIONAL_FLAG, "Run features against a DRb server. (i.e. with the spork gem)") do |drb|
             @options[:drb] = drb
           end
-          opts.on("--port PORT", "Specify DRb port.  Ignored without --drb") do |port|
+          opts.on("--port PORT", "Specify DRb port. Ignored without --drb") do |port|
             @options[:drb_port] = port
           end
-          opts.on("--dotcucumber DIR", "Write metadata to DIR") do |dir|
-            @options[:dotcucumber] = dir
+          opts.on("--testdefs DIR", "Lucid will Write test definition metadata to the DIR.") do |dir|
+            @options[:testdefs] = dir
           end
           opts.on_tail("--version", "Show Lucid version information.") do
             @out_stream.puts Lucid::VERSION

@@ -106,7 +106,7 @@ module Lucid
       end
 
       # This constant is appended to by Cuke4Duke. Do not change its name
-      BACKTRACE_FILTER_PATTERNS = [/vendor\/rails|lib\/cucumber|bin\/cucumber:|lib\/rspec|gems\/|minitest|test\/unit/]
+      BACKTRACE_FILTER_PATTERNS = [/vendor\/rails|lib\/lucid|bin\/lucid:|lib\/rspec|gems\/|minitest|test\/unit/]
       if(Lucid::JRUBY)
         BACKTRACE_FILTER_PATTERNS << /org\/jruby/
       end
@@ -121,7 +121,7 @@ module Lucid
           BACKTRACE_FILTER_PATTERNS.detect { |p| line =~ p }
         end
 
-        if ENV['CUCUMBER_TRUNCATE_OUTPUT']
+        if ENV['LUCID_TRUNCATE_OUTPUT']
           # Strip off file locations
           filtered = filtered.map do |line|
             line =~ /(.*):in `/ ? $1 : line

@@ -2,7 +2,7 @@ require 'gherkin/formatter/ansi_escapes'
 
 module Lucid
   module RbSupport
-    # Defines the basic DSL methods availlable in all Cucumber step definitions.
+    # Defines the basic DSL methods available in all Lucid step definitions.
     #
     # You can, and probably should, extend this DSL with your own methods that
     # make sense in your domain. For more on that, see {Lucid::RbSupport::RbDsl#World}
@@ -13,41 +13,41 @@ module Lucid
 
       # Call a Transform with a string from another Transform definition
       def Transform(arg)
-        rb = @__cucumber_runtime.load_programming_language('rb')
+        rb = @__lucid_runtime.load_programming_language('rb')
         rb.execute_transforms([arg]).first
       end
 
       # @private
-      attr_writer :__cucumber_runtime, :__natural_language
+      attr_writer :__lucid_runtime, :__natural_language
 
       # Run a single Gherkin step
       # @example Call another step
       #   step "I am logged in"
       # @example Call a step with quotes in the name
-      #   step %{the user "Dave" is logged in}
+      #   step %{the user "Jeff" is logged in}
       # @example Passing a table
       #   step "the following users exist:", table(%{
-      #     | name  | email           |
-      #     | Matt  | matt@matt.com   |
-      #     | Aslak | aslak@aslak.com |
+      #     | name   | email           |
+      #     | Jeff   | jeff@jeff.com   |
+      #     | Harley | harley@jeff.com |
       #   })
       # @example Passing a multiline string
       #   step "the email should contain:", "Dear sir,\nYou've won a prize!\n"
       # @param [String] name The name of the step
       # @param [String,Lucid::Ast::DocString,Lucid::Ast::Table] multiline_argument
       def step(name, multiline_argument=nil)
-        @__cucumber_runtime.invoke(name, multiline_argument)
+        @__lucid_runtime.invoke(name, multiline_argument)
       end
 
       # Run a snippet of Gherkin
       # @example
       #   steps %{
-      #     Given the user "Susan" exists
-      #     And I am logged in as "Susan"
+      #     Given the user "Jeff" exists
+      #     And I am logged in as "Jeff"
       #   }
       # @param [String] steps_text The Gherkin snippet to run
       def steps(steps_text)
-        @__cucumber_runtime.invoke_steps(steps_text, @__natural_language, caller[0])
+        @__lucid_runtime.invoke_steps(steps_text, @__natural_language, caller[0])
       end
 
       # Parse Gherkin into a {Lucid::Ast::Table} object.
@@ -55,13 +55,13 @@ module Lucid
       # Useful in conjunction with the #step method.
       # @example Create a table
       #   users = table(%{
-      #     | name  | email           |
-      #     | Matt  | matt@matt.com   |
-      #     | Aslak | aslak@aslak.com |
+      #     | name   | email           |
+      #     | Jeff   | jeff@jeff.com   |
+      #     | Harley | harley@jeff.com |
       #   })
       # @param [String] text_or_table The Gherkin string that represents the table
       def table(text_or_table, file=nil, line_offset=0)
-        @__cucumber_runtime.table(text_or_table, file, line_offset)
+        @__lucid_runtime.table(text_or_table, file, line_offset)
       end
 
       # Create an {Lucid::Ast::DocString} object
@@ -74,7 +74,7 @@ module Lucid
       #   %}, 'ruby')
       def doc_string(string_without_triple_quotes, content_type='', line_offset=0)
         # TODO: rename this method to multiline_string
-        @__cucumber_runtime.doc_string(string_without_triple_quotes, content_type, line_offset)
+        @__lucid_runtime.doc_string(string_without_triple_quotes, content_type, line_offset)
       end
 
       # @deprecated Use {#puts} instead.
@@ -85,23 +85,23 @@ module Lucid
 
       # Print a message to the output.
       #
-      # @note Cucumber might surprise you with the behaviour of this method. Instead
-      #   of sending the output directly to STDOUT, Cucumber will intercept and cache
+      # @note Lucid might surprise you with the behavior of this method. Instead
+      #   of sending the output directly to STDOUT, Lucid will intercept and cache
       #   the message until the current step has finished, and then display it.
       #   
       #   If you'd prefer to see the message immediately, call {Kernel.puts} instead.
       def puts(*messages)
-        @__cucumber_runtime.puts(*messages)
+        @__lucid_runtime.puts(*messages)
       end
 
       # Pause the tests and ask the operator for input
       def ask(question, timeout_seconds=60)
-        @__cucumber_runtime.ask(question, timeout_seconds)
+        @__lucid_runtime.ask(question, timeout_seconds)
       end
 
       # Embed an image in the output
       def embed(file, mime_type, label='Screenshot')
-        @__cucumber_runtime.embed(file, mime_type, label)
+        @__lucid_runtime.embed(file, mime_type, label)
       end
 
       # Mark the matched step as pending.

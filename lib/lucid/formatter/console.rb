@@ -100,8 +100,8 @@ module Lucid
 
       def print_exception(e, status, indent)
         message = "#{e.message} (#{e.class})"
-        if ENV['CUCUMBER_TRUNCATE_OUTPUT']
-          message = linebreaks(message, ENV['CUCUMBER_TRUNCATE_OUTPUT'].to_i)
+        if ENV['LUCID_TRUNCATE_OUTPUT']
+          message = linebreaks(message, ENV['LUCID_TRUNCATE_OUTPUT'].to_i)
         end
 
         string = "#{message}\n#{e.backtrace.join("\n")}".indent(indent)

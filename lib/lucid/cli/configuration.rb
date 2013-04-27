@@ -64,8 +64,8 @@ module Lucid
         @options[:expand]
       end
 
-      def dotcucumber
-        @options[:dotcucumber]
+      def testdefs
+        @options[:testdefs]
       end
 
       def snippet_type
@@ -152,10 +152,11 @@ module Lucid
         @options[:formats]
       end
 
-      def options
-        warn("Deprecated: Configuration#options will be removed from the next release of Cucumber. Please use the configuration object directly instead.")
-        @options
-      end
+      # TODO: Delete this.
+      ###def options
+        ###warn("Deprecated: Configuration#options will be removed from the next release of Lucid. Please use the configuration object directly instead.")
+        ###@options
+      ###end
 
       def paths
         @options[:paths]
@@ -168,10 +169,9 @@ module Lucid
 
 
       def formatters(runtime)
-        # TODO: We should remove the autoformat functionality. That
-        # can be done with the gherkin CLI.
+        # TODO: Remove the autoformat functionality; use the Gherkin CLI instead.
         if @options[:autoformat]
-          require 'cucumber/formatter/pretty'
+          require 'lucid/formatter/pretty'
           return [Formatter::Pretty.new(runtime, nil, @options)]
         end
 
@@ -216,7 +216,7 @@ module Lucid
       end
 
       def require_dirs
-        feature_dirs + Dir['vendor/{gems,plugins}/*/cucumber']
+        feature_dirs + Dir['vendor/{gems,plugins}/*/lucid']
       end
 
     end

@@ -6,8 +6,8 @@ module Lucid
     #
     # Example:
     #
-    #   Transform /^(\d+) cucumbers$/ do |cucumbers_string|
-    #     cucumbers_string.to_i
+    #   Transform /^(\d+) lucid tests$/ do |lucid_string|
+    #     lucid_string.to_i
     #   end
     #
     class RbTransform
@@ -29,7 +29,7 @@ module Lucid
       def invoke(arg)
         if matched = match(arg)
           args = matched.captures.empty? ? [arg] : matched.captures
-          @rb_language.current_world.cucumber_instance_exec(true, @regexp.inspect, *args, &@proc)
+          @rb_language.current_world.lucid_instance_exec(true, @regexp.inspect, *args, &@proc)
         end
       end
 

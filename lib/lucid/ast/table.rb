@@ -68,8 +68,8 @@ module Lucid
 
       # Creates a new instance. +raw+ should be an Array of Array of String
       # or an Array of Hash (similar to what #hashes returns).
-      # You don't typically create your own Table objects - Cucumber will do
-      # it internally and pass them to your Step Definitions.
+      # You don't typically create your own Table objects - Lucid will do
+      # it internally and pass them to your test definitions.
       #
       def initialize(raw, conversion_procs = NULL_CONVERSIONS.dup, header_mappings = {}, header_conversion_proc = nil)
         @cells_class = Cells
@@ -444,7 +444,7 @@ module Lucid
       end
 
       def to_s(options = {}) #:nodoc:
-        require 'cucumber/formatter/pretty'
+        require 'lucid/formatter/pretty'
         options = {:color => true, :indent => 2, :prefixes => TO_S_PREFIXES}.merge(options)
         io = StringIO.new
 

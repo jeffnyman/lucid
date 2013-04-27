@@ -14,13 +14,13 @@ module Lucid
     #
     #   Lucid::Rake::Task.new
     #
-    # This will define a task named <tt>cucumber</tt> described as 'Run Cucumber features'.
+    # This will define a task named <tt>lucid</tt> described as 'Run Lucid features'.
     # It will use steps from 'features/**/*.rb' and features in 'features/**/*.feature'.
     #
     # To further configure the task, you can pass a block:
     #
     #   Lucid::Rake::Task.new do |t|
-    #     t.cucumber_opts = %w{--format progress}
+    #     t.lucid_opts = %w{--format progress}
     #   end
     #
     # See the attributes for additional configuration possibilities.
@@ -33,29 +33,29 @@ module Lucid
 
         attr_reader :args
 
-        def initialize(libs, cucumber_opts, feature_files)
-          raise "libs must be an Array when running in-process" unless Array === libs
+        def initialize(libs, lucid_opts, feature_files)
+          raise "libs must be an array when running in-process" unless Array === libs
           libs.reverse.each{|lib| $LOAD_PATH.unshift(lib)}
           @args = (
-            cucumber_opts +
+            lucid_opts +
             feature_files
           ).flatten.compact
         end
 
         def run
-          require 'cucumber/cli/main'
+          require 'lucid/cli/main'
           failure = Lucid::Cli::Main.execute(args)
-          raise "Cucumber failed" if failure
+          raise "Lucid failed" if failure
         end
       end
 
       class ForkedCucumberRunner #:nodoc:
         include ::Rake::DSL if defined?(::Rake::DSL)
 
-        def initialize(libs, cucumber_bin, cucumber_opts, bundler, feature_files)
+        def initialize(libs, lucid_bin, lucid_opts, bundler, feature_files)
           @libs          = libs
-          @cucumber_bin  = cucumber_bin
-          @cucumber_opts = cucumber_opts
+          @lucid_bin     = lucid_bin
+          @lucid_opts    = lucid_opts
           @bundler       = bundler
           @feature_files = feature_files
         end
@@ -64,8 +64,8 @@ module Lucid
           ['"%s"' % @libs.join(File::PATH_SEPARATOR)]
         end
 
-        def quoted_binary(cucumber_bin)
-          ['"%s"' % cucumber_bin]
+        def quoted_binary(lucid_bin)
+          ['"%s"' % lucid_bin]
         end
 
         def use_bundler
@@ -86,11 +86,11 @@ module Lucid
 
         def cmd
           if use_bundler
-            [ Lucid::RUBY_BINARY, '-S', 'bundle', 'exec', 'cucumber', @cucumber_opts,
+            [ Lucid::RUBY_BINARY, '-S', 'bundle', 'exec', 'lucid', @lucid_opts,
             @feature_files ].flatten
           else
-            [ Lucid::RUBY_BINARY, '-I', load_path(@libs), quoted_binary(@cucumber_bin),
-            @cucumber_opts, @feature_files ].flatten
+            [ Lucid::RUBY_BINARY, '-I', load_path(@libs), quoted_binary(@lucid_bin),
+            @lucid_opts, @feature_files ].flatten
           end
         end
 
@@ -106,14 +106,14 @@ module Lucid
       # Directories to add to the Ruby $LOAD_PATH
       attr_accessor :libs
 
-      # Name of the cucumber binary to use for running features. Defaults to Lucid::BINARY
+      # Name of the Lucid binary to use for running features. Defaults to Lucid::BINARY
       attr_accessor :binary
 
-      # Extra options to pass to the cucumber binary. Can be overridden by the CUCUMBER_OPTS environment variable.
+      # Extra options to pass to the Lucid binary. Can be overridden by the LUCID_OPTS environment variable.
       # It's recommended to pass an Array, but if it's a String it will be #split by ' '.
-      attr_accessor :cucumber_opts
-      def cucumber_opts=(opts) #:nodoc:
-        @cucumber_opts = String === opts ? opts.split(' ') : opts
+      attr_accessor :lucid_opts
+      def lucid_opts=(opts) #:nodoc:
+        @lucid_opts = String === opts ? opts.split(' ') : opts
       end
 
       # Whether or not to fork a new ruby interpreter. Defaults to true. You may gain
@@ -121,8 +121,8 @@ module Lucid
       # your load path and gems.
       attr_accessor :fork
 
-      # Define what profile to be used.  When used with cucumber_opts it is simply appended
-      # to it. Will be ignored when CUCUMBER_OPTS is used.
+      # Define what profile to be used.  When used with lucid_opts it is simply appended
+      # to it. Will be ignored when LUCID_OPTS is used.
       attr_accessor :profile
 
       # Whether or not to run with bundler (bundle exec). Setting this to false may speed
@@ -132,8 +132,8 @@ module Lucid
       # Note that this attribute has no effect if you don't run in forked mode.
       attr_accessor :bundler
 
-      # Define Cucumber Rake task
-      def initialize(task_name = "cucumber", desc = "Run Cucumber features")
+      # Define Lucid Rake task
+      def initialize(task_name = "lucid", desc = "Run Lucid features")
         @task_name, @desc = task_name, desc
         @fork = true
         @libs = ['lib']
@@ -151,15 +151,15 @@ module Lucid
       end
 
       def runner(task_args = nil) #:nodoc:
-        cucumber_opts = [(ENV['CUCUMBER_OPTS'] ? ENV['CUCUMBER_OPTS'].split(/\s+/) : nil) || cucumber_opts_with_profile]
+        lucid_opts = [(ENV['LUCID_OPTS'] ? ENV['LUCID_OPTS'].split(/\s+/) : nil) || lucid_opts_with_profile]
         if(@fork)
-          return ForkedCucumberRunner.new(libs, binary, cucumber_opts, bundler, feature_files)
+          return ForkedCucumberRunner.new(libs, binary, lucid_opts, bundler, feature_files)
         end
-        InProcessCucumberRunner.new(libs, cucumber_opts, feature_files)
+        InProcessCucumberRunner.new(libs, lucid_opts, feature_files)
       end
 
-      def cucumber_opts_with_profile #:nodoc:
-        @profile ? [cucumber_opts, '--profile', @profile] : cucumber_opts
+      def lucid_opts_with_profile #:nodoc:
+        @profile ? [lucid_opts, '--profile', @profile] : lucid_opts
       end
 
       def feature_files #:nodoc:

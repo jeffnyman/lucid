@@ -3,8 +3,8 @@ require 'gherkin/formatter/argument'
 
 module Lucid
   module Formatter
-    # Adapts Cucumber formatter events to Gherkin formatter events
-    # This class will disappear when Cucumber is based on Gherkin's model.
+    # Adapts Lucid formatter events to Gherkin formatter events
+    # This class will disappear when Lucid is based on Gherkin's model.
     class GherkinFormatterAdapter
       def initialize(gherkin_formatter, print_empty_match)
         @gf = gherkin_formatter

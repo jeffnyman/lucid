@@ -38,7 +38,7 @@ module Lucid
       # like (to register more modules), but if you try to register more than
       # one Proc you will get an error.
       #
-      # Cucumber will not yield anything to the +proc+. Examples:
+      # Lucid will not yield anything to the +proc+. Examples:
       #
       #    World do
       #      MyClass.new
@@ -86,7 +86,7 @@ module Lucid
         RbDsl.register_rb_transform(regexp, proc)
       end
 
-      # Registers a proc that will run after Cucumber is configured. You can register as
+      # Registers a proc that will run after Lucid is configured. You can register as
       # as you want (typically from ruby scripts under <tt>support/hooks.rb</tt>).
       # TODO: Deprecate this
       def AfterConfiguration(&proc)

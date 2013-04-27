@@ -12,7 +12,6 @@ require 'lucid/runtime/results'
 require 'lucid/runtime/support_code'
 
 module Lucid
-  # This is the meaty part of Cucumber that ties everything together.
   class Runtime
     attr_reader :results
 
@@ -20,7 +19,7 @@ module Lucid
     include Runtime::UserInterface
 
     def initialize(configuration = Configuration.default)
-      require 'cucumber/core_ext/disable_mini_and_test_unit_autorun'
+      require 'lucid/core_ext/disable_mini_and_test_unit_autorun'
       @current_scenario = nil
       @configuration = Configuration.parse(configuration)
       @support_code = SupportCode.new(self, @configuration)
@@ -122,7 +121,7 @@ module Lucid
     end
 
     def write_stepdefs_json
-      if(@configuration.dotcucumber)
+      if(@configuration.testdefs)
         stepdefs = []
         @support_code.step_definitions.sort{|a,b| a.to_hash['source'] <=> a.to_hash['source']}.each do |stepdef|
           stepdef_hash = stepdef.to_hash
@@ -149,10 +148,10 @@ module Lucid
           stepdef_hash['steps'] = steps.uniq.sort {|a,b| a['name'] <=> b['name']}
           stepdefs << stepdef_hash
         end
-        if !File.directory?(@configuration.dotcucumber)
-          FileUtils.mkdir_p(@configuration.dotcucumber)
+        if !File.directory?(@configuration.testdefs)
+          FileUtils.mkdir_p(@configuration.testdefs)
         end
-        File.open(File.join(@configuration.dotcucumber, 'stepdefs.json'), 'w') do |io|
+        File.open(File.join(@configuration.testdefs, 'testdefs.json'), 'w') do |io|
           io.write(MultiJson.dump(stepdefs, :pretty => true))
         end
       end

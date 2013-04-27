@@ -11,7 +11,7 @@ module Lucid
     #
     # Example:
     #
-    #   Given /I have (\d+) cucumbers in my belly/ do
+    #   Given /I have (\d+) lucid testing on the mind/ do
     #     # some code here
     #   end
     #
@@ -94,7 +94,7 @@ module Lucid
       def invoke(args)
         begin
           args = @rb_language.execute_transforms(args)
-          @rb_language.current_world.cucumber_instance_exec(true, regexp_source, *args, &@proc)
+          @rb_language.current_world.lucid_instance_exec(true, regexp_source, *args, &@proc)
         rescue Lucid::ArityMismatchError => e
           e.backtrace.unshift(self.backtrace_line)
           raise e

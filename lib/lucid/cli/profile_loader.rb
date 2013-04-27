@@ -14,7 +14,7 @@ module Lucid
           raise(ProfileNotFound, <<-END_OF_ERROR)
 Could not find profile: '#{profile}'
 
-Defined profiles in cucumber.yml:
+Defined profiles in lucid.yml:
   * #{lucid_yml.keys.sort.join("\n  * ")}
         END_OF_ERROR
         end

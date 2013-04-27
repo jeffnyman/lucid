@@ -2,9 +2,9 @@ require 'optparse'
 
 module Spec #:nodoc:
   module Runner #:nodoc:
-    # Neuters RSpec's option parser.
-    # (RSpec's option parser tries to parse ARGV, which
-    # will fail when running cucumber)
+    # This makes sure that RSpec's option parser does not kick in.
+    # RSpec's option parser tries to parse ARGV, and that will
+    # fail when running Lucid.
     class OptionParser < ::OptionParser #:nodoc:
       NEUTERED_RSPEC = Object.new
       def NEUTERED_RSPEC.method_missing(m, *args); self; end

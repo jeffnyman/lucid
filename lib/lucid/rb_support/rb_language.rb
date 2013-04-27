@@ -151,7 +151,7 @@ module Lucid
       end
 
       def connect_world(scenario)
-        @current_world.__cucumber_runtime = @runtime
+        @current_world.__lucid_runtime = @runtime
         @current_world.__natural_language = scenario.language
       end
 

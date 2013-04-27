@@ -27,7 +27,7 @@ module Lucid
       message = "Ambiguous match of \"#{step_name}\":\n\n"
       message << step_definitions.map{|sd| sd.backtrace_line}.join("\n")
       message << "\n\n"
-      message << "You can run again with --guess to make Cucumber be more smart about it\n" unless used_guess
+      message << "You can run again with --guess to make Lucid be a little more smart about it.\n" unless used_guess
       super(message)
     end
   end

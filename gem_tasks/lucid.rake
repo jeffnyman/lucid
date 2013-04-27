@@ -22,8 +22,8 @@ end
 
 Lucid::Rake::Task.new(:legacy_features) do |t|
   t.fork = false
-  t.cucumber_opts = %w{legacy_features}
+  t.lucid_opts = %w{legacy_features}
   t.set_profile_for_current_ruby
 end
 
-task :cucumber => [:features, :legacy_features]
+task :lucid => [:features, :legacy_features]
