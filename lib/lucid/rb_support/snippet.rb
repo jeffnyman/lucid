@@ -22,7 +22,7 @@ module Lucid
         end
 
         def self.cli_option_string(type)
-          "%-7s: %-28s e.g. %s" % [type, description, example]
+          "%-7s: %-28s Example: %s" % [type, description, example]
         end
 
         private
@@ -68,7 +68,7 @@ module Lucid
         end
 
         def self.example
-          new("Given", "missing step", nil).step
+          new("Given", "some phrase", nil).step
         end
 
       end
@@ -79,7 +79,7 @@ module Lucid
         end
 
         def self.description
-          "Snippets with parentheses"
+          "Matchers with parentheses."
         end
       end
 
@@ -89,7 +89,7 @@ module Lucid
         end
 
         def self.description
-          "Snippets without parentheses. Note that these cause a warning from modern versions of Ruby."
+          "Matchers without parentheses."
         end
       end
 
@@ -99,7 +99,7 @@ module Lucid
         end
 
         def self.description
-          "Snippets with percent regexp"
+          "Matchers with delimited regexp."
         end
       end
 

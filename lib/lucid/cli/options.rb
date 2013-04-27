@@ -17,7 +17,7 @@ module Lucid
                                                               "#{INDENT}listed first. If --dry-run is used the duration\n" +
                                                               "#{INDENT}is not shown, and step definitions are sorted by\n" +
                                                               "#{INDENT}filename instead."],
-        'stepdefs'    => ['Lucid::Formatter::Stepdefs',    "Prints All step definitions with their locations. Same as\n" +
+        'stepdefs'    => ['Lucid::Formatter::Stepdefs',    "Prints all test definitions with their locations. Same as\n" +
                                                               "#{INDENT}the usage formatter, except that steps are not printed."],
         'junit'       => ['Lucid::Formatter::Junit',       'Generates a report similar to Ant+JUnit.'],
         'json'        => ['Lucid::Formatter::Json',        'Prints the feature as JSON'],
@@ -28,12 +28,12 @@ module Lucid
       FORMAT_HELP = (BUILTIN_FORMATS.keys.sort.map do |key|
         "  #{key}#{' ' * (max - key.length)} : #{BUILTIN_FORMATS[key][1]}"
       end) + ["Use --format rerun --out features.txt to write out failing",
-        "features. You can rerun them with cucumber @rerun.txt.",
+        "features. You can rerun them with lucid @rerun.txt.",
         "FORMAT can also be the fully qualified class name of",
         "your own custom formatter. If the class isn't loaded,",
-        "Cucumber will attempt to require a file with a relative",
+        "Lucid will attempt to require a file with a relative",
         "file name that is the underscore name of the class name.",
-        "Example: --format Foo::BarZap -> Cucumber will look for",
+        "Example: --format Foo::BarZap -> Lucid will look for",
         "foo/bar_zap.rb. You can place the file with this relative",
         "path underneath your features/support directory or anywhere",
         "on Ruby's LOAD_PATH, for example in a Ruby gem."
@@ -120,22 +120,23 @@ module Lucid
         @args.extend(::OptionParser::Arguable)
 
         @args.options do |opts|
-          opts.banner = ["Usage: cucumber [options] [ [FILE|DIR|URL][:LINE[:LINE]*] ]+", "",
-            "Examples:",
-            "cucumber examples/i18n/en/features",
-            "cucumber @rerun.txt (See --format rerun)",
-            "cucumber examples/i18n/it/features/somma.feature:6:98:113",
-            "cucumber -s -i http://rubyurl.com/eeCl", "", "",
+          opts.banner = ["Lucid: Test Description Language Execution Engine",
+                         "Usage: lucid [options] [ [FILE|DIR|URL][:LINE[:LINE]*] ]+", "",
+                         "Examples:",
+                         "lucid examples/i18n/en/features",
+                         "lucid @rerun.txt (See --format rerun)",
+                         "lucid examples/i18n/it/features/test.feature:6:98:113",
+                         "lucid -s -i http://rubyurl.com/eeCl", "", "",
           ].join("\n")
           opts.on("-r LIBRARY|DIR", "--require LIBRARY|DIR",
-            "Require files before executing the features. If this",
-            "option is not specified, all *.rb files that are",
-            "siblings or below the features will be loaded auto-",
-            "matically. Automatic loading is disabled when this",
-            "option is specified, and all loading becomes explicit.",
-            "Files under directories named \"support\" are always",
-            "loaded first.",
-            "This option can be specified multiple times.") do |v|
+                  "Require files before executing the features. If this option",
+                  "is not specified, all *.rb files that are siblings or below",
+                  "the features will be loaded automatically. Automatic loading",
+                  "is disabled when this option is specified. That means all",
+                  "loading becomes explicit.",
+                  "Files under directories named \"support\" will always be",
+                  "loaded first.",
+                  "This option can be specified multiple times.") do |v|
             @options[:require] << v
             if(Lucid::JRUBY && File.directory?(v))
               require 'java'
@@ -145,14 +146,14 @@ module Lucid
 
           if(Lucid::JRUBY)
             opts.on("-j DIR", "--jars DIR",
-            "Load all the jars under DIR") do |jars|
+                    "Load all the jars under the specified directory.") do |jars|
               Dir["#{jars}/**/*.jar"].each {|jar| require jar}
             end
           end
 
           opts.on("--i18n LANG",
-            "List keywords for in a particular language",
-            %{Run with "--i18n help" to see all languages}) do |lang|
+                  "List keywords for a particular language.",
+                  %{Run with "--i18n help" to see all languages}) do |lang|
             if lang == 'help'
               list_languages_and_exit
             else
@@ -160,51 +161,61 @@ module Lucid
             end
           end
           opts.on("-f FORMAT", "--format FORMAT",
-            "How to format features (Default: pretty). Available formats:",
-            *FORMAT_HELP) do |v|
+                  "How Lucid will format spec execution output.",
+                  "(Default: pretty). Available formats:",
+                  *FORMAT_HELP
+          ) do |v|
             @options[:formats] << [v, @out_stream]
           end
           opts.on("-o", "--out [FILE|DIR]",
-            "Write output to a file/directory instead of STDOUT. This option",
-            "applies to the previously specified --format, or the",
-            "default format if no format is specified. Check the specific",
-            "formatter's docs to see whether to pass a file or a dir.") do |v|
+                  "Write output to a file or directory instead of to standard",
+                  "console output. This option applies to any specified format",
+                  "option (via the --format switch) or to the default format",
+                  "if no format was specified. You can check the specific",
+                  "documentation for a given formatter to see whether to pass",
+                  "a file or a directory."
+          ) do |v|
             @options[:formats] << ['pretty', nil] if @options[:formats].empty?
             @options[:formats][-1][1] = v
           end
           opts.on("-t TAG_EXPRESSION", "--tags TAG_EXPRESSION",
-            "Only execute the features or scenarios with tags matching TAG_EXPRESSION.",
-            "Scenarios inherit tags declared on the Feature level. The simplest",
-            "TAG_EXPRESSION is simply a tag. Example: --tags @dev. When a tag in a tag",
-            "expression starts with a ~, this represents boolean NOT. Example: --tags ~@dev.",
-            "A tag expression can have several tags separated by a comma, which represents",
-            "logical OR. Example: --tags @dev,@wip. The --tags option can be specified",
-            "several times, and this represents logical AND. Example: --tags @foo,~@bar --tags @zap.",
-            "This represents the boolean expression (@foo || !@bar) && @zap.",
-            "\n",
-            "Beware that if you want to use several negative tags to exclude several tags",
-            "you have to use logical AND: --tags ~@fixme --tags ~@buggy.",
-            "\n",
-            "Positive tags can be given a threshold to limit the number of occurrences.",
-            "Example: --tags @qa:3 will fail if there are more than 3 occurrences of the @qa tag.",
-            "This can be practical if you are practicing Kanban or CONWIP.") do |v|
+                  "Lucid will only execute features or scenarios with tags that match the",
+                  "tag expression provided. A single tag expressions can have several tags",
+                  "separated by a comma, which represents a logical OR. If this option is",
+                  "provided more than once, this represents a logical AND. A tag expression",
+                  "can be prefaced with a ~ character, which represents a logical NOT.",
+                  "Examples:",
+                  " --tags @smoke.",
+                  " --tags ~@wip",
+                  " --tags @smoke,@wip",
+                  " --tags @smoke,~@wip --tags @regression",
+                  "If you want to use multiple exclusion tags, you must use the logical",
+                  "AND approach, as in: --tags ~@wip --tags ~@failing",
+                  "Positive tags can be given a threshold to limit the number of occurrences.",
+                  "Example: --tags @critical:3",
+                  "That will fail if there are more than three occurrences of the @critical tag."
+          ) do |v|
             @options[:tag_expressions] << v
           end
           opts.on("-n NAME", "--name NAME",
-            "Only execute the feature elements which match part of the given name.",
-            "If this option is given more than once, it will match against all the",
-            "given names.") do |v|
+                  "Lucid will only execute features or abilities that match with the name",
+                  "provided. The match can be done on partial information. If this option",
+                  "is provided multiple times, then the match will be performed against",
+                  "each set of provided names."
+          ) do |v|
             @options[:name_regexps] << /#{v}/
           end
-          opts.on("-e", "--exclude PATTERN", "Don't run feature files or require ruby files matching PATTERN") do |v|
+          opts.on("-e", "--exclude PATTERN",
+                  "Lucid will not use files that match the PATTERN.") do |v|
             @options[:excludes] << Regexp.new(v)
           end
           opts.on(PROFILE_SHORT_FLAG, "#{PROFILE_LONG_FLAG} PROFILE",
-              "Pull commandline arguments from cucumber.yml which can be defined as",
-              "strings or arrays.  When a 'default' profile is defined and no profile",
-              "is specified it is always used. (Unless disabled, see -P below.)",
-              "When feature files are defined in a profile and on the command line",
-              "then only the ones from the command line are used.") do |v|
+                  "Pull commandline arguments from lucid.yml which can be defined as",
+                  "strings or arrays. When a 'default' profile is defined and no profile",
+                  "is specified it is always used. (Unless disabled, see -P below.)",
+                  "When feature files are defined in a profile and on the command line",
+                  "then only the ones from the command line are used."
+          ) do |v|
             @profiles << v
           end
           opts.on(NO_PROFILE_SHORT_FLAG, NO_PROFILE_LONG_FLAG,
@@ -212,8 +223,10 @@ module Lucid
             @disable_profile_loading = true
           end
           opts.on("-c", "--[no-]color",
-            "Whether or not to use ANSI color in the output. Cucumber decides",
-            "based on your platform and the output destination if not specified.") do |v|
+                  "Specifies whether or not to use ANSI color in the output. If this",
+                  "option is not specified, Lucid makes the decision on colored output",
+                  "based on your platform and the output destination."
+          ) do |v|
             Lucid::Term::ANSIColor.coloring = v
           end
           opts.on("-d", "--dry-run", "Invokes formatters without executing the steps.",
@@ -231,19 +244,22 @@ module Lucid
           end
 
           opts.on("-m", "--no-multiline",
-            "Don't print multiline strings and tables under steps.") do
+                  "Lucid will not print multiline strings and tables under steps.") do
             @options[:no_multiline] = true
           end
           opts.on("-s", "--no-source",
-            "Don't print the file and line of the step definition with the steps.") do
+                  "Lucid will not print the file and line of the test definition with the steps.") do
             @options[:source] = false
           end
-          opts.on("-i", "--no-snippets", "Don't print snippets for pending steps.") do
+          opts.on("-i", "--no-snippets",
+                  "Lucid will not print snippets (matchers) for pending steps.") do
             @options[:snippets] = false
           end
           opts.on("-I", "--snippet-type TYPE",
-                  "Use different snippet type (Default: regexp). Available types:",
-                  *Lucid::RbSupport::RbLanguage.cli_snippet_type_options) do |v|
+                  "Use different snippet type (Default: regexp).",
+                  "Available types:",
+                  *Lucid::RbSupport::RbLanguage.cli_snippet_type_options
+          ) do |v|
             @options[:snippet_type] = v.to_sym
           end
 
@@ -262,13 +278,13 @@ module Lucid
           opts.on("-v", "--verbose", "Show the files and features loaded.") do
             @options[:verbose] = true
           end
-          opts.on("-g", "--guess", "Guess best match for Ambiguous steps.") do
+          opts.on("-g", "--guess", "Guess best match for ambiguous steps.") do
             @options[:guess] = true
           end
           opts.on("-l", "--lines LINES", "Run given line numbers. Equivalent to FILE:LINE syntax") do |lines|
             @options[:lines] = lines
           end
-          opts.on("-x", "--expand", "Expand Scenario Outline Tables in output.") do
+          opts.on("-x", "--expand", "Expand Scenario Outline tables in output.") do
             @options[:expand] = true
           end
           opts.on(DRB_OPTIONAL_FLAG, "Run features against a DRb server. (i.e. with the spork gem)") do |drb|
@@ -280,11 +296,11 @@ module Lucid
           opts.on("--dotcucumber DIR", "Write metadata to DIR") do |dir|
             @options[:dotcucumber] = dir
           end
-          opts.on_tail("--version", "Show version.") do
+          opts.on_tail("--version", "Show Lucid version information.") do
             @out_stream.puts Lucid::VERSION
             Kernel.exit(0)
           end
-          opts.on_tail("-h", "--help", "You're looking at it.") do
+          opts.on_tail("-h", "--help", "Show Lucid execution options.") do
             @out_stream.puts opts.help
             Kernel.exit(0)
           end
@@ -299,7 +315,7 @@ module Lucid
         @args.map! { |a| "#{a}:#{@options[:lines]}" } if @options[:lines]
 
         extract_environment_variables
-        @options[:paths] = @args.dup #whatver is left over
+        @options[:paths] = @args.dup
 
         merge_profiles
 
