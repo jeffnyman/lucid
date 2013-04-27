@@ -1,9 +1,9 @@
 require 'autotest'
 require 'tempfile'
 require 'lucid'
-require 'cucumber/cli/profile_loader'
+require 'lucid/cli/profile_loader'
 
-module Autotest::CucumberMixin
+module Autotest::LucidMixin
   def self.included(receiver)
     receiver::ALL_HOOKS << [:run_features, :ran_features]
   end
@@ -68,8 +68,8 @@ module Autotest::CucumberMixin
 
   def run_features
     hook :run_features
-    Tempfile.open('autotest-cucumber') do |dirty_features_file|
-      cmd = self.make_cucumber_cmd(self.features_to_run, dirty_features_file.path)
+    Tempfile.open('autotest-lucid') do |dirty_features_file|
+      cmd = self.make_lucid_cmd(self.features_to_run, dirty_features_file.path)
       return if cmd.empty?
       puts cmd unless $q
       old_sync = $stdout.sync
@@ -105,7 +105,7 @@ module Autotest::CucumberMixin
     hook :ran_features
   end
 
-  def make_cucumber_cmd(features_to_run, dirty_features_filename)
+  def make_lucid_cmd(features_to_run, dirty_features_filename)
     return '' if features_to_run == ''
 
     profile_loader = Lucid::Cli::ProfileLoader.new
