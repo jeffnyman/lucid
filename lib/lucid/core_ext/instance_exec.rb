@@ -50,7 +50,7 @@ class Object #:nodoc:
   INSTANCE_EXEC_OFFSET = (Lucid::RUBY_2_0 || Lucid::RUBY_1_9 || Lucid::JRUBY) ? -3 : -4
 
   def replace_instance_exec_invocation_line!(backtrace, instance_exec_invocation_line, pseudo_method)
-    return if Cucumber.use_full_backtrace
+    return if Lucid.use_full_backtrace
 
     instance_exec_pos = backtrace.index(instance_exec_invocation_line)
     if instance_exec_pos

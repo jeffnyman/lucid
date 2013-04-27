@@ -75,7 +75,7 @@ module Lucid
 
       class Regexp < BaseSnippet
         def typed_pattern
-          "(/^#{pattern}$/)"
+          " (/^#{pattern}$/)"
         end
 
         def self.description

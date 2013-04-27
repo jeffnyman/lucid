@@ -251,7 +251,7 @@ module Lucid
             @quiet = true
           end
           opts.on("-b", "--backtrace", "Show full backtrace for all errors.") do
-            Cucumber.use_full_backtrace = true
+            Lucid.use_full_backtrace = true
           end
           opts.on("-S", "--strict", "Fail if there are any undefined or pending steps.") do
             @options[:strict] = true

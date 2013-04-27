@@ -85,7 +85,7 @@ module Lucid
           @failures.each do |failure|
             profiles_string = options.custom_profiles.empty? ? '' : (options.custom_profiles.map{|profile| "-p #{profile}" }).join(' ') + ' '
             source = options[:source] ? format_string(" # Scenario: " + failure.name, :comment) : ''
-            @io.puts format_string("lucid #{profiles_string}" + failure.file_colon_line, :failed) + source
+            @io.puts format_string("Lucid #{profiles_string}" + failure.file_colon_line, :failed) + source
           end
           @io.puts
         end
