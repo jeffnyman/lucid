@@ -385,7 +385,7 @@ module Lucid
 
       def default_profile_should_be_used?
         @profiles.empty? &&
-          profile_loader.cucumber_yml_defined? &&
+          profile_loader.lucid_yml_defined? &&
           profile_loader.has_profile?(@default_profile)
       end
 
