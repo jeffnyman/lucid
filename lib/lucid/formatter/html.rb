@@ -6,7 +6,7 @@ require 'lucid/formatter/io'
 module Lucid
   module Formatter
     class Html
-      include ERB::Util # for the #h method
+      include ERB::Util
       include Duration
       include Io
 
@@ -40,30 +40,23 @@ module Lucid
         end
       end
 
-
       def before_features(features)
         @step_count = features.step_count
 
-        # <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-        @builder.declare!(
-          :DOCTYPE,
-          :html,
-          :PUBLIC,
-          '-//W3C//DTD XHTML 1.0 Strict//EN',
-          'http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd'
-        )
+        @builder.declare!(:DOCTYPE, :html)
 
-        @builder << '<html xmlns ="http://www.w3.org/1999/xhtml">'
-          @builder.head do
-          @builder.meta('http-equiv' => 'Content-Type', :content => 'text/html;charset=utf-8')
+        @builder << '<html>'
+        @builder.head do
+          @builder.meta(:charset => 'utf-8')
           @builder.title 'Lucid'
           inline_css
           inline_js
         end
         @builder << '<body>'
         @builder << "<!-- Step count #{@step_count}-->"
-        @builder << '<div class="cucumber">'
-        @builder.div(:id => 'cucumber-header') do
+        @builder << '<div class="lucid">'
+
+        @builder.div(:id => 'lucid-header') do
           @builder.div(:id => 'label') do
             @builder.h1('Lucid Features')
           end
@@ -294,7 +287,6 @@ module Lucid
         end
       end
 
-
       def before_table_row(table_row)
         @row_id = table_row.dom_id
         @col_index = 0
@@ -393,7 +385,7 @@ module Lucid
         @builder.div(:class => 'backtrace') do
           @builder.pre do
             backtrace = exception.backtrace
-            backtrace.delete_if { |x| x =~ /\/gems\/(cucumber|rspec)/ }
+            backtrace.delete_if { |x| x =~ /\/gems\/(lucid|rspec)/ }
             @builder << backtrace_line(backtrace.join("\n"))
           end
         end
@@ -412,7 +404,7 @@ module Lucid
 
       def set_scenario_color_failed
         @builder.script do
-          @builder.text!("makeRed('cucumber-header');") unless @header_red
+          @builder.text!("makeRed('lucid-header');") unless @header_red
           @header_red = true
           @builder.text!("makeRed('scenario_#{@scenario_number}');") unless @scenario_red
           @scenario_red = true
@@ -421,7 +413,7 @@ module Lucid
 
       def set_scenario_color_pending
         @builder.script do
-          @builder.text!("makeYellow('cucumber-header');") unless @header_red
+          @builder.text!("makeYellow('lucid-header');") unless @header_red
           @builder.text!("makeYellow('scenario_#{@scenario_number}');") unless @scenario_red
         end
       end
@@ -459,7 +451,7 @@ module Lucid
 
       def inline_css
         @builder.style(:type => 'text/css') do
-          @builder << File.read(File.dirname(__FILE__) + '/cucumber.css')
+          @builder << File.read(File.dirname(__FILE__) + '/lucid.css')
         end
       end
 
@@ -497,7 +489,7 @@ module Lucid
   })
 
   function moveProgressBar(percentDone) {
-    $("cucumber-header").css('width', percentDone +"%");
+    $("lucid-header").css('width', percentDone +"%");
   }
   function makeRed(element_id) {
     $('#'+element_id).css('background', '#C40D0D');
@@ -586,7 +578,7 @@ module Lucid
             line = $2.to_i
             [lines_around(file, line), line]
           else
-            ["# Couldn't get snippet for #{error_line}", 1]
+            ["# Could not get matcher for #{error_line}", 1]
           end
         end
 
