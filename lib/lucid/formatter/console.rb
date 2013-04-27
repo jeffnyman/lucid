@@ -85,7 +85,7 @@ module Lucid
           @failures.each do |failure|
             profiles_string = options.custom_profiles.empty? ? '' : (options.custom_profiles.map{|profile| "-p #{profile}" }).join(' ') + ' '
             source = options[:source] ? format_string(" # Scenario: " + failure.name, :comment) : ''
-            @io.puts format_string("cucumber #{profiles_string}" + failure.file_colon_line, :failed) + source
+            @io.puts format_string("lucid #{profiles_string}" + failure.file_colon_line, :failed) + source
           end
           @io.puts
         end
@@ -126,14 +126,14 @@ module Lucid
           snippet
         end.compact.uniq
 
-        text = "\nYou can implement step definitions for undefined steps with these snippets:\n\n"
+        text = "\nYou can implement test definitions for undefined test steps with these matchers:\n\n"
         text += snippets.join("\n\n")
         @io.puts format_string(text, :undefined)
 
         if unknown_programming_language
-          @io.puts format_string("\nIf you want snippets in a different programming language," +
+          @io.puts format_string("\nIf you want matchers in a different programming language," +
                                  "\njust make sure a file with the appropriate file extension" +
-                                 "\nexists where cucumber looks for step definitions.", :failed)
+                                 "\nexists where Lucid looks for test definitions.", :failed)
         end
 
         @io.puts
@@ -144,10 +144,10 @@ module Lucid
         return unless options[:wip]
         passed = runtime.scenarios(:passed)
         if passed.any?
-          @io.puts format_string("\nThe --wip switch was used, so I didn't expect anything to pass. These scenarios passed:", :failed)
+          @io.puts format_string("\nThe --wip switch was used, so nothing was expected to pass. These scenarios passed:", :failed)
           print_elements(passed, :passed, "scenarios")
         else
-          @io.puts format_string("\nThe --wip switch was used, so the failures were expected. All is good.\n", :passed)
+          @io.puts format_string("\nThe --wip switch was used, so any failures were expected. All is good.\n", :passed)
         end
       end
 
