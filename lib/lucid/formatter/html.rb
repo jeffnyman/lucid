@@ -3,7 +3,7 @@ require 'lucid/formatter/ordered_xml_markup'
 require 'lucid/formatter/duration'
 require 'lucid/formatter/io'
 
-module Cucumber
+module Lucid
   module Formatter
     class Html
       include ERB::Util # for the #h method
@@ -314,7 +314,7 @@ module Cucumber
               end
             end
           end
-          if table_row.exception.is_a? ::Cucumber::Pending
+          if table_row.exception.is_a? ::Lucid::Pending
             set_scenario_color_pending
           else
             set_scenario_color_failed

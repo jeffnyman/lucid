@@ -1,4 +1,4 @@
-module Cucumber
+module Lucid
   # Raised when there is no matching StepDefinition for a step.
   class Undefined < StandardError
     attr_reader :step_name

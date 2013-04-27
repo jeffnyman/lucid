@@ -1,4 +1,4 @@
-module Cucumber
+module Lucid
   module WireSupport
     # Proxy for an exception that occured at the remote end of the wire
     class WireException < StandardError

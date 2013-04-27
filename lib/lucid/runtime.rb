@@ -11,7 +11,7 @@ require 'lucid/runtime/features_loader'
 require 'lucid/runtime/results'
 require 'lucid/runtime/support_code'
 
-module Cucumber
+module Lucid
   # This is the meaty part of Cucumber that ties everything together.
   class Runtime
     attr_reader :results
@@ -184,7 +184,7 @@ module Cucumber
     end
 
     def log
-      Cucumber.logger
+      Lucid.logger
     end
   end
 

@@ -1,4 +1,4 @@
-module Cucumber
+module Lucid
   class Broadcaster #:nodoc:
     def initialize(receivers = [])
       @receivers = receivers

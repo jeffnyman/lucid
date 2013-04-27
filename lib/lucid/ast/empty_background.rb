@@ -1,6 +1,6 @@
-require 'cucumber/ast/step_collection'
+require 'lucid/ast/step_collection'
 
-module Cucumber
+module Lucid
   module Ast
     class EmptyBackground
       attr_writer :file

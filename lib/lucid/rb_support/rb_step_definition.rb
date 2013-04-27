@@ -3,7 +3,7 @@ require 'lucid/core_ext/string'
 require 'lucid/core_ext/proc'
 require 'lucid/rb_support/regexp_argument_matcher'
 
-module Cucumber
+module Lucid
   module RbSupport
     # A Ruby Step Definition holds a Regexp and a Proc, and is created
     # by calling <tt>Given</tt>, <tt>When</tt> or <tt>Then</tt>
@@ -95,7 +95,7 @@ module Cucumber
         begin
           args = @rb_language.execute_transforms(args)
           @rb_language.current_world.cucumber_instance_exec(true, regexp_source, *args, &@proc)
-        rescue Cucumber::ArityMismatchError => e
+        rescue Lucid::ArityMismatchError => e
           e.backtrace.unshift(self.backtrace_line)
           raise e
         end

@@ -1,4 +1,4 @@
-module Cucumber
+module Lucid
   module RbSupport
     # Wrapper for Before, After and AfterStep hooks
     class RbHook

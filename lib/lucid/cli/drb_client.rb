@@ -1,7 +1,7 @@
 require "drb/drb"
 # This code was taken from the RSpec project and slightly modified.
 
-module Cucumber
+module Lucid
   module Cli
     class DRbClientError < StandardError
     end

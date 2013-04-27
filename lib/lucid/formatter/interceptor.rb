@@ -1,5 +1,5 @@
 
-module Cucumber
+module Lucid
   module Formatter
     module Interceptor
       class Pipe

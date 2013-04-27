@@ -5,7 +5,7 @@ rescue LoadError
   require 'builder'
 end
 
-module Cucumber
+module Lucid
   module Formatter
     # Emits attributes ordered alphabetically, so that we can predicatbly test output.
     class OrderedXmlMarkup < Builder::XmlMarkup #:nodoc:

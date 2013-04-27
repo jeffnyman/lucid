@@ -3,7 +3,7 @@ require 'gherkin/rubify'
 require 'lucid/ast/multiline_argument'
 require 'lucid/ast/empty_background'
 
-module Cucumber
+module Lucid
   module Parser
     # This class conforms to the Gherkin event API and builds the
     # "legacy" AST. It will be replaced later when we have a new "clean"
@@ -97,7 +97,7 @@ module Cucumber
       end
 
       def file
-        if Cucumber::WINDOWS && !ENV['CUCUMBER_FORWARD_SLASH_PATHS']
+        if Lucid::WINDOWS && !ENV['CUCUMBER_FORWARD_SLASH_PATHS']
           @path.gsub(/\//, '\\')
         else
           @path

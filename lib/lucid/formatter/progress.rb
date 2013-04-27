@@ -1,7 +1,7 @@
 require 'lucid/formatter/console'
 require 'lucid/formatter/io'
 
-module Cucumber
+module Lucid
   module Formatter
     # The formatter used for <tt>--format progress</tt>
     class Progress

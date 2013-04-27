@@ -1,8 +1,8 @@
-require 'cucumber/ast/names'
-require 'cucumber/ast/location'
-require 'cucumber/ast/location'
+require 'lucid/ast/names'
+require 'lucid/ast/location'
+require 'lucid/ast/location'
 
-module Cucumber
+module Lucid
   module Ast
     # Represents the root node of a parsed feature.
     class Feature #:nodoc:
@@ -29,7 +29,7 @@ module Cucumber
       end
 
       def accept(visitor)
-        return if Cucumber.wants_to_quit
+        return if Lucid.wants_to_quit
         visitor.visit_comment(@comment) unless @comment.empty?
         visitor.visit_tags(@tags)
         visitor.visit_feature_name(@keyword, indented_name)

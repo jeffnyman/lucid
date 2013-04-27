@@ -1,11 +1,11 @@
-module Cucumber
+module Lucid
   module Ast
     # Walks the AST, executing steps and notifying listeners
     class TreeWalker
       attr_accessor :configuration #:nodoc:
       attr_reader   :runtime #:nodoc:
 
-      def initialize(runtime, listeners = [], configuration = Cucumber::Configuration.default)
+      def initialize(runtime, listeners = [], configuration = Lucid::Configuration.default)
         @runtime, @listeners, @configuration = runtime, listeners, configuration
       end
 

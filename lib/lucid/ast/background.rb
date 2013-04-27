@@ -1,8 +1,8 @@
-require 'cucumber/ast/has_steps'
-require 'cucumber/ast/names'
-require 'cucumber/ast/location'
+require 'lucid/ast/has_steps'
+require 'lucid/ast/names'
+require 'lucid/ast/location'
 
-module Cucumber
+module Lucid
   module Ast
     class Background #:nodoc:
       include HasSteps
@@ -35,7 +35,7 @@ module Cucumber
       end
 
       def accept(visitor)
-        return if Cucumber.wants_to_quit
+        return if Lucid.wants_to_quit
         visitor.visit_comment(@comment) unless @comment.empty?
         visitor.visit_background_name(@keyword, name, file_colon_line, source_indent(first_line_length))
         with_visitor(hook_context, visitor) do

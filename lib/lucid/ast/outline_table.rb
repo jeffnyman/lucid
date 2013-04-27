@@ -1,4 +1,4 @@
-module Cucumber
+module Lucid
   module Ast
     class OutlineTable < Table #:nodoc:
       def initialize(raw, scenario_outline)
@@ -18,7 +18,7 @@ module Cucumber
       end
 
       def accept(visitor)
-        return if Cucumber.wants_to_quit
+        return if Lucid.wants_to_quit
         init
         cells_rows.each_with_index do |row, n|
           if(visitor.configuration.expand?)
@@ -103,7 +103,7 @@ module Cucumber
         end
 
         def accept(visitor)
-          return if Cucumber.wants_to_quit
+          return if Lucid.wants_to_quit
           visitor.configuration.expand? ? accept_expand(visitor) : accept_plain(visitor)
         end
 

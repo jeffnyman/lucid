@@ -2,8 +2,8 @@
 # in various places.
 require 'rbconfig'
 
-module Cucumber
-  unless defined?(Cucumber::VERSION)
+module Lucid
+  unless defined?(Lucid::VERSION)
     VERSION       = '0.0.5'
     BINARY        = File.expand_path(File.dirname(__FILE__) + '/../../bin/lucid')
     LIBDIR        = File.expand_path(File.dirname(__FILE__) + '/../../lib')

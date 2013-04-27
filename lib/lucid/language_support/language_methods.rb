@@ -1,7 +1,7 @@
 require 'lucid/step_match'
 require 'lucid/step_definition_light'
 
-module Cucumber
+module Lucid
   module LanguageSupport
     module LanguageMethods
       def around(scenario)

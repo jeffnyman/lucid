@@ -1,4 +1,4 @@
-module Cucumber
+module Lucid
   module Ast
     # Holds the value of a comment parsed from a feature file:
     #
@@ -17,7 +17,7 @@ module Cucumber
       end
 
       def accept(visitor)
-        return if Cucumber.wants_to_quit
+        return if Lucid.wants_to_quit
         @value.strip.split("\n").each do |line|
           visitor.visit_comment_line(line.strip)
         end

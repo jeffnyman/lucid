@@ -3,7 +3,7 @@ require 'lucid/formatter/io'
 require 'gherkin/formatter/argument'
 require 'gherkin/formatter/json_formatter'
 
-module Cucumber
+module Lucid
   module Formatter
     # The formatter used for <tt>--format json</tt>
     class Json < GherkinFormatterAdapter

@@ -1,7 +1,7 @@
 require 'enumerator'
 require 'gherkin/tag_expression'
 
-module Cucumber
+module Lucid
   module Ast
     module HasSteps #:nodoc:
       attr_reader :gherkin_statement, :raw_steps, :title, :description

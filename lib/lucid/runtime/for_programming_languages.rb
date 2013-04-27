@@ -1,6 +1,6 @@
 require 'forwardable'
 
-module Cucumber
+module Lucid
   class Runtime
     # This is what a programming language will consider to be a runtime.
     #
@@ -25,7 +25,7 @@ module Cucumber
         :invoke,
         :load_programming_language
 
-      # Returns a Cucumber::Ast::Table for +text_or_table+, which can either
+      # Returns a Lucid::Ast::Table for +text_or_table+, which can either
       # be a String:
       #
       #   table(%{

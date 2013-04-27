@@ -6,20 +6,20 @@ begin
 rescue LoadError
 end
 
-module Cucumber
+module Lucid
   module Rake
     # Defines a Rake task for running features.
     #
     # The simplest use of it goes something like:
     #
-    #   Cucumber::Rake::Task.new
+    #   Lucid::Rake::Task.new
     #
     # This will define a task named <tt>cucumber</tt> described as 'Run Cucumber features'.
     # It will use steps from 'features/**/*.rb' and features in 'features/**/*.feature'.
     #
     # To further configure the task, you can pass a block:
     #
-    #   Cucumber::Rake::Task.new do |t|
+    #   Lucid::Rake::Task.new do |t|
     #     t.cucumber_opts = %w{--format progress}
     #   end
     #
@@ -44,7 +44,7 @@ module Cucumber
 
         def run
           require 'cucumber/cli/main'
-          failure = Cucumber::Cli::Main.execute(args)
+          failure = Lucid::Cli::Main.execute(args)
           raise "Cucumber failed" if failure
         end
       end
@@ -86,10 +86,10 @@ module Cucumber
 
         def cmd
           if use_bundler
-            [ Cucumber::RUBY_BINARY, '-S', 'bundle', 'exec', 'cucumber', @cucumber_opts,
+            [ Lucid::RUBY_BINARY, '-S', 'bundle', 'exec', 'cucumber', @cucumber_opts,
             @feature_files ].flatten
           else
-            [ Cucumber::RUBY_BINARY, '-I', load_path(@libs), quoted_binary(@cucumber_bin),
+            [ Lucid::RUBY_BINARY, '-I', load_path(@libs), quoted_binary(@cucumber_bin),
             @cucumber_opts, @feature_files ].flatten
           end
         end
@@ -106,7 +106,7 @@ module Cucumber
       # Directories to add to the Ruby $LOAD_PATH
       attr_accessor :libs
 
-      # Name of the cucumber binary to use for running features. Defaults to Cucumber::BINARY
+      # Name of the cucumber binary to use for running features. Defaults to Lucid::BINARY
       attr_accessor :binary
 
       # Extra options to pass to the cucumber binary. Can be overridden by the CUCUMBER_OPTS environment variable.
@@ -139,7 +139,7 @@ module Cucumber
         @libs = ['lib']
         @rcov_opts = %w{--rails --exclude osx\/objc,gems\/}
         yield self if block_given?
-        @binary = binary.nil? ? Cucumber::BINARY : File.expand_path(binary)
+        @binary = binary.nil? ? Lucid::BINARY : File.expand_path(binary)
         define_task
       end
 

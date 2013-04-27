@@ -1,4 +1,4 @@
-module Cucumber
+module Lucid
   module WireSupport
     class RequestHandler
       def initialize(connection)

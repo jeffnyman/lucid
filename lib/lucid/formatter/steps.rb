@@ -1,4 +1,4 @@
-module Cucumber
+module Lucid
   module Formatter
     # The formatter used for <tt>--format steps</tt>
     class Steps

@@ -3,8 +3,8 @@ require 'yard/rake/yardoc_task'
 require File.expand_path(File.dirname(__FILE__) + '/../lib/lucid/platform')
 
 DOC_DIR      = File.expand_path(File.dirname(__FILE__) + '/../doc')
-SITE_DIR     = File.expand_path(File.dirname(__FILE__) + '/../../cucumber.github.com')
-API_DIR      = File.join(SITE_DIR, 'api', 'cucumber', 'ruby', 'yardoc')
+SITE_DIR     = File.expand_path(File.dirname(__FILE__) + '/../../lucid.github.com')
+API_DIR      = File.join(SITE_DIR, 'api', 'lucid', 'ruby', 'yardoc')
 TEMPLATE_DIR = File.expand_path(File.join(File.dirname(__FILE__), 'yard'))
 YARD::Templates::Engine.register_template_path(TEMPLATE_DIR)
 
@@ -30,7 +30,7 @@ namespace :api do
   task :release do
     Dir.chdir(SITE_DIR) do
       sh 'git add .'
-      sh "git commit -m 'Update API docs for Cucumber-Ruby v#{Cucumber::VERSION}'"
+      sh "git commit -m 'Update API docs for Lucid v#{Lucid::VERSION}'"
       sh 'git push'
     end
   end

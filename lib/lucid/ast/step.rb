@@ -1,8 +1,8 @@
-require 'cucumber/core_ext/string'
-require 'cucumber/step_match'
-require 'cucumber/ast/location'
+require 'lucid/core_ext/string'
+require 'lucid/step_match'
+require 'lucid/ast/location'
 
-module Cucumber
+module Lucid
   module Ast
     class Step #:nodoc:
       include HasLocation
@@ -47,7 +47,7 @@ module Cucumber
       end
 
       def accept(visitor)
-        return if Cucumber.wants_to_quit
+        return if Lucid.wants_to_quit
         # The only time a Step is visited is when it is in a ScenarioOutline.
         # Otherwise it's always StepInvocation that gets visited instead.
         visit_step_result(visitor, first_match(visitor), @multiline_arg, :skipped, nil, nil)

@@ -14,7 +14,7 @@ require 'lucid/ast/outline_table'
 require 'lucid/ast/examples'
 require 'lucid/ast/tree_walker'
 
-module Cucumber
+module Lucid
   # Classes in this module represent the Abstract Syntax Tree (AST)
   # that gets built when feature files are parsed.
   #
@@ -22,7 +22,7 @@ module Cucumber
   # in order to encourage a less coupled design in the classes
   # that operate on the AST. The only public method is #accept.
   #
-  # The AST can be traversed with a visitor. See Cucumber::Format::Pretty
+  # The AST can be traversed with a visitor. See Lucid::Format::Pretty
   # for an example.
   module Ast
   end

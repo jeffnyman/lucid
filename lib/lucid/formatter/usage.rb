@@ -1,7 +1,7 @@
 require 'lucid/formatter/progress'
 require 'lucid/step_definition_light'
 
-module Cucumber
+module Lucid
   module Formatter
     class Usage < Progress
       include Console

@@ -1,4 +1,4 @@
-module Cucumber
+module Lucid
   module Formatter
     module Duration
       # Helper method for formatters that need to

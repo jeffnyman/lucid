@@ -3,22 +3,22 @@
 require 'lucid/platform'
 require 'lucid/formatter/ansicolor'
 
-if Cucumber::WINDOWS
+if Lucid::WINDOWS
   if ENV['CUCUMBER_OUTPUT_ENCODING']
-    Cucumber::CODEPAGE = ENV['CUCUMBER_OUTPUT_ENCODING']
+    Lucid::CODEPAGE = ENV['CUCUMBER_OUTPUT_ENCODING']
   elsif `cmd /c chcp` =~ /(\d+)/
     if [65000, 65001].include? $1.to_i
-      Cucumber::CODEPAGE = 'UTF-8'
+      Lucid::CODEPAGE = 'UTF-8'
       ENV['ANSICON_API'] = 'ruby'
     else
-      Cucumber::CODEPAGE = "cp#{$1.to_i}"
+      Lucid::CODEPAGE = "cp#{$1.to_i}"
     end
   else
-    Cucumber::CODEPAGE = "cp1252"
+    Lucid::CODEPAGE = "cp1252"
     STDERR.puts("WARNING: Couldn't detect your output codepage. Assuming it is 1252. You may have to chcp 1252 or SET CUCUMBER_OUTPUT_ENCODING=cp1252.")
   end
 
-  module Cucumber
+  module Lucid
     # @private
     module WindowsOutput
       def self.extended(o)

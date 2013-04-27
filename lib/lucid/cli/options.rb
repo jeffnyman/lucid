@@ -2,27 +2,27 @@ require 'lucid/cli/profile_loader'
 require 'lucid/formatter/ansicolor'
 require 'lucid/rb_support/rb_language'
 
-module Cucumber
+module Lucid
   module Cli
 
     class Options
       INDENT = ' ' * 53
       BUILTIN_FORMATS = {
-        'html'        => ['Cucumber::Formatter::Html',        'Generates a nice looking HTML report.'],
-        'pretty'      => ['Cucumber::Formatter::Pretty',      'Prints the feature as is - in colours.'],
-        'progress'    => ['Cucumber::Formatter::Progress',    'Prints one character per scenario.'],
-        'rerun'       => ['Cucumber::Formatter::Rerun',       'Prints failing files with line numbers.'],
-        'usage'       => ['Cucumber::Formatter::Usage',       "Prints where step definitions are used.\n" +
+        'html'        => ['Lucid::Formatter::Html',        'Generates a nice looking HTML report.'],
+        'pretty'      => ['Lucid::Formatter::Pretty',      'Prints the feature as is - in colours.'],
+        'progress'    => ['Lucid::Formatter::Progress',    'Prints one character per scenario.'],
+        'rerun'       => ['Lucid::Formatter::Rerun',       'Prints failing files with line numbers.'],
+        'usage'       => ['Lucid::Formatter::Usage',       "Prints where step definitions are used.\n" +
                                                               "#{INDENT}The slowest step definitions (with duration) are\n" +
                                                               "#{INDENT}listed first. If --dry-run is used the duration\n" +
                                                               "#{INDENT}is not shown, and step definitions are sorted by\n" +
                                                               "#{INDENT}filename instead."],
-        'stepdefs'    => ['Cucumber::Formatter::Stepdefs',    "Prints All step definitions with their locations. Same as\n" +
+        'stepdefs'    => ['Lucid::Formatter::Stepdefs',    "Prints All step definitions with their locations. Same as\n" +
                                                               "#{INDENT}the usage formatter, except that steps are not printed."],
-        'junit'       => ['Cucumber::Formatter::Junit',       'Generates a report similar to Ant+JUnit.'],
-        'json'        => ['Cucumber::Formatter::Json',        'Prints the feature as JSON'],
-        'json_pretty' => ['Cucumber::Formatter::JsonPretty',  'Prints the feature as prettified JSON'],
-        'debug'       => ['Cucumber::Formatter::Debug',       'For developing formatters - prints the calls made to the listeners.']
+        'junit'       => ['Lucid::Formatter::Junit',       'Generates a report similar to Ant+JUnit.'],
+        'json'        => ['Lucid::Formatter::Json',        'Prints the feature as JSON'],
+        'json_pretty' => ['Lucid::Formatter::JsonPretty',  'Prints the feature as prettified JSON'],
+        'debug'       => ['Lucid::Formatter::Debug',       'For developing formatters - prints the calls made to the listeners.']
       }
       max = BUILTIN_FORMATS.keys.map{|s| s.length}.max
       FORMAT_HELP = (BUILTIN_FORMATS.keys.sort.map do |key|
@@ -137,13 +137,13 @@ module Cucumber
             "loaded first.",
             "This option can be specified multiple times.") do |v|
             @options[:require] << v
-            if(Cucumber::JRUBY && File.directory?(v))
+            if(Lucid::JRUBY && File.directory?(v))
               require 'java'
               $CLASSPATH << v
             end
           end
 
-          if(Cucumber::JRUBY)
+          if(Lucid::JRUBY)
             opts.on("-j DIR", "--jars DIR",
             "Load all the jars under DIR") do |jars|
               Dir["#{jars}/**/*.jar"].each {|jar| require jar}
@@ -214,7 +214,7 @@ module Cucumber
           opts.on("-c", "--[no-]color",
             "Whether or not to use ANSI color in the output. Cucumber decides",
             "based on your platform and the output destination if not specified.") do |v|
-            Cucumber::Term::ANSIColor.coloring = v
+            Lucid::Term::ANSIColor.coloring = v
           end
           opts.on("-d", "--dry-run", "Invokes formatters without executing the steps.",
             "This also omits the loading of your support/env.rb file if it exists.") do
@@ -225,7 +225,7 @@ module Cucumber
             "Be careful if you choose to overwrite the originals.",
             "Implies --dry-run --format pretty.") do |directory|
             @options[:autoformat] = directory
-            Cucumber::Term::ANSIColor.coloring = false
+            Lucid::Term::ANSIColor.coloring = false
             @options[:dry_run] = true
             @quiet = true
           end
@@ -243,7 +243,7 @@ module Cucumber
           end
           opts.on("-I", "--snippet-type TYPE",
                   "Use different snippet type (Default: regexp). Available types:",
-                  *Cucumber::RbSupport::RbLanguage.cli_snippet_type_options) do |v|
+                  *Lucid::RbSupport::RbLanguage.cli_snippet_type_options) do |v|
             @options[:snippet_type] = v.to_sym
           end
 
@@ -281,7 +281,7 @@ module Cucumber
             @options[:dotcucumber] = dir
           end
           opts.on_tail("--version", "Show version.") do
-            @out_stream.puts Cucumber::VERSION
+            @out_stream.puts Lucid::VERSION
             Kernel.exit(0)
           end
           opts.on_tail("-h", "--help", "You're looking at it.") do

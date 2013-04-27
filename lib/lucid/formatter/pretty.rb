@@ -3,7 +3,7 @@ require 'lucid/formatter/console'
 require 'lucid/formatter/io'
 require 'gherkin/formatter/escaping'
 
-module Cucumber
+module Lucid
   module Formatter
     # The formatter used for <tt>--format pretty</tt> (the default formatter).
     #
@@ -207,7 +207,7 @@ module Cucumber
         cell_text = escape_cell(value.to_s || '')
         padded = cell_text + (' ' * (width - cell_text.unpack('U*').length))
         prefix = cell_prefix(status)
-        @io.print(' ' + format_string("#{prefix}#{padded}", status) + ::Cucumber::Term::ANSIColor.reset(" |"))
+        @io.print(' ' + format_string("#{prefix}#{padded}", status) + ::Lucid::Term::ANSIColor.reset(" |"))
         @io.flush
       end
 

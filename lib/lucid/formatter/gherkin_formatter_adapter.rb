@@ -1,7 +1,7 @@
 require 'lucid/formatter/io'
 require 'gherkin/formatter/argument'
 
-module Cucumber
+module Lucid
   module Formatter
     # Adapts Cucumber formatter events to Gherkin formatter events
     # This class will disappear when Cucumber is based on Gherkin's model.

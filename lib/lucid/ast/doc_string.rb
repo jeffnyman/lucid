@@ -1,4 +1,4 @@
-module Cucumber
+module Lucid
   module Ast
     # Represents an inline argument in a step. Example:
     #
@@ -35,7 +35,7 @@ module Cucumber
       end
 
       def accept(visitor)
-        return if Cucumber.wants_to_quit
+        return if Lucid.wants_to_quit
         visitor.visit_doc_string(self)
       end
 

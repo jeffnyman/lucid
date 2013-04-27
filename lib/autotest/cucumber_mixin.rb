@@ -108,7 +108,7 @@ module Autotest::CucumberMixin
   def make_cucumber_cmd(features_to_run, dirty_features_filename)
     return '' if features_to_run == ''
 
-    profile_loader = Cucumber::Cli::ProfileLoader.new
+    profile_loader = Lucid::Cli::ProfileLoader.new
 
     profile ||= "autotest-all" if profile_loader.has_profile?("autotest-all") && features_to_run == :all
     profile ||= "autotest"     if profile_loader.has_profile?("autotest")
@@ -130,6 +130,6 @@ module Autotest::CucumberMixin
 
     args = args.join(' ')
 
-    return "#{Cucumber::RUBY_BINARY} #{Cucumber::BINARY} #{args}"
+    return "#{Lucid::RUBY_BINARY} #{Lucid::BINARY} #{args}"
   end
 end

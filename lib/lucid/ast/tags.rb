@@ -1,6 +1,6 @@
 require 'gherkin/tag_expression'
 
-module Cucumber
+module Lucid
   module Ast
     class Tags #:nodoc:
       attr_reader :tags
@@ -10,7 +10,7 @@ module Cucumber
       end
 
       def accept(visitor)
-        return if Cucumber.wants_to_quit
+        return if Lucid.wants_to_quit
         @tags.each do |tag|
           visitor.visit_tag_name(tag.name)
         end

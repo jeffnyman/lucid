@@ -1,4 +1,4 @@
-module Cucumber
+module Lucid
   module Term
     # The ANSIColor module can be used for namespacing and mixed into your own
     # classes.
@@ -46,7 +46,7 @@ module Cucumber
 
       # Turns the coloring on or off globally, so you can easily do
       # this for example:
-      #  Cucumber::Term::ANSIColor::coloring = STDOUT.isatty
+      #  Lucid::Term::ANSIColor::coloring = STDOUT.isatty
       def self.coloring=(val)
         @coloring = val
       end
@@ -56,7 +56,7 @@ module Cucumber
         eval %Q{
             def #{c}(string = nil)
               result = ''
-              result << "\e[#{v}m" if Cucumber::Term::ANSIColor.coloring?
+              result << "\e[#{v}m" if Lucid::Term::ANSIColor.coloring?
               if block_given?
                 result << yield
               elsif string
@@ -66,7 +66,7 @@ module Cucumber
               else
                 return result #only switch on
               end
-              result << "\e[0m" if Cucumber::Term::ANSIColor.coloring?
+              result << "\e[0m" if Lucid::Term::ANSIColor.coloring?
               result
             end
         }
@@ -100,7 +100,7 @@ module Cucumber
 
       module_function
 
-      # Returns an array of all Cucumber::Term::ANSIColor attributes as symbols.
+      # Returns an array of all Lucid::Term::ANSIColor attributes as symbols.
       def attributes
         ATTRIBUTE_NAMES
       end

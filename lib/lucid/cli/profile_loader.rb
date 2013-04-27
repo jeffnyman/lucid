@@ -1,6 +1,6 @@
 require 'yaml'
 
-module Cucumber
+module Lucid
   module Cli
 
     class ProfileLoader
@@ -24,7 +24,7 @@ Defined profiles in cucumber.yml:
         case(args_from_yml)
           when String
             raise YmlLoadError, "The '#{profile}' profile in cucumber.yml was blank.  Please define the command line arguments for the '#{profile}' profile in cucumber.yml.\n" if args_from_yml =~ /^\s*$/
-            if(Cucumber::WINDOWS)
+            if(Lucid::WINDOWS)
               #Shellwords treats backslash as an escape character so here's a rudimentary approximation of the same code
               args_from_yml = args_from_yml.split
               args_from_yml = args_from_yml.collect {|x| x.gsub(/^\"(.*)\"/,'\1') }

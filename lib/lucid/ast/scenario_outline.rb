@@ -1,8 +1,8 @@
-require 'cucumber/ast/has_steps'
-require 'cucumber/ast/names'
-require 'cucumber/ast/empty_background'
+require 'lucid/ast/has_steps'
+require 'lucid/ast/names'
+require 'lucid/ast/empty_background'
 
-module Cucumber
+module Lucid
   module Ast
     class ScenarioOutline #:nodoc:
       include HasSteps
@@ -14,7 +14,7 @@ module Cucumber
 
       module ExamplesArray #:nodoc:
         def accept(visitor)
-          return if Cucumber.wants_to_quit
+          return if Lucid.wants_to_quit
           each do |examples|
             visitor.visit_examples(examples)
           end
@@ -33,7 +33,7 @@ module Cucumber
       end
 
       def accept(visitor)
-        return if Cucumber.wants_to_quit
+        return if Lucid.wants_to_quit
         raise_missing_examples_error unless @example_sections
 
         visitor.visit_comment(@comment) unless @comment.empty?

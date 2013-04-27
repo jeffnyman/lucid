@@ -1,6 +1,6 @@
 require 'lucid/errors'
 
-module Cucumber
+module Lucid
   class Runtime
 
     class FeaturesLoader
@@ -54,7 +54,7 @@ module Cucumber
       end
 
       def log
-        Cucumber.logger
+        Lucid.logger
       end
     end
 

@@ -1,7 +1,7 @@
 require 'yaml'
 require 'erb'
 
-module Cucumber
+module Lucid
   module WireSupport
     class Configuration
       attr_reader :host, :port, :unix

@@ -1,6 +1,6 @@
 require 'lucid/wire_support/wire_protocol/requests'
 
-module Cucumber
+module Lucid
   module WireSupport
     module WireProtocol
       def step_matches(name_to_match, name_to_report)

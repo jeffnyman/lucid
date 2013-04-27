@@ -1,4 +1,4 @@
-module Cucumber
+module Lucid
   module Formatter
     module Summary
 

@@ -3,7 +3,7 @@ require 'lucid/formatter/io'
 require 'lucid/formatter/interceptor'
 require 'fileutils'
 
-module Cucumber
+module Lucid
   module Formatter
     # The formatter used for <tt>--format junit</tt>
     class Junit
@@ -110,7 +110,7 @@ module Cucumber
       end
 
       def after_table_row(table_row)
-        return unless @in_examples and Cucumber::Ast::OutlineTable::ExampleRow === table_row
+        return unless @in_examples and Lucid::Ast::OutlineTable::ExampleRow === table_row
         duration = Time.now - @table_start
         unless @header_row
           name_suffix = " (outline example : #{table_row.name})"

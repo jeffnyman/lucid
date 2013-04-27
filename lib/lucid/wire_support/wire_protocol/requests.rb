@@ -1,7 +1,7 @@
 require 'lucid/wire_support/request_handler'
 require 'gherkin/formatter/argument'
 
-module Cucumber
+module Lucid
   module WireSupport
     module WireProtocol
       module Requests
@@ -76,7 +76,7 @@ module Cucumber
           def handle_diff(tables)
             begin
               handle_diff!(tables)
-            rescue Cucumber::Ast::Table::Different
+            rescue Lucid::Ast::Table::Different
               @connection.diff_failed
             end
             @connection.diff_ok

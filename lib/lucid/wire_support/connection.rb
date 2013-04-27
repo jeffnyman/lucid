@@ -1,7 +1,7 @@
 require 'timeout'
 require 'lucid/wire_support/wire_protocol'
 
-module Cucumber
+module Lucid
   module WireSupport
     class Connection
       class ConnectionError < StandardError; end

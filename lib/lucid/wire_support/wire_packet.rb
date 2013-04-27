@@ -1,6 +1,6 @@
 require 'multi_json'
 
-module Cucumber
+module Lucid
   module WireSupport
     # Represents the packet of data sent over the wire as JSON data, containing
     # a message and a hash of arguments

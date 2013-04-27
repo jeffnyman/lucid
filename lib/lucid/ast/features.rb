@@ -1,4 +1,4 @@
-module Cucumber
+module Lucid
   module Ast
     class Features #:nodoc:
       include Enumerable
@@ -22,7 +22,7 @@ module Cucumber
       end
 
       def accept(visitor)
-        return if Cucumber.wants_to_quit
+        return if Lucid.wants_to_quit
         start = Time.now
         self.each do |feature|
           visitor.visit_feature(feature)

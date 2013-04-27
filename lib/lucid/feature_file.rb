@@ -3,7 +3,7 @@ require 'gherkin/formatter/filter_formatter'
 require 'gherkin/formatter/tag_count_formatter'
 require 'gherkin/parser/parser'
 
-module Cucumber
+module Lucid
   class FeatureFile
     FILE_COLON_LINE_PATTERN = /^([\w\W]*?):([\d:]+)$/ #:nodoc:
     DEFAULT_ENCODING = "UTF-8" #:nodoc:
@@ -22,13 +22,13 @@ module Cucumber
       end
     end
 
-    # Parses a file and returns a Cucumber::Ast::Feature
+    # Parses a file and returns a Lucid::Ast::Feature
     # If +configuration_filters+ contains any filters, the result will
     # be filtered.
     def parse(configuration_filters, tag_counts)
       filters = @lines || configuration_filters
 
-      builder             = Cucumber::Parser::GherkinBuilder.new(@path)
+      builder             = Lucid::Parser::GherkinBuilder.new(@path)
       filter_formatter    = filters.empty? ? builder : Gherkin::Formatter::FilterFormatter.new(builder, filters)
       tag_count_formatter = Gherkin::Formatter::TagCountFormatter.new(filter_formatter, tag_counts)
       parser              = Gherkin::Parser::Parser.new(tag_count_formatter, true, "root", false)
@@ -49,11 +49,11 @@ module Cucumber
         open(@path).read
       else
         begin
-          source = File.open(@path, Cucumber.file_mode('r', DEFAULT_ENCODING)).read
+          source = File.open(@path, Lucid.file_mode('r', DEFAULT_ENCODING)).read
           encoding = encoding_for(source)
           if(DEFAULT_ENCODING.downcase != encoding.downcase)
             # Read the file again - it's explicitly declaring a different encoding
-            source = File.open(@path, Cucumber.file_mode('r', encoding)).read
+            source = File.open(@path, Lucid.file_mode('r', encoding)).read
             source = to_default_encoding(source, encoding)
           end
           source

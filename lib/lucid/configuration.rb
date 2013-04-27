@@ -1,5 +1,5 @@
-module Cucumber
-  # The base class for configuring settings for a Cucumber run.
+module Lucid
+  # The base class for configuring settings for a Lucid run.
   class Configuration
     def self.default
       new

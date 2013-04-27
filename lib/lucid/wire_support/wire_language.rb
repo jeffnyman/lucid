@@ -6,7 +6,7 @@ require 'lucid/wire_support/wire_packet'
 require 'lucid/wire_support/wire_exception'
 require 'lucid/wire_support/wire_step_definition'
 
-module Cucumber
+module Lucid
   module WireSupport
 
     # The wire-protocol (lanugage independent) implementation of the programming

@@ -1,4 +1,4 @@
-module Cucumber
+module Lucid
   module RbSupport
     # This module defines the methods you can use to define pure Ruby
     # Step Definitions and Hooks. This module is mixed into the toplevel
@@ -116,4 +116,4 @@ module Cucumber
   end
 end
 
-extend(Cucumber::RbSupport::RbDsl)
+extend(Lucid::RbSupport::RbDsl)

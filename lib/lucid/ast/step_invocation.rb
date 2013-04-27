@@ -1,9 +1,9 @@
-require 'cucumber/errors'
-require 'cucumber/step_match'
-require 'cucumber/ast/table'
+require 'lucid/errors'
+require 'lucid/step_match'
+require 'lucid/ast/table'
 require 'gherkin/rubify'
 
-module Cucumber
+module Lucid
   module Ast
     class StepInvocation #:nodoc:
       include Gherkin::Rubify
@@ -34,7 +34,7 @@ module Cucumber
       end
 
       def accept(visitor)
-        return if Cucumber.wants_to_quit
+        return if Lucid.wants_to_quit
         invoke(visitor.runtime, visitor.configuration)
         visit_step_result(visitor)
       end
@@ -66,7 +66,7 @@ module Cucumber
           rescue Undefined => e
             failed(configuration, e, false)
             status!(:undefined)
-          rescue Cucumber::Ast::Table::Different => e
+          rescue Lucid::Ast::Table::Different => e
             @different_table = e.table
             failed(configuration, e, false)
             status!(:failed)
@@ -107,14 +107,14 @@ module Cucumber
 
       # This constant is appended to by Cuke4Duke. Do not change its name
       BACKTRACE_FILTER_PATTERNS = [/vendor\/rails|lib\/cucumber|bin\/cucumber:|lib\/rspec|gems\/|minitest|test\/unit/]
-      if(Cucumber::JRUBY)
+      if(Lucid::JRUBY)
         BACKTRACE_FILTER_PATTERNS << /org\/jruby/
       end
       PWD_PATTERN = /#{Regexp.escape(Dir.pwd)}\//m
 
       # This is to work around double ":in " segments in JRuby backtraces. JRuby bug?
       def filter_backtrace(e)
-        return e if Cucumber.use_full_backtrace
+        return e if Lucid.use_full_backtrace
         e.backtrace.each{|line| line.gsub!(PWD_PATTERN, "./")}
 
         filtered = (e.backtrace || []).reject do |line|

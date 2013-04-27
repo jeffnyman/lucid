@@ -1,4 +1,4 @@
-module Cucumber
+module Lucid
   module Ast
     module Names
       attr_reader :title, :description

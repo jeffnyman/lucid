@@ -15,4 +15,4 @@ require 'lucid/rspec/disable_option_parser'
 require 'lucid/cli/main'
 
 # The dup is to keep ARGV intact, so that tools like ruby-debug can respawn.
-Cucumber::Cli::Main.new(ARGV.dup).execute!
+Lucid::Cli::Main.new(ARGV.dup).execute!

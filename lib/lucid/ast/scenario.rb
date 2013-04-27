@@ -1,10 +1,10 @@
-require 'cucumber/ast/has_steps'
-require 'cucumber/ast/names'
-require 'cucumber/ast/empty_background'
-require 'cucumber/ast/location'
-require 'cucumber/unit'
+require 'lucid/ast/has_steps'
+require 'lucid/ast/names'
+require 'lucid/ast/empty_background'
+require 'lucid/ast/location'
+require 'lucid/unit'
 
-module Cucumber
+module Lucid
   module Ast
     class Scenario #:nodoc:
       include HasSteps
@@ -21,7 +21,7 @@ module Cucumber
       end
 
       def accept(visitor)
-        return if Cucumber.wants_to_quit
+        return if Lucid.wants_to_quit
 
         visitor.visit_comment(@comment) unless @comment.empty?
         visitor.visit_tags(@tags)

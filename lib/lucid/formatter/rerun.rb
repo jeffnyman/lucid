@@ -1,6 +1,6 @@
 require 'lucid/formatter/io'
 
-module Cucumber
+module Lucid
   module Formatter
     # The formatter used for <tt>--format rerun</tt>
     #
@@ -52,7 +52,7 @@ module Cucumber
       end
 
       def after_table_row(table_row)
-        return unless @in_examples and Cucumber::Ast::OutlineTable::ExampleRow === table_row
+        return unless @in_examples and Lucid::Ast::OutlineTable::ExampleRow === table_row
         unless @header_row
           if table_row.failed?
             @rerun = true

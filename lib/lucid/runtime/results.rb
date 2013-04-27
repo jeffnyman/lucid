@@ -1,4 +1,4 @@
-module Cucumber
+module Lucid
   class Runtime
 
     class Results

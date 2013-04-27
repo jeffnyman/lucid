@@ -1,6 +1,6 @@
 require 'gherkin/formatter/argument'
 
-module Cucumber
+module Lucid
   module RbSupport
     class RegexpArgumentMatcher
       def self.arguments_from(regexp, step_name)

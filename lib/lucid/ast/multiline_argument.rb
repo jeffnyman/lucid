@@ -1,6 +1,6 @@
 require 'gherkin/rubify'
 
-module Cucumber
+module Lucid
   module Ast
     module MultilineArgument
 

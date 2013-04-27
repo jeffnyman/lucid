@@ -1,7 +1,7 @@
 require 'lucid/platform'
 require 'lucid/term/ansicolor'
 
-if Cucumber::IRONRUBY
+if Lucid::IRONRUBY
   begin
     require 'iron-term-ansicolor'
   rescue LoadError
@@ -9,16 +9,16 @@ if Cucumber::IRONRUBY
   end
 end
 
-if Cucumber::WINDOWS_MRI
+if Lucid::WINDOWS_MRI
   unless ENV['ANSICON']
     STDERR.puts %{*** WARNING: You must use ANSICON 1.31 or higher (https://github.com/adoxa/ansicon/) to get coloured output on Windows}
-    Cucumber::Term::ANSIColor.coloring = false
+    Lucid::Term::ANSIColor.coloring = false
   end
 end
 
-Cucumber::Term::ANSIColor.coloring = false if !STDOUT.tty? && !ENV.has_key?("AUTOTEST")
+Lucid::Term::ANSIColor.coloring = false if !STDOUT.tty? && !ENV.has_key?("AUTOTEST")
 
-module Cucumber
+module Lucid
   module Formatter
     # Defines aliases for coloured output. You don't invoke any methods from this
     # module directly, but you can change the output colours by defining
@@ -55,10 +55,10 @@ module Cucumber
     #
     # To see what colours and effects are available, just run this in your shell:
     #
-    #   ruby -e "require 'rubygems'; require 'term/ansicolor'; puts Cucumber::Term::ANSIColor.attributes"
+    #   ruby -e "require 'rubygems'; require 'term/ansicolor'; puts Lucid::Term::ANSIColor.attributes"
     #
     module ANSIColor
-      include Cucumber::Term::ANSIColor
+      include Lucid::Term::ANSIColor
 
       ALIASES = Hash.new do |h,k|
         if k.to_s =~ /(.*)_param/
@@ -116,7 +116,7 @@ module Cucumber
           when 0
             raise "Your terminal doesn't support colours."
           when 1
-            ::Cucumber::Term::ANSIColor.coloring = false
+            ::Lucid::Term::ANSIColor.coloring = false
             alias grey white
           when 2..8
             alias grey white
@@ -138,7 +138,7 @@ module Cucumber
 
       def self.define_real_grey #:nodoc:
         def grey(string) #:nodoc:
-          if ::Cucumber::Term::ANSIColor.coloring?
+          if ::Lucid::Term::ANSIColor.coloring?
             "\e[90m#{string}\e[0m"
           else
             string

@@ -1,4 +1,4 @@
-module Cucumber
+module Lucid
   module WireSupport
     class WireStepDefinition
       attr_reader :regexp_source, :file_colon_line
@@ -18,7 +18,7 @@ module Cucumber
       private
 
       def prepare(arg)
-        return arg unless arg.is_a?(Cucumber::Ast::Table)
+        return arg unless arg.is_a?(Lucid::Ast::Table)
         arg.raw
       end
     end

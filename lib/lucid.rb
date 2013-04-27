@@ -10,7 +10,7 @@ require 'lucid/broadcaster'
 require 'lucid/step_definitions'
 require 'lucid/term/ansicolor'
 
-module Cucumber
+module Lucid
   class << self
     attr_accessor :wants_to_quit
 

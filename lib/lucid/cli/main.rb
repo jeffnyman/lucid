@@ -12,7 +12,7 @@ require 'lucid/feature_file'
 require 'lucid/cli/configuration'
 require 'lucid/cli/drb_client'
 
-module Cucumber
+module Lucid
   module Cli
     class Main
       class << self
@@ -46,7 +46,7 @@ module Cucumber
 
         runtime.run!
         runtime.write_stepdefs_json
-        failure = runtime.results.failure? || Cucumber.wants_to_quit
+        failure = runtime.results.failure? || Lucid.wants_to_quit
         @kernel.exit(failure ? 1 : 0)
       rescue ProfilesNotDefinedError, YmlLoadError, ProfileNotFound => e
         @err.puts(e.message)
@@ -66,7 +66,7 @@ module Cucumber
 
         @configuration = Configuration.new(@out, @err)
         @configuration.parse!(@args)
-        Cucumber.logger = @configuration.log
+        Lucid.logger = @configuration.log
         @configuration
       end
 
@@ -82,8 +82,8 @@ module Cucumber
 
       def trap_interrupt
         trap('INT') do
-          exit!(1) if Cucumber.wants_to_quit
-          Cucumber.wants_to_quit = true
+          exit!(1) if Lucid.wants_to_quit
+          Lucid.wants_to_quit = true
           STDERR.puts "\nExiting... Interrupt again to exit immediately."
         end
       end

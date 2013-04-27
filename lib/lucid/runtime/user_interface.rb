@@ -1,6 +1,6 @@
 require 'timeout'
 
-module Cucumber
+module Lucid
   class Runtime
 
     module UserInterface
@@ -32,7 +32,7 @@ module Cucumber
         STDOUT.flush
         puts(question)
 
-        if(Cucumber::JRUBY)
+        if(Lucid::JRUBY)
           answer = jruby_gets(timeout_seconds)
         else
           answer = mri_gets(timeout_seconds)

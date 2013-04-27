@@ -3,7 +3,7 @@ require 'lucid/cli/options'
 require 'lucid/constantize'
 require 'gherkin/tag_expression'
 
-module Cucumber
+module Lucid
   module Cli
     class YmlLoadError < StandardError; end
     class ProfilesNotDefinedError < YmlLoadError; end

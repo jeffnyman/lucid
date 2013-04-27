@@ -1,4 +1,4 @@
-module Cucumber
+module Lucid
   module LoadPath
     def add_dirs(*dirs)
       dirs.each do |dir|
@@ -10,4 +10,4 @@ module Cucumber
   end
 end
 
-Cucumber::LoadPath.add_dirs('lib')
+Lucid::LoadPath.add_dirs('lib')

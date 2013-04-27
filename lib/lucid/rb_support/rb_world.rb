@@ -1,11 +1,11 @@
 require 'gherkin/formatter/ansi_escapes'
 
-module Cucumber
+module Lucid
   module RbSupport
     # Defines the basic DSL methods availlable in all Cucumber step definitions.
     #
     # You can, and probably should, extend this DSL with your own methods that
-    # make sense in your domain. For more on that, see {Cucumber::RbSupport::RbDsl#World}
+    # make sense in your domain. For more on that, see {Lucid::RbSupport::RbDsl#World}
     module RbWorld
 
       # @private
@@ -34,7 +34,7 @@ module Cucumber
       # @example Passing a multiline string
       #   step "the email should contain:", "Dear sir,\nYou've won a prize!\n"
       # @param [String] name The name of the step
-      # @param [String,Cucumber::Ast::DocString,Cucumber::Ast::Table] multiline_argument
+      # @param [String,Lucid::Ast::DocString,Lucid::Ast::Table] multiline_argument
       def step(name, multiline_argument=nil)
         @__cucumber_runtime.invoke(name, multiline_argument)
       end
@@ -50,7 +50,7 @@ module Cucumber
         @__cucumber_runtime.invoke_steps(steps_text, @__natural_language, caller[0])
       end
 
-      # Parse Gherkin into a {Cucumber::Ast::Table} object.
+      # Parse Gherkin into a {Lucid::Ast::Table} object.
       #
       # Useful in conjunction with the #step method.
       # @example Create a table
@@ -64,7 +64,7 @@ module Cucumber
         @__cucumber_runtime.table(text_or_table, file, line_offset)
       end
 
-      # Create an {Cucumber::Ast::DocString} object
+      # Create an {Lucid::Ast::DocString} object
       #
       # Useful in conjunction with the #step method, when
       # want to specify a content type.

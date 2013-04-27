@@ -2,7 +2,7 @@ require 'gherkin/rubify'
 require 'gherkin/lexer/i18n_lexer'
 require 'gherkin/formatter/escaping'
 
-module Cucumber
+module Lucid
   module Ast
     # Step Definitions that match a plain text Step with a multiline argument table
     # will receive it as an instance of Table. A Table object holds the data of a
@@ -178,7 +178,7 @@ module Cucumber
       end
 
       def accept(visitor) #:nodoc:
-        return if Cucumber.wants_to_quit
+        return if Lucid.wants_to_quit
         cells_rows.each do |row|
           visitor.visit_table_row(row)
         end
@@ -448,13 +448,13 @@ module Cucumber
         options = {:color => true, :indent => 2, :prefixes => TO_S_PREFIXES}.merge(options)
         io = StringIO.new
 
-        c = Cucumber::Term::ANSIColor.coloring?
-        Cucumber::Term::ANSIColor.coloring = options[:color]
+        c = Lucid::Term::ANSIColor.coloring?
+        Lucid::Term::ANSIColor.coloring = options[:color]
         formatter = Formatter::Pretty.new(nil, io, options)
         formatter.instance_variable_set('@indent', options[:indent])
         TreeWalker.new(nil, [formatter]).visit_multiline_arg(self)
 
-        Cucumber::Term::ANSIColor.coloring = c
+        Lucid::Term::ANSIColor.coloring = c
         io.rewind
         s = "\n" + io.read + (" " * (options[:indent] - 2))
         s
@@ -631,7 +631,7 @@ module Cucumber
         end
 
         def accept(visitor)
-          return if Cucumber.wants_to_quit
+          return if Lucid.wants_to_quit
           each do |cell|
             visitor.visit_table_cell(cell)
           end
@@ -687,7 +687,7 @@ module Cucumber
         end
 
         def accept(visitor)
-          return if Cucumber.wants_to_quit
+          return if Lucid.wants_to_quit
           visitor.visit_table_cell_value(value, status)
         end
 

@@ -2,7 +2,7 @@ require 'lucid/constantize'
 require 'lucid/ast/multiline_argument'
 require 'lucid/runtime/for_programming_languages'
 
-module Cucumber
+module Lucid
 
   class Runtime
 
@@ -54,7 +54,7 @@ module Cucumber
       end
 
       def invoke(step_name, multiline_argument=nil)
-        multiline_argument = Cucumber::Ast::MultilineArgument.from(multiline_argument)
+        multiline_argument = Lucid::Ast::MultilineArgument.from(multiline_argument)
         # It is very important to leave multiline_argument=nil as a vararg. Cuke4Duke needs it that way.
         begin
           step_match(step_name).invoke(multiline_argument)
@@ -70,7 +70,7 @@ module Cucumber
       #
       def load_programming_language(ext)
         return @language_map[ext] if @language_map[ext]
-        programming_language_class = constantize("Cucumber::#{ext.capitalize}Support::#{ext.capitalize}Language")
+        programming_language_class = constantize("Lucid::#{ext.capitalize}Support::#{ext.capitalize}Language")
         programming_language = programming_language_class.new(@runtime_facade)
         @programming_languages << programming_language
         @language_map[ext] = programming_language
@@ -184,7 +184,7 @@ module Cucumber
       end
 
       def log
-        Cucumber.logger
+        Lucid.logger
       end
 
       def programming_language_for(step_def_file)

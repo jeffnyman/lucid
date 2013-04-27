@@ -1,6 +1,6 @@
 require 'lucid/formatter/usage'
 
-module Cucumber
+module Lucid
   module Formatter
     class Stepdefs < Usage
       def print_steps(stepdef_key)

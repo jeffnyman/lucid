@@ -1,4 +1,4 @@
-module Cucumber
+module Lucid
   class StepMatch #:nodoc:
     attr_reader :step_definition, :step_arguments
 

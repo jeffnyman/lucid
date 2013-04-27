@@ -18,7 +18,7 @@ rescue LoadError
   end
 end
 
-module Cucumber
+module Lucid
   module RbSupport
     # Raised if a World block returns Nil.
     class NilWorld < StandardError
@@ -34,7 +34,7 @@ module Cucumber
         message << "in 2 places:\n\n"
         message << first_proc.backtrace_line('World') << "\n"
         message << second_proc.backtrace_line('World') << "\n\n"
-        message << "Use Ruby modules instead to extend your worlds. See the Cucumber::RbSupport::RbDsl#World RDoc\n"
+        message << "Use Ruby modules instead to extend your worlds. See the Lucid::RbSupport::RbDsl#World RDoc\n"
         message << "or http://wiki.github.com/cucumber/cucumber/a-whole-new-world.\n\n"
         super(message)
       end

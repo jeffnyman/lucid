@@ -1,6 +1,6 @@
-require 'cucumber/ast/names'
+require 'lucid/ast/names'
 
-module Cucumber
+module Lucid
   module Ast
     class Examples #:nodoc:
       include Names
@@ -19,7 +19,7 @@ module Cucumber
       end
 
       def accept(visitor)
-        return if Cucumber.wants_to_quit
+        return if Lucid.wants_to_quit
         visitor.visit_comment(@comment) unless @comment.empty?
         visitor.visit_examples_name(@keyword, name)
         visitor.visit_outline_table(@outline_table)

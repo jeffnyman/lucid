@@ -1,4 +1,4 @@
-module Cucumber
+module Lucid
   module Ast
     # Holds an Array of Step or StepDefinition
     class StepCollection #:nodoc:
@@ -14,7 +14,7 @@ module Cucumber
       end
 
       def accept(visitor)
-        return if Cucumber.wants_to_quit
+        return if Lucid.wants_to_quit
         @steps.each do |step|
           visitor.visit_step(step)
         end

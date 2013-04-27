@@ -7,9 +7,9 @@ require "lucid/platform"
 
 Gem::Specification.new do |gem|
   gem.name        = 'lucid'
-  gem.version     = Cucumber::VERSION
+  gem.version     = Lucid::VERSION
   gem.authors     = ["Jeff Nyman"]
-  gem.description = 'Test Description Language Execution Engine'
+  gem.description = "Test Description Language Execution Engine"
   gem.summary     = "lucid-#{gem.version}"
   gem.email       = ["jeffnyman@gmail.com"]
   gem.license     = "MIT"

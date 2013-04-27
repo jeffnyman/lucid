@@ -1,6 +1,6 @@
 require 'lucid/platform'
 
-module Cucumber
+module Lucid
   # Raised if the number of a StepDefinition's Regexp match groups
   # is different from the number of Proc arguments.
   class ArityMismatchError < StandardError
@@ -17,7 +17,7 @@ class Object #:nodoc:
           ari = ari < 0 ? (ari.abs-1).to_s+"+" : ari
           s1 = ari == 1 ? "" : "s"
           s2 = args.length == 1 ? "" : "s"
-          raise Cucumber::ArityMismatchError.new(
+          raise Lucid::ArityMismatchError.new(
             "Your block takes #{ari} argument#{s1}, but the Regexp matched #{args.length} argument#{s2}."
           )
         end
@@ -47,7 +47,7 @@ class Object #:nodoc:
     end
   end
 
-  INSTANCE_EXEC_OFFSET = (Cucumber::RUBY_2_0 || Cucumber::RUBY_1_9 || Cucumber::JRUBY) ? -3 : -4
+  INSTANCE_EXEC_OFFSET = (Lucid::RUBY_2_0 || Lucid::RUBY_1_9 || Lucid::JRUBY) ? -3 : -4
 
   def replace_instance_exec_invocation_line!(backtrace, instance_exec_invocation_line, pseudo_method)
     return if Cucumber.use_full_backtrace
