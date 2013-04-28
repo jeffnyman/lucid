@@ -1,4 +1,4 @@
-require 'lucid/parser/gherkin_builder'
+require 'lucid/tdl_builder'
 require 'gherkin/formatter/filter_formatter'
 require 'gherkin/formatter/tag_count_formatter'
 require 'gherkin/parser/parser'
@@ -28,7 +28,7 @@ module Lucid
     def parse(configuration_filters, tag_counts)
       filters = @lines || configuration_filters
 
-      builder             = Lucid::Parser::GherkinBuilder.new(@path)
+      builder             = Lucid::Parser::TDLBuilder.new(@path)
       filter_formatter    = filters.empty? ? builder : Gherkin::Formatter::FilterFormatter.new(builder, filters)
       tag_count_formatter = Gherkin::Formatter::TagCountFormatter.new(filter_formatter, tag_counts)
       parser              = Gherkin::Parser::Parser.new(tag_count_formatter, true, "root", false)
