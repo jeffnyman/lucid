@@ -1,5 +1,5 @@
 require 'lucid/cli/options'
-require 'lucid/constantize'
+require 'lucid/factory'
 require 'gherkin/tag_expression'
 
 module Lucid
@@ -9,7 +9,7 @@ module Lucid
     class ProfileNotFound < StandardError; end
 
     class Configuration
-      include Constantize
+      include ObjectFactory
 
       attr_reader :out_stream
 
@@ -77,9 +77,9 @@ module Lucid
 
       def formatter_class(format)
         if(builtin = Options::BUILTIN_FORMATS[format])
-          constantize(builtin[0])
+          create_object_of(builtin[0])
         else
-          constantize(format)
+          create_object_of(format)
         end
       end
 

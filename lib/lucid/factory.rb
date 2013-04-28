@@ -1,19 +1,19 @@
 module Lucid
-  module Constantize #:nodoc:
-    def constantize(camel_cased_word)
+  module ObjectFactory #:nodoc:
+    def create_object_of(phrase)
       try = 0
       begin
         try += 1
-        names = camel_cased_word.split('::')
+        names = phrase.split('::')
         names.shift if names.empty? || names.first.empty?
 
         constant = ::Object
         names.each do |name|
-          constant = constantize_name(constant, name)
+          constant = provide_object_name(constant, name)
         end
         constant
       rescue NameError => e
-        require underscore(camel_cased_word)
+        require underscore(phrase)
         if try < 2
           retry
         else
@@ -22,9 +22,8 @@ module Lucid
       end
     end
 
-    # Snagged from active_support
-    def underscore(camel_cased_word)
-      camel_cased_word.to_s.gsub(/::/, '/').
+    def underscore(phrase)
+      phrase.to_s.gsub(/::/, '/').
         gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').
         gsub(/([a-z\d])([A-Z])/,'\1_\2').
         tr("-", "_").
@@ -33,7 +32,7 @@ module Lucid
 
     private
 
-    def constantize_name(constant, name)
+    def provide_object_name(constant, name)
       if constant.const_defined?(name, false)
         constant.const_get(name, false)
       else

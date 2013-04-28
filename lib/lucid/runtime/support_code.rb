@@ -1,4 +1,4 @@
-require 'lucid/constantize'
+require 'lucid/factory'
 require 'lucid/ast/multiline_argument'
 require 'lucid/runtime/for_programming_languages'
 
@@ -27,7 +27,7 @@ module Lucid
         end
       end
 
-      include Constantize
+      include ObjectFactory
 
       def initialize(user_interface, configuration={})
         @configuration = Configuration.parse(configuration)
@@ -70,7 +70,7 @@ module Lucid
       #
       def load_programming_language(ext)
         return @language_map[ext] if @language_map[ext]
-        programming_language_class = constantize("Lucid::#{ext.capitalize}Support::#{ext.capitalize}Language")
+        programming_language_class = create_object_of("Lucid::#{ext.capitalize}Support::#{ext.capitalize}Language")
         programming_language = programming_language_class.new(@runtime_facade)
         @programming_languages << programming_language
         @language_map[ext] = programming_language
