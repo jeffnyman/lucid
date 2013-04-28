@@ -1,4 +1,3 @@
-require 'logger'
 require 'lucid/cli/options'
 require 'lucid/constantize'
 require 'gherkin/tag_expression'
@@ -187,13 +186,6 @@ module Lucid
           end
         end
       end
-
-      class LogFormatter < ::Logger::Formatter
-        def call(severity, time, progname, msg)
-          msg
-        end
-      end
-
 
       def set_environment_variables
         @options[:env_vars].each do |var, value|

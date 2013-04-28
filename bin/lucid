@@ -3,16 +3,13 @@
 app_lib = File.expand_path('../lib', File.dirname(__FILE__))
 $LOAD_PATH.unshift(app_lib) unless $LOAD_PATH.include?(app_lib)
 
-###$:.unshift(File.dirname(__FILE__) + '/../lib') unless $:.include?(File.dirname(__FILE__) + '/../lib')
-
 if(ENV['SIMPLECOV'] && RUBY_VERSION =~ /1\.9/)
   require 'simplecov'
   SimpleCov.root(File.expand_path(File.dirname(__FILE__) + '/..'))
   SimpleCov.start
 end
 
-require 'lucid/rspec/disable_option_parser'
+require 'lucid/rspec/disallow_options'
 require 'lucid/cli/main'
 
-# The dup is to keep ARGV intact, so that tools like ruby-debug can respawn.
-Lucid::CLI::Main.new(ARGV.dup).execute!
+Lucid::CLI::App.new(ARGV.dup).start

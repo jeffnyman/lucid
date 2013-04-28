@@ -1,9 +1,4 @@
-begin
-  require 'gherkin'
-rescue LoadError
-  require 'rubygems'
-  require 'gherkin'
-end
+require 'gherkin'
 require 'optparse'
 require 'lucid'
 require 'logger'
@@ -14,13 +9,7 @@ require 'lucid/cli/drb_client'
 
 module Lucid
   module CLI
-    class Main
-      class << self
-        def execute(args)
-          new(args).execute!
-        end
-      end
-
+    class App
       def initialize(args, stdin=STDIN, out=STDOUT, err=STDERR, kernel=Kernel)
         raise "args can't be nil" unless args
         raise "out can't be nil" unless out
@@ -33,7 +22,7 @@ module Lucid
         @configuration = nil
       end
 
-      def execute!(existing_runtime = nil)
+      def start(existing_runtime = nil)
         trap_interrupt
         return @drb_output if run_drb_client
 
@@ -72,6 +61,7 @@ module Lucid
 
       private
 
+      # TODO: Determine if this is crap.
       def run_drb_client
         return false unless configuration.drb?
         @drb_output = DRbClient.run(@args, @err, @out, configuration.drb_port)
@@ -84,7 +74,7 @@ module Lucid
         trap('INT') do
           exit!(1) if Lucid.wants_to_quit
           Lucid.wants_to_quit = true
-          STDERR.puts "\nExiting... Interrupt again to exit immediately."
+          STDERR.puts "\nExiting. Interrupt again to exit immediately."
         end
       end
     end

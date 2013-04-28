@@ -6,6 +6,7 @@ begin
 rescue LoadError
 end
 
+# TODO: Determine if this is needed for now.
 module Lucid
   module Rake
     # Defines a Rake task for running features.
@@ -44,7 +45,7 @@ module Lucid
 
         def run
           require 'lucid/cli/main'
-          failure = Lucid::CLI::Main.execute(args)
+          failure = Lucid::CLI::App.execute(args)
           raise "Lucid failed" if failure
         end
       end

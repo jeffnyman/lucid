@@ -2,6 +2,7 @@ $:.unshift(File.dirname(__FILE__)) unless
   $:.include?(File.dirname(__FILE__)) || $:.include?(File.expand_path(File.dirname(__FILE__)))
 
 require 'yaml'
+require 'logger'
 require 'lucid/platform'
 require 'lucid/parser'
 require 'lucid/runtime'
@@ -24,4 +25,11 @@ module Lucid
       @log = logger
     end
   end
+
+  class LogFormatter < ::Logger::Formatter
+    def call(severity, time, progname, msg)
+      "\n[ LUCID (#{severity}) ] #{msg}"
+    end
+  end
+
 end
