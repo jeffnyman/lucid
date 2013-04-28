@@ -1,0 +1,15 @@
+script: "rake"
+
+rvm:
+  - 2.0.0
+  - 1.9.3
+  - jruby
+
+branches:
+  only:
+    - master
+    - develop
+
+notifications:
+  recipients:
+    - jeffnyman@gmail.com

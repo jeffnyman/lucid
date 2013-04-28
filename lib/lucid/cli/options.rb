@@ -1,0 +1,409 @@
+require 'lucid/cli/profile_loader'
+require 'lucid/formatter/ansicolor'
+require 'lucid/rb_support/rb_language'
+
+module Lucid
+  module CLI
+
+    class Options
+      INDENT = ' ' * 53
+      BUILTIN_FORMATS = {
+        'html'        => ['Lucid::Formatter::Html',        'Generates a nice looking HTML report.'],
+        'pretty'      => ['Lucid::Formatter::Pretty',      'Prints the feature as is - in colours.'],
+        'progress'    => ['Lucid::Formatter::Progress',    'Prints one character per scenario.'],
+        'rerun'       => ['Lucid::Formatter::Rerun',       'Prints failing files with line numbers.'],
+        'usage'       => ['Lucid::Formatter::Usage',       "Prints where step definitions are used.\n" +
+                                                              "#{INDENT}The slowest step definitions (with duration) are\n" +
+                                                              "#{INDENT}listed first. If --dry-run is used the duration\n" +
+                                                              "#{INDENT}is not shown, and step definitions are sorted by\n" +
+                                                              "#{INDENT}filename instead."],
+        'stepdefs'    => ['Lucid::Formatter::Stepdefs',    "Prints all test definitions with their locations. Same as\n" +
+                                                              "#{INDENT}the usage formatter, except that steps are not printed."],
+        'junit'       => ['Lucid::Formatter::Junit',       'Generates a report similar to Ant+JUnit.'],
+        'json'        => ['Lucid::Formatter::Json',        'Prints the feature as JSON'],
+        'json_pretty' => ['Lucid::Formatter::JsonPretty',  'Prints the feature as prettified JSON'],
+        'debug'       => ['Lucid::Formatter::Debug',       'For developing formatters - prints the calls made to the listeners.']
+      }
+      max = BUILTIN_FORMATS.keys.map{|s| s.length}.max
+      FORMAT_HELP = (BUILTIN_FORMATS.keys.sort.map do |key|
+        "  #{key}#{' ' * (max - key.length)} : #{BUILTIN_FORMATS[key][1]}"
+      end) + ["Use --format rerun --out features.txt to write out failing",
+        "features. You can rerun them with lucid @rerun.txt.",
+        "FORMAT can also be the fully qualified class name of",
+        "your own custom formatter. If the class isn't loaded,",
+        "Lucid will attempt to require a file with a relative",
+        "file name that is the underscore name of the class name.",
+        "Example: --format Foo::BarZap -> Lucid will look for",
+        "foo/bar_zap.rb. You can place the file with this relative",
+        "path underneath your features/support directory or anywhere",
+        "on Ruby's LOAD_PATH, for example in a Ruby gem."
+      ]
+      PROFILE_SHORT_FLAG = '-p'
+      NO_PROFILE_SHORT_FLAG = '-P'
+      PROFILE_LONG_FLAG = '--profile'
+      NO_PROFILE_LONG_FLAG = '--no-profile'
+      OPTIONS_WITH_ARGS = ['-r', '--require', '--i18n', '-f', '--format', '-o', '--out',
+                                  '-t', '--tags', '-n', '--name', '-e', '--exclude',
+                                  PROFILE_SHORT_FLAG, PROFILE_LONG_FLAG,
+                                  '-a', '--autoformat', '-l', '--lines', '--port',
+                                  '-I', '--snippet-type']
+
+      def self.parse(args, out_stream, error_stream, options = {})
+        new(out_stream, error_stream, options).parse!(args)
+      end
+
+      def initialize(out_stream = STDOUT, error_stream = STDERR, options = {})
+        @out_stream   = out_stream
+        @error_stream = error_stream
+
+        @default_profile = options[:default_profile]
+        @profiles = []
+        @overridden_paths = []
+        @options = default_options
+        @profile_loader = options[:profile_loader]
+        @options[:skip_profile_information] = options[:skip_profile_information]
+
+        @quiet = @disable_profile_loading = nil
+      end
+
+      def [](key)
+        @options[key]
+      end
+
+      def []=(key, value)
+        @options[key] = value
+      end
+
+      def parse!(args)
+        @args = args
+        @expanded_args = @args.dup
+
+        @args.extend(::OptionParser::Arguable)
+
+        @args.options do |opts|
+          opts.banner = ["Lucid: Test Description Language Execution Engine",
+                         "Usage: lucid [options] [ [FILE|DIR|URL][:LINE[:LINE]*] ]+", "",
+                         "Examples:",
+                         "lucid examples/i18n/en/features",
+                         "lucid @rerun.txt (See --format rerun)",
+                         "lucid examples/i18n/it/features/test.feature:6:98:113",
+                         "lucid -s -i http://rubyurl.com/eeCl", "", "",
+          ].join("\n")
+          opts.on("-r LIBRARY|DIR", "--require LIBRARY|DIR",
+                  "Require files before executing the features. If this option",
+                  "is not specified, all *.rb files that are siblings or below",
+                  "the features will be loaded automatically. Automatic loading",
+                  "is disabled when this option is specified. That means all",
+                  "loading becomes explicit.",
+                  "Files under directories named \"support\" will always be",
+                  "loaded first.",
+                  "This option can be specified multiple times.") do |v|
+            @options[:require] << v
+            if(Lucid::JRUBY && File.directory?(v))
+              require 'java'
+              $CLASSPATH << v
+            end
+          end
+
+          if(Lucid::JRUBY)
+            opts.on("-j DIR", "--jars DIR",
+                    "Load all the jars under the specified directory.") do |jars|
+              Dir["#{jars}/**/*.jar"].each {|jar| require jar}
+            end
+          end
+
+          opts.on("--i18n LANG",
+                  "List keywords for a particular language.",
+                  %{Run with "--i18n help" to see all languages}) do |lang|
+            if lang == 'help'
+              list_languages_and_exit
+            else
+              list_keywords_and_exit(lang)
+            end
+          end
+          opts.on("-f FORMAT", "--format FORMAT",
+                  "How Lucid will format spec execution output.",
+                  "(Default: pretty). Available formats:",
+                  *FORMAT_HELP
+          ) do |v|
+            @options[:formats] << [v, @out_stream]
+          end
+          opts.on("-o", "--out [FILE|DIR]",
+                  "Write output to a file or directory instead of to standard",
+                  "console output. This option applies to any specified format",
+                  "option (via the --format switch) or to the default format",
+                  "if no format was specified. You can check the specific",
+                  "documentation for a given formatter to see whether to pass",
+                  "a file or a directory."
+          ) do |v|
+            @options[:formats] << ['pretty', nil] if @options[:formats].empty?
+            @options[:formats][-1][1] = v
+          end
+          opts.on("-t TAG_EXPRESSION", "--tags TAG_EXPRESSION",
+                  "Lucid will only execute features or scenarios with tags that match the",
+                  "tag expression provided. A single tag expressions can have several tags",
+                  "separated by a comma, which represents a logical OR. If this option is",
+                  "provided more than once, this represents a logical AND. A tag expression",
+                  "can be prefaced with a ~ character, which represents a logical NOT.",
+                  "Examples:",
+                  " --tags @smoke.",
+                  " --tags ~@wip",
+                  " --tags @smoke,@wip",
+                  " --tags @smoke,~@wip --tags @regression",
+                  "If you want to use multiple exclusion tags, you must use the logical",
+                  "AND approach, as in: --tags ~@wip --tags ~@failing",
+                  "Positive tags can be given a threshold to limit the number of occurrences.",
+                  "Example: --tags @critical:3",
+                  "That will fail if there are more than three occurrences of the @critical tag."
+          ) do |v|
+            @options[:tag_expressions] << v
+          end
+          opts.on("-n NAME", "--name NAME",
+                  "Lucid will only execute features or abilities that match with the name",
+                  "provided. The match can be done on partial information. If this option",
+                  "is provided multiple times, then the match will be performed against",
+                  "each set of provided names."
+          ) do |v|
+            @options[:name_regexps] << /#{v}/
+          end
+          opts.on("-e", "--exclude PATTERN",
+                  "Lucid will not use files that match the PATTERN.") do |v|
+            @options[:excludes] << Regexp.new(v)
+          end
+          opts.on(PROFILE_SHORT_FLAG, "#{PROFILE_LONG_FLAG} PROFILE",
+                  "Pull commandline arguments from lucid.yml which can be defined as",
+                  "strings or arrays. When a 'default' profile is defined and no profile",
+                  "is specified it is always used. (Unless disabled, see -P below.)",
+                  "When feature files are defined in a profile and on the command line",
+                  "then only the ones from the command line are used."
+          ) do |v|
+            @profiles << v
+          end
+          opts.on(NO_PROFILE_SHORT_FLAG, NO_PROFILE_LONG_FLAG,
+            "Disables all profile loading to avoid using the 'default' profile.") do |v|
+            @disable_profile_loading = true
+          end
+          opts.on("-c", "--[no-]color",
+                  "Specifies whether or not to use ANSI color in the output. If this",
+                  "option is not specified, Lucid makes the decision on colored output",
+                  "based on your platform and the output destination."
+          ) do |v|
+            Lucid::Term::ANSIColor.coloring = v
+          end
+          opts.on("-d", "--dry-run", "Invokes formatters without executing the steps.",
+            "This also omits the loading of your support/env.rb file if it exists.") do
+            @options[:dry_run] = true
+          end
+          opts.on("-a", "--autoformat DIR",
+            "Reformats (pretty prints) feature files and write them to DIRECTORY.",
+            "Be careful if you choose to overwrite the originals.",
+            "Implies --dry-run --format pretty.") do |directory|
+            @options[:autoformat] = directory
+            Lucid::Term::ANSIColor.coloring = false
+            @options[:dry_run] = true
+            @quiet = true
+          end
+
+          opts.on("-m", "--no-multiline",
+                  "Lucid will not print multiline strings and tables under steps.") do
+            @options[:no_multiline] = true
+          end
+          opts.on("-s", "--no-source",
+                  "Lucid will not print the file and line of the test definition with the steps.") do
+            @options[:source] = false
+          end
+          opts.on("-i", "--no-snippets",
+                  "Lucid will not print snippets (matchers) for pending steps.") do
+            @options[:snippets] = false
+          end
+          opts.on("-I", "--snippet-type TYPE",
+                  "Use different snippet type (Default: regexp).",
+                  "Available types:",
+                  *Lucid::RbSupport::RbLanguage.cli_snippet_type_options
+          ) do |v|
+            @options[:snippet_type] = v.to_sym
+          end
+
+          opts.on("-q", "--quiet", "Alias for --no-snippets --no-source.") do
+            @quiet = true
+          end
+          opts.on("-b", "--backtrace", "Show full backtrace for all errors.") do
+            Lucid.use_full_backtrace = true
+          end
+          opts.on("-S", "--strict", "Fail if there are any undefined or pending steps.") do
+            @options[:strict] = true
+          end
+          opts.on("-w", "--wip", "Fail if there are any passing scenarios.") do
+            @options[:wip] = true
+          end
+          opts.on("-v", "--verbose", "Show the files and features loaded.") do
+            @options[:verbose] = true
+          end
+          opts.on("-g", "--guess", "Guess best match for ambiguous steps.") do
+            @options[:guess] = true
+          end
+          opts.on("-l", "--lines LINES", "Run given line numbers. Equivalent to FILE:LINE syntax") do |lines|
+            @options[:lines] = lines
+          end
+          opts.on("-x", "--expand", "Expand Scenario Outline tables in output.") do
+            @options[:expand] = true
+          end
+          opts.on("--testdefs DIR", "Lucid will Write test definition metadata to the DIR.") do |dir|
+            @options[:testdefs] = dir
+          end
+          opts.on_tail("--version", "Show Lucid version information.") do
+            @out_stream.puts Lucid::VERSION
+            Kernel.exit(0)
+          end
+          opts.on_tail("-h", "--help", "Show Lucid execution options.") do
+            @out_stream.puts opts.help
+            Kernel.exit(0)
+          end
+        end.parse!
+
+        if @quiet
+          @options[:snippets] = @options[:source] = false
+        else
+          @options[:snippets] = true if @options[:snippets].nil?
+          @options[:source]   = true if @options[:source].nil?
+        end
+        @args.map! { |a| "#{a}:#{@options[:lines]}" } if @options[:lines]
+
+        extract_environment_variables
+        @options[:paths] = @args.dup
+
+        merge_profiles
+
+        self
+      end
+
+      def custom_profiles
+        @profiles - [@default_profile]
+      end
+
+      def filters
+        @options.values_at(:name_regexps, :tag_expressions).select{|v| !v.empty?}.first || []
+      end
+
+    protected
+
+      attr_reader :options, :profiles, :expanded_args
+      protected :options, :profiles, :expanded_args
+
+    private
+
+      def non_stdout_formats
+        @options[:formats].select {|format, output| output != @out_stream }
+      end
+
+      def stdout_formats
+        @options[:formats].select {|format, output| output == @out_stream }
+      end
+
+      def extract_environment_variables
+        @args.delete_if do |arg|
+          if arg =~ /^(\w+)=(.*)$/
+            @options[:env_vars][$1] = $2
+            true
+          end
+        end
+      end
+
+      def disable_profile_loading?
+        @disable_profile_loading
+      end
+
+      def merge_profiles
+        if @disable_profile_loading
+          @out_stream.puts "Disabling profiles..."
+          return
+        end
+
+        @profiles << @default_profile if default_profile_should_be_used?
+
+        @profiles.each do |profile|
+          merge_with_profile(profile)
+        end
+
+        @options[:profiles] = @profiles
+      end
+
+      def merge_with_profile(profile)
+        profile_args = profile_loader.args_from(profile)
+        profile_options = Options.parse(
+          profile_args, @out_stream, @error_stream,
+          :skip_profile_information => true,
+          :profile_loader => profile_loader
+        )
+        reverse_merge(profile_options)
+      end
+
+      def default_profile_should_be_used?
+        @profiles.empty? &&
+          profile_loader.lucid_yml_defined? &&
+          profile_loader.has_profile?(@default_profile)
+      end
+
+      def profile_loader
+        @profile_loader ||= ProfileLoader.new
+      end
+
+      def reverse_merge(other_options)
+        @options = other_options.options.merge(@options)
+        @options[:require] += other_options[:require]
+        @options[:excludes] += other_options[:excludes]
+        @options[:name_regexps] += other_options[:name_regexps]
+        @options[:tag_expressions] += other_options[:tag_expressions]
+        @options[:env_vars] = other_options[:env_vars].merge(@options[:env_vars])
+        if @options[:paths].empty?
+          @options[:paths] = other_options[:paths]
+        else
+          @overridden_paths += (other_options[:paths] - @options[:paths])
+        end
+        @options[:source] &= other_options[:source]
+        @options[:snippets] &= other_options[:snippets]
+        @options[:strict] |= other_options[:strict]
+        @options[:dry_run] |= other_options[:dry_run]
+
+        @profiles += other_options.profiles
+        @expanded_args += other_options.expanded_args
+
+        if @options[:formats].empty?
+          @options[:formats] = other_options[:formats]
+        else
+          @options[:formats] += other_options[:formats]
+          @options[:formats] = stdout_formats[0..0] + non_stdout_formats
+        end
+
+        self
+      end
+
+      def list_keywords_and_exit(lang)
+        require 'gherkin/i18n'
+        @out_stream.write(Gherkin::I18n.get(lang).keyword_table)
+        Kernel.exit(0)
+      end
+
+      def list_languages_and_exit
+        require 'gherkin/i18n'
+        @out_stream.write(Gherkin::I18n.language_table)
+        Kernel.exit(0)
+      end
+
+      def default_options
+        {
+          :strict       => false,
+          :require      => [],
+          :dry_run      => false,
+          :formats      => [],
+          :excludes     => [],
+          :tag_expressions  => [],
+          :name_regexps => [],
+          :env_vars     => {},
+          :diff_enabled => true
+        }
+      end
+    end
+
+  end
+end

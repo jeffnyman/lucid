@@ -1,15 +1,15 @@
 #!/usr/bin/env ruby
+
 app_lib = File.expand_path('../lib', File.dirname(__FILE__))
 $LOAD_PATH.unshift(app_lib) unless $LOAD_PATH.include?(app_lib)
 
-require 'lucid/app'
-
-begin
-  Lucid::App.new.run
-rescue SystemExit
-  # noop
-rescue Exception => e
-  STDERR.puts("#{e.message} (#{e.class})")
-  STDERR.puts(e.backtrace.join("\n"))
-  Kernel.exit(1)
+if(ENV['SIMPLECOV'] && RUBY_VERSION =~ /1\.9/)
+  require 'simplecov'
+  SimpleCov.root(File.expand_path(File.dirname(__FILE__) + '/..'))
+  SimpleCov.start
 end
+
+require 'lucid/rspec/disallow_options'
+require 'lucid/cli/main'
+
+Lucid::CLI::App.new(ARGV.dup).start

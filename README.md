@@ -1,33 +1,22 @@
-# Lucid
+[![Build Status](https://secure.travis-ci.org/cucumber/cucumber.png)](http://travis-ci.org/cucumber/cucumber) [![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/cucumber/cucumber)
 
-Lucid is a shiv around BDD tools. Currently the only such tool that Lucid intercepts calls to is Cucumber. The reason for this is that many of these BDD tools are highly opinionated in their structure. While most tools do have a way to force the structure to be your way, how this is done is not always consistent.
+# Cucumber
 
-By way of example, Cucumber expects features to live in a directory called features and step definitions to live in a directory called step_definitions that is under the features directory. When running a feature, all step definitions are loaded unless you explicitly require just the ones you want. If you structure your project differently from how Cucumber expects, then you have to require files explicitly.
+Cucumber is a tool for running automated tests written in plain language. Because they're
+written in plain language, they can be read by anyone on your team. Because they can be 
+read by anyone, you can use them to help improve communication, collaboration and trust on
+your team.
 
-Lucid allows you to specify configuration options that are then passed to Cucumber.
+Where to get more info:
 
-## Installation
+  * The main website: http://cukes.info/
+  * Documentation: https://wiki.github.com/cucumber/cucumber/
+  * API Documentation: http://cukes.info/api/cucumber/ruby/yardoc/
+  * Support forum: https://groups.google.com/forum/?fromgroups#!forum/cukes
+  * IRC channel: irc://irc.freenode.net/cucumber
 
-Add this line to your application's Gemfile:
+See [CONTRIBUTING.md](CONTRIBUTING.md) for info on contributing to Cucumber.
 
-    gem 'lucid'
+## Copyright
 
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install lucid
-
-## Usage
-
-Lucid can be configured project by project through the use of a lucid.yml file that lives in the root of your project. This file will contain configurable options. These options will be indicated by specific declarations.
-
-## Contributing
-
-1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
+Copyright (c) 2008,2009,2010,2011,2012,2013 Aslak Hellesøy and Contributors. See LICENSE for details.
