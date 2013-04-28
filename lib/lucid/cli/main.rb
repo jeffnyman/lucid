@@ -13,7 +13,7 @@ require 'lucid/cli/configuration'
 require 'lucid/cli/drb_client'
 
 module Lucid
-  module Cli
+  module CLI
     class Main
       class << self
         def execute(args)

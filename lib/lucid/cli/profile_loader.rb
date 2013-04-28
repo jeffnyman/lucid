@@ -1,7 +1,7 @@
 require 'yaml'
 
 module Lucid
-  module Cli
+  module CLI
 
     class ProfileLoader
 

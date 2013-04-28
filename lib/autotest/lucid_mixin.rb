@@ -108,7 +108,7 @@ module Autotest::LucidMixin
   def make_lucid_cmd(features_to_run, dirty_features_filename)
     return '' if features_to_run == ''
 
-    profile_loader = Lucid::Cli::ProfileLoader.new
+    profile_loader = Lucid::CLI::ProfileLoader.new
 
     profile ||= "autotest-all" if profile_loader.has_profile?("autotest-all") && features_to_run == :all
     profile ||= "autotest"     if profile_loader.has_profile?("autotest")

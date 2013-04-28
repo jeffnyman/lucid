@@ -4,7 +4,7 @@ require 'lucid/constantize'
 require 'gherkin/tag_expression'
 
 module Lucid
-  module Cli
+  module CLI
     class YmlLoadError < StandardError; end
     class ProfilesNotDefinedError < YmlLoadError; end
     class ProfileNotFound < StandardError; end

@@ -2,7 +2,7 @@ require "drb/drb"
 # This code was taken from the RSpec project and slightly modified.
 
 module Lucid
-  module Cli
+  module CLI
     class DRbClientError < StandardError
     end
     # Runs features on a DRB server, originally created with Spork compatibility in mind.

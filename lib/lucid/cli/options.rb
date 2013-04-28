@@ -3,7 +3,7 @@ require 'lucid/formatter/ansicolor'
 require 'lucid/rb_support/rb_language'
 
 module Lucid
-  module Cli
+  module CLI
 
     class Options
       INDENT = ' ' * 53

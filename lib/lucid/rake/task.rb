@@ -44,7 +44,7 @@ module Lucid
 
         def run
           require 'lucid/cli/main'
-          failure = Lucid::Cli::Main.execute(args)
+          failure = Lucid::CLI::Main.execute(args)
           raise "Lucid failed" if failure
         end
       end
