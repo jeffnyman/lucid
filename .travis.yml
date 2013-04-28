@@ -1,16 +1,15 @@
+script: "rake"
+
 rvm:
   - 2.0.0
   - 1.9.3
   - jruby
 
-# whitelist
 branches:
   only:
     - master
-    - v1.3.x-bugfix
+    - develop
 
 notifications:
-  email:
-    - cukes-devs@googlegroups.com
-  irc:
-    - "irc.freenode.org#cucumber"
+  recipients:
+    - jeffnyman@gmail.com
