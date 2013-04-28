@@ -1,4 +1,4 @@
-require 'lucid/cli/profile_loader'
+require 'lucid/cli/profile'
 require 'lucid/formatter/ansicolor'
 require 'lucid/rb_support/rb_language'
 
@@ -345,7 +345,7 @@ module Lucid
       end
 
       def profile_loader
-        @profile_loader ||= ProfileLoader.new
+        @profile_loader ||= Profile.new
       end
 
       def reverse_merge(other_options)

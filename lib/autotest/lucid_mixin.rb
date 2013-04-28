@@ -1,7 +1,7 @@
 require 'autotest'
 require 'tempfile'
 require 'lucid'
-require 'lucid/cli/profile_loader'
+require 'lucid/cli/profile'
 
 module Autotest::LucidMixin
   def self.included(receiver)
@@ -108,7 +108,7 @@ module Autotest::LucidMixin
   def make_lucid_cmd(features_to_run, dirty_features_filename)
     return '' if features_to_run == ''
 
-    profile_loader = Lucid::CLI::ProfileLoader.new
+    profile_loader = Lucid::CLI::Profile.new
 
     profile ||= "autotest-all" if profile_loader.has_profile?("autotest-all") && features_to_run == :all
     profile ||= "autotest"     if profile_loader.has_profile?("autotest")
