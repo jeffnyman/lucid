@@ -6,7 +6,6 @@ require 'lucid/platform'
 require 'lucid/parser'
 require 'lucid/runtime'
 require 'lucid/cli/main'
-require 'lucid/broadcaster'
 require 'lucid/step_definitions'
 require 'lucid/term/ansicolor'
 
