@@ -5,7 +5,6 @@ require 'logger'
 require 'lucid/parser'
 require 'lucid/feature_file'
 require 'lucid/cli/configuration'
-require 'lucid/cli/drb_client'
 
 module Lucid
   module CLI
@@ -24,7 +23,6 @@ module Lucid
 
       def start(existing_runtime = nil)
         trap_interrupt
-        return @drb_output if run_drb_client
 
         runtime = if existing_runtime
           existing_runtime.configure(configuration)
@@ -60,15 +58,6 @@ module Lucid
       end
 
       private
-
-      # TODO: Determine if this is crap.
-      def run_drb_client
-        return false unless configuration.drb?
-        @drb_output = DRbClient.run(@args, @err, @out, configuration.drb_port)
-        true
-      rescue DRbClientError => e
-        @err.puts "WARNING: #{e.message} Running features locally:"
-      end
 
       def trap_interrupt
         trap('INT') do

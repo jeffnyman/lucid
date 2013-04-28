@@ -26,7 +26,6 @@ module Lucid
         raise("You can't use both --strict and --wip") if strict? && wip?
 
         @options[:tag_expression] = Gherkin::TagExpression.new(@options[:tag_expressions])
-        return @args.replace(@options.expanded_args_without_drb) if drb?
 
         set_environment_variables
       end
@@ -45,14 +44,6 @@ module Lucid
 
       def guess?
         @options[:guess]
-      end
-
-      def drb?
-        @options[:drb]
-      end
-
-      def drb_port
-        @options[:drb_port].to_i if @options[:drb_port]
       end
 
       def dry_run?
@@ -151,12 +142,6 @@ module Lucid
         @options[:formats]
       end
 
-      # TODO: Delete this.
-      ###def options
-        ###warn("Deprecated: Configuration#options will be removed from the next release of Lucid. Please use the configuration object directly instead.")
-        ###@options
-      ###end
-
       def paths
         @options[:paths]
       end
@@ -165,7 +150,6 @@ module Lucid
         return ['features'] if paths.empty?
         paths
       end
-
 
       def formatters(runtime)
         # TODO: Remove the autoformat functionality; use the Gherkin CLI instead.
