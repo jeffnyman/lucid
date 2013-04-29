@@ -12,7 +12,7 @@ require 'lucid/ast/tags'
 require 'lucid/ast/doc_string'
 require 'lucid/ast/outline_table'
 require 'lucid/ast/examples'
-require 'lucid/ast/tree_walker'
+require 'lucid/ast/tdl_walker'
 
 module Lucid
   # Classes in this module represent the Abstract Syntax Tree (AST)

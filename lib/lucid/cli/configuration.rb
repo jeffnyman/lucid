@@ -67,7 +67,7 @@ module Lucid
       end
 
       def build_tree_walker(runtime)
-        Ast::TreeWalker.new(runtime, formatters(runtime), self)
+        Ast::TDLWalker.new(runtime, formatters(runtime), self)
       end
 
       def formatter_class(format)

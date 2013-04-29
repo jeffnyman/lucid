@@ -1,7 +1,7 @@
 module Lucid
   module Ast
     # Walks the AST, executing steps and notifying listeners
-    class TreeWalker
+    class TDLWalker
       attr_accessor :configuration #:nodoc:
       attr_reader   :runtime #:nodoc:
 
