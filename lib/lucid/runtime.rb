@@ -37,8 +37,8 @@ module Lucid
       @orchestrator.load_code_language(language)
     end
 
-    def run!
-      load_step_definitions
+    def run
+      load_execution_context
       fire_after_configuration_hook
 
       tdl_walker = @configuration.establish_tdl_walker(self)
@@ -158,7 +158,6 @@ module Lucid
     end
 
     # Returns Ast::DocString for +string_without_triple_quotes+.
-    #
     def doc_string(string_without_triple_quotes, content_type='', line_offset=0)
       Ast::DocString.new(string_without_triple_quotes,content_type)
     end
@@ -176,14 +175,20 @@ module Lucid
     # (a SpecFile instance) which in turn can be broken down into an AST.
     def specs
       @loader ||= Runtime::SpecsLoader.new(
-        @configuration.feature_files,
+        @configuration.spec_files,
         @configuration.filters,
         @configuration.tag_expression)
       @loader.specs
     end
 
-    def load_step_definitions
-      files = @configuration.support_to_load + @configuration.step_defs_to_load
+    # Loading the execution context means getting all of the loadable files
+    # in the spec repository. Loadable files means any code language type
+    # files. These files are sent to an orchestrator instance that will be
+    # responsible for loading them. The loading of these files provides the
+    # execution context for Lucid as it runs executable specs.
+    def load_execution_context
+      files = @configuration.library_context + @configuration.definition_context
+      log.info("Runtime Load Execution Context: #{files}")
       @orchestrator.load_files(files)
     end
 

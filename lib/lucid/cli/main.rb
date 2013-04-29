@@ -33,7 +33,7 @@ module Lucid
 
         log.debug("Runtime: #{runtime.inspect}")
 
-        runtime.run!
+        runtime.run
         runtime.write_stepdefs_json
         failure = runtime.results.failure? || Lucid.wants_to_quit
         @kernel.exit(failure ? 1 : 0)

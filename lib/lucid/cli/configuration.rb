@@ -72,43 +72,65 @@ module Lucid
         Ast::TDLWalker.new(runtime, formatters(runtime), self)
       end
 
-      def formatter_class(format)
-        if(builtin = Options::LUCID_FORMATS[format])
-          create_object_of(builtin[0])
+      def formatter_class(name)
+        if(lucid_format = Options::LUCID_FORMATS[name])
+          create_object_of(lucid_format[0])
         else
-          create_object_of(format)
+          create_object_of(name)
         end
       end
 
-      def all_files_to_load
+      # The spec_repo is used to get all of the files that are in the
+      # "spec source" location. This location defaults to 'specs' but can
+      # be changed via a command line option. The spec repo will remove
+      # any directory names and, perhaps counter-intuitively, any spec
+      # files. The reason for this is that, by default, the "spec repo"
+      # contains everything that Lucid will need, whether that be
+      # test spec files or code files to support them.
+      def spec_repo
         requires = @options[:require].empty? ? require_dirs : @options[:require]
+
         files = requires.map do |path|
-          path = path.gsub(/\\/, '/')
-          path = path.gsub(/\/$/, '')
+          path = path.gsub(/\\/, '/')   # convert \ to /
+          path = path.gsub(/\/$/, '')   # removing trailing /
           File.directory?(path) ? Dir["#{path}/**/*"] : path
         end.flatten.uniq
+
         extract_excluded_files(files)
+
         files.reject! {|f| !File.file?(f)}
         files.reject! {|f| File.extname(f) == '.feature' }
         files.reject! {|f| f =~ /^http/}
         files.sort
       end
 
-      def step_defs_to_load
-        all_files_to_load.reject {|f| f =~ %r{/support/} }
+      # The definition context refers to any files that are found in the spec
+      # repository that are not spec files and that are not contained in the
+      # library path.
+      # @see Lucid::Runtime.load_execution_context
+      def definition_context
+        spec_repo.reject {|f| f =~ %r{/support/} }
       end
 
-      def support_to_load
-        support_files = all_files_to_load.select {|f| f =~ %r{/support/} }
+      # The library context will store an array of all files that are found
+      # in the library_path. This path defaults to 'lucid' but can be changed
+      # via a command line option.
+      # @see Lucid::Runtime.load_execution_context
+      def library_context
+        support_files = spec_repo.select {|f| f =~ %r{/support/} }
         env_files = support_files.select {|f| f =~ %r{/support/env\..*} }
         other_files = support_files - env_files
         @options[:dry_run] ? other_files : env_files + other_files
       end
 
-      def feature_files
-        potential_feature_files = with_default_features_path(paths).map do |path|
-          path = path.gsub(/\\/, '/') # In case we're on windows. Globs don't work with backslashes.
-          path = path.chomp('/')
+      # The spec files refer to any files found within the spec repository
+      # that match the specification file type. Note that this method is
+      # called from the specs action in a Runtime instance.
+      # @see Lucid::Runtime.specs
+      def spec_files
+        files = with_default_features_path(spec_source).map do |path|
+          path = path.gsub(/\\/, '/')  # convert \ to /
+          path = path.chomp('/')       # removing trailing /
           if File.directory?(path)
             Dir["#{path}/**/*.feature"].sort
           elsif path[0..0] == '@' and # @listfile.txt
@@ -118,13 +140,19 @@ module Lucid
             path
           end
         end.flatten.uniq
-        extract_excluded_files(potential_feature_files)
-        potential_feature_files
+
+        log.info("Spec Files: #{files}")
+
+        extract_excluded_files(files)
+        files
       end
 
-      def feature_dirs
-        dirs = paths.map { |f| File.directory?(f) ? f : File.dirname(f) }.uniq
-        dirs.delete('.') unless paths.include?('.')
+      # A call to spec_location will return the location of a spec repository.
+      def spec_location
+        dirs = spec_source.map { |f| File.directory?(f) ? f : File.dirname(f) }.uniq
+        dirs.delete('.') unless spec_source.include?('.')
+
+        # TODO: Should I be doing this? (See commented line in spec_source)
         with_default_features_path(dirs)
       end
 
@@ -149,10 +177,17 @@ module Lucid
         @options[:formats]
       end
 
-      def paths
+      # The "spec_source" refers to the location of the spec repository. This
+      # value will default to 'specs' but the value of spec_source can be
+      # changed if a repository location is specified on the command line when
+      # calling Lucid.
+      def spec_source
         @options[:paths]
+        #@options[:spec_source].empty? ? ['specs'] : @options[:spec_source]
       end
+
     private
+
       def with_default_features_path(paths)
         return ['features'] if paths.empty?
         paths
@@ -203,7 +238,7 @@ module Lucid
       end
 
       def require_dirs
-        feature_dirs + Dir['vendor/{gems,plugins}/*/lucid']
+        spec_location + Dir['vendor/{gems,plugins}/*/lucid']
       end
 
     end
