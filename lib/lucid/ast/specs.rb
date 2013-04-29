@@ -1,6 +1,6 @@
 module Lucid
   module Ast
-    class Features #:nodoc:
+    class Specs #:nodoc:
       include Enumerable
 
       attr_reader :duration
