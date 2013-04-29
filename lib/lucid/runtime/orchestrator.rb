@@ -6,21 +6,21 @@ module Lucid
 
   class Runtime
 
-    class SupportCode
+    class Orchestrator
 
       require 'forwardable'
       class StepInvoker
         include Gherkin::Rubify
 
-        def initialize(support_code)
-          @support_code = support_code
+        def initialize(orchestrator)
+          @orchestrator = orchestrator
         end
 
         def uri(uri)
         end
 
         def step(step)
-          @support_code.invoke(step.name, Ast::MultilineArgument.from(step.doc_string || step.rows))
+          @orchestrator.invoke(step.name, Ast::MultilineArgument.from(step.doc_string || step.rows))
         end
 
         def eof
@@ -32,8 +32,8 @@ module Lucid
       def initialize(user_interface, configuration={})
         @configuration = Configuration.parse(configuration)
         @runtime_facade = Runtime::Facade.new(self, user_interface)
-        @unsupported_programming_languages = []
-        @programming_languages = []
+        @unsupported_languages = []
+        @supported_languages = []
         @language_map = {}
       end
 
@@ -64,21 +64,24 @@ module Lucid
         end
       end
 
-      # Loads and registers programming language implementation.
-      # Instances are cached, so calling with the same argument
-      # twice will return the same instance.
-      #
-      def load_programming_language(ext)
-        return @language_map[ext] if @language_map[ext]
-        programming_language_class = create_object_of("Lucid::#{ext.capitalize}Support::#{ext.capitalize}Language")
-        programming_language = programming_language_class.new(@runtime_facade)
-        @programming_languages << programming_language
-        @language_map[ext] = programming_language
-        programming_language
+      # The orchestrator will register the the code language and load up an
+      # implementation of that language. There is a provision to make sure
+      # that the language is not already registered.
+      def load_code_language(code)
+        return @language_map[code] if @language_map[code]
+        lucid_language = create_object_of("Lucid::#{code.capitalize}Support::#{code.capitalize}Language")
+        language = lucid_language.new(@runtime_facade)
+        @supported_languages << language
+        @language_map[code] = language
+        language
       end
 
-      def load_files!(files)
-        log.info("Code:\n")
+      # The orchestrator will load only the loadable execution context files.
+      # This is how the orchestrator will, quite literally, orchestrate the
+      # execution of specs with the code logic that supports those specs.
+      # @see Lucid::Runtime.load_execution_context
+      def load_files(files)
+        log.info("Orchestrator Load Files:\n")
         files.each do |file|
           load_file(file)
         end
@@ -87,34 +90,34 @@ module Lucid
 
       def load_files_from_paths(paths)
         files = paths.map { |path| Dir["#{path}/**/*"] }.flatten
-        load_files! files
+        load_files files
       end
 
       def unmatched_step_definitions
-        @programming_languages.map do |programming_language|
+        @supported_languages.map do |programming_language|
           programming_language.unmatched_step_definitions
         end.flatten
       end
 
       def snippet_text(step_keyword, step_name, multiline_arg_class) #:nodoc:
-        load_programming_language('rb') if unknown_programming_language?
-        @programming_languages.map do |programming_language|
+        load_code_language('rb') if unknown_programming_language?
+        @supported_languages.map do |programming_language|
           programming_language.snippet_text(step_keyword, step_name, multiline_arg_class, @configuration.snippet_type)
         end.join("\n")
       end
 
       def unknown_programming_language?
-        @programming_languages.empty?
+        @supported_languages.empty?
       end
 
       def fire_hook(name, *args)
-        @programming_languages.each do |programming_language|
+        @supported_languages.each do |programming_language|
           programming_language.send(name, *args)
         end
       end
 
       def around(scenario, block)
-        @programming_languages.reverse.inject(block) do |blk, programming_language|
+        @supported_languages.reverse.inject(block) do |blk, programming_language|
           proc do
             programming_language.around(scenario) do
               blk.call(scenario)
@@ -124,7 +127,7 @@ module Lucid
       end
 
       def step_definitions
-        @programming_languages.map do |programming_language|
+        @supported_languages.map do |programming_language|
           programming_language.step_definitions
         end.flatten
       end
@@ -153,7 +156,7 @@ module Lucid
       end
 
       def matches(step_name, name_to_report)
-        @programming_languages.map do |programming_language|
+        @supported_languages.map do |programming_language|
           programming_language.step_matches(step_name, name_to_report).to_a
         end.flatten
       end
@@ -174,10 +177,12 @@ module Lucid
         end
       end
 
+      # For each execution context file, the orchestrator will determine the
+      # code language associated with the file.
       def load_file(file)
-        if programming_language = programming_language_for(file)
+        if language = get_language_for(file)
           log.info("  * #{file}\n")
-          programming_language.load_code_file(file)
+          language.load_code_file(file)
         else
           log.info("  * #{file} [NOT SUPPORTED]\n")
         end
@@ -187,14 +192,20 @@ module Lucid
         Lucid.logger
       end
 
-      def programming_language_for(step_def_file)
-        if ext = File.extname(step_def_file)[1..-1]
-          return nil if @unsupported_programming_languages.index(ext)
+      # The orchestrator will attempt to get the programming language for a
+      # specific code file, unless that code file is marked as being an
+      # unsupported language. An object is returned if the code file was part
+      # of a supported language. If an object is returned it will be an
+      # object of this sort:
+      #     Lucid::InterfaceRb::RbLanguage
+      def get_language_for(file)
+        if extension = File.extname(file)[1..-1]
+          return nil if @unsupported_languages.index(extension)
           begin
-            load_programming_language(ext)
+            load_code_language(extension)
           rescue LoadError => e
-            log.info("Failed to load '#{ext}' programming language for file #{step_def_file}: #{e.message}\n")
-            @unsupported_programming_languages << ext
+            log.info("Unable to load '#{extension}' language for file #{file}: #{e.message}\n")
+            @unsupported_languages << extension
             nil
           end
         else

@@ -13,7 +13,7 @@ module Lucid
 
       # Call a Transform with a string from another Transform definition
       def Transform(arg)
-        rb = @__lucid_runtime.load_programming_language('rb')
+        rb = @__lucid_runtime.load_code_language('rb')
         rb.execute_transforms([arg]).first
       end
 
