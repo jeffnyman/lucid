@@ -1,6 +1,6 @@
 require 'lucid/factory'
 require 'lucid/ast/multiline_argument'
-require 'lucid/runtime/for_programming_languages'
+require 'lucid/runtime/facade'
 
 module Lucid
 
@@ -31,7 +31,7 @@ module Lucid
 
       def initialize(user_interface, configuration={})
         @configuration = Configuration.parse(configuration)
-        @runtime_facade = Runtime::ForProgrammingLanguages.new(self, user_interface)
+        @runtime_facade = Runtime::Facade.new(self, user_interface)
         @unsupported_programming_languages = []
         @programming_languages = []
         @language_map = {}

@@ -6,7 +6,7 @@ module Lucid
     #
     # It's a thin class that directs the handul of methods needed by the
     # programming languages to the right place.
-    class ForProgrammingLanguages
+    class Facade
       extend Forwardable
 
       def initialize(support_code, user_interface)
