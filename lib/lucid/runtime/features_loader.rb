@@ -22,17 +22,17 @@ module Lucid
 
         tag_counts = {}
         start = Time.new
-        log.debug("Features:\n")
+        log.info("Features:\n")
         @feature_files.each do |f|
           feature_file = FeatureFile.new(f)
           feature = feature_file.parse(@filters, tag_counts)
           if feature
             features.add_feature(feature)
-            log.debug("  * #{f}\n")
+            log.info("  * #{f}\n")
           end
         end
         duration = Time.now - start
-        log.debug("Parsing feature files took #{format_duration(duration)}\n\n")
+        log.info("Parsing feature files took #{format_duration(duration)}\n\n")
 
         check_tag_limits(tag_counts)
 

@@ -31,6 +31,8 @@ module Lucid
           Runtime.new(configuration)
         end
 
+        log.debug("Runtime: #{runtime.inspect}")
+
         runtime.run!
         runtime.write_stepdefs_json
         failure = runtime.results.failure? || Lucid.wants_to_quit
@@ -54,10 +56,15 @@ module Lucid
         @configuration = Configuration.new(@out, @err)
         @configuration.parse!(@args)
         Lucid.logger = @configuration.log
+        log.debug("Configuration: #{@configuration.inspect}")
         @configuration
       end
 
       private
+
+      def log
+        Lucid.logger
+      end
 
       def trap_interrupt
         trap('INT') do

@@ -11,7 +11,7 @@ module Lucid
         'html'        => ['Lucid::Formatter::Html',        'Generates an HTML report.'],
         'standard'    => ['Lucid::Formatter::Standard',    'Prints the spec as-is, using color if available.'],
         'progress'    => ['Lucid::Formatter::Progress',    'Prints one character per scenario.'],
-        'rerun'       => ['Lucid::Formatter::Rerun',       'Prints failing files with line numbers.'],
+        'rerun'       => ['Lucid::Formatter::Rerun',       'Prints failing specs with line numbers.'],
         'usage'       => ['Lucid::Formatter::Usage',       "Prints where test definitions are used.\n" +
                                                               "#{INDENT}The slowest test definitions (with duration) are\n" +
                                                               "#{INDENT}listed first. If --dry-run is used the duration\n" +
@@ -236,9 +236,6 @@ module Lucid
           opts.on("-w", "--wip", "Fail if there are any passing scenarios.") do
             @options[:wip] = true
           end
-          opts.on("-v", "--verbose", "Show the files and features loaded.") do
-            @options[:verbose] = true
-          end
           opts.on("-g", "--guess", "Guess best match for ambiguous steps.") do
             @options[:guess] = true
           end
@@ -251,6 +248,17 @@ module Lucid
           opts.on("--testdefs DIR", "Lucid will Write test definition metadata to the DIR.") do |dir|
             @options[:testdefs] = dir
           end
+
+          opts.on("-v", "--verbose", "Show detailed information about Lucid execution.") do
+            @options[:verbose] = true
+          end
+
+          opts.on("--debug", "Show behind-the-scenes information about Lucid execution.") do
+            @options[:debug] = true
+          end
+
+          opts.separator ""
+
           opts.on_tail("--version", "Show Lucid version information.") do
             @out_stream.puts Lucid::VERSION
             Kernel.exit(0)

@@ -78,11 +78,11 @@ module Lucid
       end
 
       def load_files!(files)
-        log.debug("Code:\n")
+        log.info("Code:\n")
         files.each do |file|
           load_file(file)
         end
-        log.debug("\n")
+        log.info("\n")
       end
 
       def load_files_from_paths(paths)
@@ -176,10 +176,10 @@ module Lucid
 
       def load_file(file)
         if programming_language = programming_language_for(file)
-          log.debug("  * #{file}\n")
+          log.info("  * #{file}\n")
           programming_language.load_code_file(file)
         else
-          log.debug("  * #{file} [NOT SUPPORTED]\n")
+          log.info("  * #{file} [NOT SUPPORTED]\n")
         end
       end
 
@@ -193,7 +193,7 @@ module Lucid
           begin
             load_programming_language(ext)
           rescue LoadError => e
-            log.debug("Failed to load '#{ext}' programming language for file #{step_def_file}: #{e.message}\n")
+            log.info("Failed to load '#{ext}' programming language for file #{step_def_file}: #{e.message}\n")
             @unsupported_programming_languages << ext
             nil
           end

@@ -13,17 +13,17 @@ module Lucid
 
       attr_reader :out_stream
 
-      def initialize(out_stream = STDOUT, error_stream = STDERR)
+      def initialize(out_stream = STDOUT, err_stream = STDERR)
         @out_stream   = out_stream
-        @error_stream = error_stream
-        @options = Options.new(@out_stream, @error_stream, :default_profile => 'default')
+        @err_stream = err_stream
+        @options = Options.new(@out_stream, @err_stream, :default_profile => 'default')
       end
 
       def parse!(args)
         @args = args
         @options.parse!(args)
         arrange_formats
-        raise("You can't use both --strict and --wip") if strict? && wip?
+        raise("You cannot use both --strict and --wip tags.") if strict? && wip?
 
         @options[:tag_expression] = Gherkin::TagExpression.new(@options[:tag_expressions])
 
@@ -32,6 +32,10 @@ module Lucid
 
       def verbose?
         @options[:verbose]
+      end
+
+      def debug?
+        @options[:debug]
       end
 
       def strict?
@@ -125,8 +129,9 @@ module Lucid
       def log
         logger = Logger.new(@out_stream)
         logger.formatter = LogFormatter.new
-        logger.level = Logger::INFO
-        logger.level = Logger::DEBUG if self.verbose?
+        logger.level = Logger::WARN
+        logger.level = Logger::INFO  if self.verbose?
+        logger.level = Logger::DEBUG if self.debug?
         logger
       end
 
@@ -165,7 +170,7 @@ module Lucid
             formatter_class = formatter_class(format)
             formatter_class.new(runtime, path_or_io, @options)
           rescue Exception => e
-            e.message << "\nError creating formatter: #{format}"
+            e.message << "\nLucid is unable to create the formatter: #{format}"
             raise e
           end
         end
