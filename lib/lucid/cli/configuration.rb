@@ -66,7 +66,7 @@ module Lucid
         @options[:snippet_type] || :regexp
       end
 
-      def build_tree_walker(runtime)
+      def establish_tdl_walker(runtime)
         Ast::TDLWalker.new(runtime, formatters(runtime), self)
       end
 
