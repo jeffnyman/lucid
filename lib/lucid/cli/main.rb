@@ -54,7 +54,7 @@ module Lucid
         return @configuration if @configuration
 
         @configuration = Configuration.new(@out, @err)
-        @configuration.parse!(@args)
+        @configuration.parse(@args)
         Lucid.logger = @configuration.log
         log.debug("Configuration: #{@configuration.inspect}")
         @configuration

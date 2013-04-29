@@ -49,7 +49,7 @@ module Lucid
                            '-I', '--snippet-type']
 
       def self.parse(args, out_stream, error_stream, options = {})
-        new(out_stream, error_stream, options).parse!(args)
+        new(out_stream, error_stream, options).parse(args)
       end
 
       def initialize(out_stream = STDOUT, error_stream = STDERR, options = {})
@@ -74,7 +74,7 @@ module Lucid
         @options[key] = value
       end
 
-      def parse!(args)
+      def parse(args)
         @args = args
         @expanded_args = @args.dup
 

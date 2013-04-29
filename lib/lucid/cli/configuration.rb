@@ -19,10 +19,12 @@ module Lucid
         @options = Options.new(@out_stream, @err_stream, :default_profile => 'default')
       end
 
-      def parse!(args)
+      def parse(args)
         @args = args
-        @options.parse!(args)
-        arrange_formats
+        @options.parse(args)
+        log.debug("Options: #{@options.inspect}")
+
+        prepare_output_formatting
         raise("You cannot use both --strict and --wip tags.") if strict? && wip?
 
         @options[:tag_expression] = Gherkin::TagExpression.new(@options[:tag_expressions])
@@ -85,7 +87,7 @@ module Lucid
           path = path.gsub(/\/$/, '')
           File.directory?(path) ? Dir["#{path}/**/*"] : path
         end.flatten.uniq
-        remove_excluded_files_from(files)
+        extract_excluded_files(files)
         files.reject! {|f| !File.file?(f)}
         files.reject! {|f| File.extname(f) == '.feature' }
         files.reject! {|f| f =~ /^http/}
@@ -116,7 +118,7 @@ module Lucid
             path
           end
         end.flatten.uniq
-        remove_excluded_files_from(potential_feature_files)
+        extract_excluded_files(potential_feature_files)
         potential_feature_files
       end
 
@@ -163,14 +165,16 @@ module Lucid
           return [Formatter::Standard.new(runtime, nil, @options)]
         end
 
-        @options[:formats].map do |format_and_out|
-          format = format_and_out[0]
-          path_or_io = format_and_out[1]
+        @options[:formats].map do |format|
+          # The name will be a name, like 'standard'. The route will be the
+          # location where output is sent to, such as 'STDOUT'.
+          name = format[0]
+          route = format[1]
           begin
-            formatter_class = formatter_class(format)
-            formatter_class.new(runtime, path_or_io, @options)
+            formatter = formatter_class(name)
+            formatter.new(runtime, route, @options)
           rescue Exception => e
-            e.message << "\nLucid is unable to create the formatter: #{format}"
+            e.message << "\nLucid is unable to create the formatter: #{name}"
             raise e
           end
         end
@@ -182,17 +186,19 @@ module Lucid
         end
       end
 
-      def arrange_formats
+      def prepare_output_formatting
         @options[:formats] << ['standard', @out_stream] if @options[:formats].empty?
         @options[:formats] = @options[:formats].sort_by{|f| f[1] == @out_stream ? -1 : 1}
         @options[:formats].uniq!
+
         streams = @options[:formats].map { |(_, stream)| stream }
+
         if streams != streams.uniq
           raise "All but one formatter must use --out, only one can print to each stream (or STDOUT)"
         end
       end
 
-      def remove_excluded_files_from(files)
+      def extract_excluded_files(files)
         files.reject! {|path| @options[:excludes].detect {|pattern| path =~ pattern } }
       end
 
