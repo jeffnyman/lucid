@@ -67,7 +67,7 @@ module Lucid
       end
 
       def formatter_class(format)
-        if(builtin = Options::BUILTIN_FORMATS[format])
+        if(builtin = Options::LUCID_FORMATS[format])
           create_object_of(builtin[0])
         else
           create_object_of(format)
@@ -77,8 +77,8 @@ module Lucid
       def all_files_to_load
         requires = @options[:require].empty? ? require_dirs : @options[:require]
         files = requires.map do |path|
-          path = path.gsub(/\\/, '/') # In case we're on windows. Globs don't work with backslashes.
-          path = path.gsub(/\/$/, '') # Strip trailing slash.
+          path = path.gsub(/\\/, '/')
+          path = path.gsub(/\/$/, '')
           File.directory?(path) ? Dir["#{path}/**/*"] : path
         end.flatten.uniq
         remove_excluded_files_from(files)
@@ -154,8 +154,8 @@ module Lucid
       def formatters(runtime)
         # TODO: Remove the autoformat functionality; use the Gherkin CLI instead.
         if @options[:autoformat]
-          require 'lucid/formatter/pretty'
-          return [Formatter::Pretty.new(runtime, nil, @options)]
+          require 'lucid/formatter/standard'
+          return [Formatter::Standard.new(runtime, nil, @options)]
         end
 
         @options[:formats].map do |format_and_out|
@@ -178,7 +178,7 @@ module Lucid
       end
 
       def arrange_formats
-        @options[:formats] << ['pretty', @out_stream] if @options[:formats].empty?
+        @options[:formats] << ['standard', @out_stream] if @options[:formats].empty?
         @options[:formats] = @options[:formats].sort_by{|f| f[1] == @out_stream ? -1 : 1}
         @options[:formats].uniq!
         streams = @options[:formats].map { |(_, stream)| stream }

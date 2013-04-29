@@ -444,13 +444,13 @@ module Lucid
       end
 
       def to_s(options = {}) #:nodoc:
-        require 'lucid/formatter/pretty'
+        require 'lucid/formatter/standard'
         options = {:color => true, :indent => 2, :prefixes => TO_S_PREFIXES}.merge(options)
         io = StringIO.new
 
         c = Lucid::Term::ANSIColor.coloring?
         Lucid::Term::ANSIColor.coloring = options[:color]
-        formatter = Formatter::Pretty.new(nil, io, options)
+        formatter = Formatter::Standard.new(nil, io, options)
         formatter.instance_variable_set('@indent', options[:indent])
         TreeWalker.new(nil, [formatter]).visit_multiline_arg(self)
 

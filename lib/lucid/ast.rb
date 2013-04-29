@@ -22,7 +22,7 @@ module Lucid
   # in order to encourage a less coupled design in the classes
   # that operate on the AST. The only public method is #accept.
   #
-  # The AST can be traversed with a visitor. See Lucid::Format::Pretty
+  # The AST can be traversed with a visitor. See Lucid::Format::Standard
   # for an example.
   module Ast
   end

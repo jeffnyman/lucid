@@ -117,7 +117,7 @@ module Autotest::LucidMixin
     if profile
       args = ["--profile", profile]
     else
-      args = %w{--format} << (features_to_run == :all ? "progress" : "pretty")
+      args = %w{--format} << (features_to_run == :all ? "progress" : "standard")
     end
     # No --color option as some IDEs (Netbeans) don't output them very well ([31m1 failed step[0m)
     args += %w{--format rerun --out} << dirty_features_filename
