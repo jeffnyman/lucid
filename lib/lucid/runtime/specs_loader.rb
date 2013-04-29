@@ -33,7 +33,7 @@ module Lucid
         log.info("Specs:\n")
 
         @spec_files.each do |f|
-          spec_file = FeatureFile.new(f)
+          spec_file = SpecFile.new(f)
 
           # The "spec_file" will contain a Lucid::SpecFile instance, a
           # primary attribute of which will be a @location instance variable.
