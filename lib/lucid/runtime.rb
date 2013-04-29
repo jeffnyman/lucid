@@ -7,7 +7,7 @@ require 'lucid/load_path'
 require 'lucid/language_support/language_methods'
 require 'lucid/formatter/duration'
 require 'lucid/runtime/user_interface'
-require 'lucid/runtime/features_loader'
+require 'lucid/runtime/specs_loader'
 require 'lucid/runtime/results'
 require 'lucid/runtime/orchestrator'
 
@@ -44,7 +44,7 @@ module Lucid
       tdl_walker = @configuration.establish_tdl_walker(self)
       self.visitor = tdl_walker # Ugly circular dependency, but needed to support World#puts
 
-      tdl_walker.visit_features(features)
+      tdl_walker.visit_features(specs)
     end
 
     def features_paths
@@ -169,12 +169,17 @@ module Lucid
       @orchestrator.fire_hook(:after_configuration, @configuration)
     end
 
-    def features
-      @loader ||= Runtime::FeaturesLoader.new(
+    # The specs is used to begin loading the executable specs. This is as
+    # opposed to loading the execution context (code files), which was
+    # already handled. A SpecsLoader instance is created and this is what
+    # makes sure that a spec file can be turned into a code construct
+    # (a SpecFile instance) which in turn can be broken down into an AST.
+    def specs
+      @loader ||= Runtime::SpecsLoader.new(
         @configuration.feature_files,
         @configuration.filters,
         @configuration.tag_expression)
-      @loader.features
+      @loader.specs
     end
 
     def load_step_definitions

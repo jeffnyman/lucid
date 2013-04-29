@@ -16,6 +16,11 @@ module Lucid
         end
       end
 
+      # The ability to visit specs is the first step in turning a spec into
+      # what is traditionally called a feature. The spec file and the feature
+      # are initially the same concept. When the spec is visited, the high
+      # level construct (feature, ability) is determined.
+      # @see Lucid::Runtime.run
       def visit_features(features)
         broadcast(features) do
           features.accept(self)

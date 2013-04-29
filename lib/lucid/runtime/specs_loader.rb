@@ -2,28 +2,32 @@ require 'lucid/errors'
 
 module Lucid
   class Runtime
-
-    class FeaturesLoader
+    class SpecsLoader
       include Formatter::Duration
 
-      def initialize(feature_files, filters, tag_expression)
-        @feature_files, @filters, @tag_expression = feature_files, filters, tag_expression
+      def initialize(spec_files, filters, tag_expression)
+        @spec_files, @filters, @tag_expression = spec_files, filters, tag_expression
       end
 
-      def features
-        load unless (defined? @features) and @features
-        @features
+      # @see Lucid::Runtime.specs
+      def specs
+        load unless (defined? @specs) and @specs
+        @specs
       end
 
     private
 
+      # The specs loader will call upon load to load up all specs that were
+      # found in the spec repository. During this process, a Specs instance
+      # is created that will hold instances of the high level construct,
+      # which is basically the feature.
       def load
         features = Ast::Features.new
 
         tag_counts = {}
         start = Time.new
-        log.info("Features:\n")
-        @feature_files.each do |f|
+        log.info("Specs:\n")
+        @spec_files.each do |f|
           feature_file = FeatureFile.new(f)
           feature = feature_file.parse(@filters, tag_counts)
           if feature
@@ -32,11 +36,11 @@ module Lucid
           end
         end
         duration = Time.now - start
-        log.info("Parsing feature files took #{format_duration(duration)}\n\n")
+        log.info("Parsing spec files took #{format_duration(duration)}\n\n")
 
         check_tag_limits(tag_counts)
 
-        @features = features
+        @specs = features
       end
 
       def check_tag_limits(tag_counts)
