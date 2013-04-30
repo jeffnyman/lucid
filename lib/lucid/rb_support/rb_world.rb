@@ -5,7 +5,7 @@ module Lucid
     # Defines the basic DSL methods available in all Lucid step definitions.
     #
     # You can, and probably should, extend this DSL with your own methods that
-    # make sense in your domain. For more on that, see {Lucid::RbSupport::RbDsl#World}
+    # make sense in your domain. For more on that, see {Lucid::RbSupport::RbLucid#World}
     module RbWorld
 
       # @private

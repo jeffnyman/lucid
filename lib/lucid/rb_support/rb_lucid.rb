@@ -1,9 +1,9 @@
 module Lucid
   module RbSupport
-    # This module defines the methods you can use to define pure Ruby
-    # Step Definitions and Hooks. This module is mixed into the toplevel
-    # object.
-    module RbDsl
+    # It is necessary for the RbLucid module to be mixed in to the top level
+    # object. This is what allows TDL test definitions and hooks to be
+    # resolved as valid methods.
+    module RbLucid
       class << self
         attr_writer :rb_language
 
@@ -47,19 +47,19 @@ module Lucid
       #    World(MyModule)
       #
       def World(*world_modules, &proc)
-        RbDsl.build_rb_world_factory(world_modules, proc)
+        RbLucid.build_rb_world_factory(world_modules, proc)
       end
 
       # Registers a proc that will run before each Scenario. You can register as many
       # as you want (typically from ruby scripts under <tt>support/hooks.rb</tt>).
       def Before(*tag_expressions, &proc)
-        RbDsl.register_rb_hook('before', tag_expressions, proc)
+        RbLucid.register_rb_hook('before', tag_expressions, proc)
       end
 
       # Registers a proc that will run after each Scenario. You can register as many
       # as you want (typically from ruby scripts under <tt>support/hooks.rb</tt>).
       def After(*tag_expressions, &proc)
-        RbDsl.register_rb_hook('after', tag_expressions, proc)
+        RbLucid.register_rb_hook('after', tag_expressions, proc)
       end
 
       # Registers a proc that will be wrapped around each scenario. The proc
@@ -68,13 +68,13 @@ module Lucid
       # blocks in 1.8), on which it should call the .call method. You can register
       # as many  as you want (typically from ruby scripts under <tt>support/hooks.rb</tt>).
       def Around(*tag_expressions, &proc)
-        RbDsl.register_rb_hook('around', tag_expressions, proc)
+        RbLucid.register_rb_hook('around', tag_expressions, proc)
       end
 
       # Registers a proc that will run after each Step. You can register as
       # as you want (typically from ruby scripts under <tt>support/hooks.rb</tt>).
       def AfterStep(*tag_expressions, &proc)
-        RbDsl.register_rb_hook('after_step', tag_expressions, proc)
+        RbLucid.register_rb_hook('after_step', tag_expressions, proc)
       end
 
       # Registers a proc that will be called with a step definition argument if it
@@ -83,14 +83,14 @@ module Lucid
       # provided proc. The return value of the proc is consequently yielded to the
       # step definition.
       def Transform(regexp, &proc)
-        RbDsl.register_rb_transform(regexp, proc)
+        RbLucid.register_rb_transform(regexp, proc)
       end
 
       # Registers a proc that will run after Lucid is configured. You can register as
       # as you want (typically from ruby scripts under <tt>support/hooks.rb</tt>).
       # TODO: Deprecate this
       def AfterConfiguration(&proc)
-        RbDsl.register_rb_hook('after_configuration', [], proc)
+        RbLucid.register_rb_hook('after_configuration', [], proc)
       end
 
       # Registers a new Ruby StepDefinition. This method is aliased
@@ -110,10 +110,10 @@ module Lucid
       # the context of the <tt>World</tt> object.
       def register_rb_step_definition(regexp, symbol = nil, options = {}, &proc)
         proc_or_sym = symbol || proc
-        RbDsl.register_rb_step_definition(regexp, proc_or_sym, options)
+        RbLucid.register_rb_step_definition(regexp, proc_or_sym, options)
       end
     end
   end
 end
 
-extend(Lucid::RbSupport::RbDsl)
+extend(Lucid::RbSupport::RbLucid)
