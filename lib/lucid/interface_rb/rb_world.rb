@@ -1,11 +1,11 @@
 require 'gherkin/formatter/ansi_escapes'
 
 module Lucid
-  module RbSupport
+  module InterfaceRb
     # Defines the basic DSL methods available in all Lucid step definitions.
     #
     # You can, and probably should, extend this DSL with your own methods that
-    # make sense in your domain. For more on that, see {Lucid::RbSupport::RbLucid#World}
+    # make sense in your domain. For more on that, see {Lucid::InterfaceRb::RbLucid#World}
     module RbWorld
 
       # @private

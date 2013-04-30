@@ -69,7 +69,7 @@ module Lucid
       # that the language is not already registered.
       def load_code_language(code)
         return @language_map[code] if @language_map[code]
-        lucid_language = create_object_of("Lucid::#{code.capitalize}Support::#{code.capitalize}Language")
+        lucid_language = create_object_of("Lucid::Interface#{code.capitalize}::#{code.capitalize}Language")
         language = lucid_language.new(@runtime_facade)
         @supported_languages << language
         @language_map[code] = language

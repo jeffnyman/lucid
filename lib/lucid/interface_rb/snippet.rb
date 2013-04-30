@@ -1,5 +1,5 @@
 module Lucid
-  module RbSupport
+  module InterfaceRb
     module Snippet
 
       ARGUMENT_PATTERNS = ['"(.*?)"', '(\d+)']

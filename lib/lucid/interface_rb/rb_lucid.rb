@@ -1,5 +1,5 @@
 module Lucid
-  module RbSupport
+  module InterfaceRb
     # It is necessary for the RbLucid module to be mixed in to the top level
     # object. This is what allows TDL test definitions and hooks to be
     # resolved as valid methods.
@@ -116,4 +116,4 @@ module Lucid
   end
 end
 
-extend(Lucid::RbSupport::RbLucid)
+extend(Lucid::InterfaceRb::RbLucid)

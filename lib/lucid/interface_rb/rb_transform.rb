@@ -1,5 +1,5 @@
 module Lucid
-  module RbSupport
+  module InterfaceRb
     # A Ruby Transform holds a Regexp and a Proc, and is created
     # by calling <tt>Transform in the <tt>support</tt> ruby files.
     # See also RbLucid.

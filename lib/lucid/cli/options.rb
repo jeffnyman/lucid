@@ -1,6 +1,6 @@
 require 'lucid/cli/profile'
 require 'lucid/formatter/ansicolor'
-require 'lucid/rb_support/rb_language'
+require 'lucid/interface_rb/rb_language'
 
 module Lucid
   module CLI
@@ -223,7 +223,7 @@ module Lucid
           opts.on("-I", "--snippet-type TYPE",
                   "Use different snippet type (Default: regexp).",
                   "Available types:",
-                  *Lucid::RbSupport::RbLanguage.cli_snippet_type_options
+                  *Lucid::InterfaceRb::RbLanguage.cli_snippet_type_options
           ) do |v|
             @options[:snippet_type] = v.to_sym
           end

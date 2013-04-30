@@ -1,10 +1,10 @@
 require 'lucid/core_ext/instance_exec'
-require 'lucid/rb_support/rb_lucid'
-require 'lucid/rb_support/rb_world'
-require 'lucid/rb_support/rb_step_definition'
-require 'lucid/rb_support/rb_hook'
-require 'lucid/rb_support/rb_transform'
-require 'lucid/rb_support/snippet'
+require 'lucid/interface_rb/rb_lucid'
+require 'lucid/interface_rb/rb_world'
+require 'lucid/interface_rb/rb_step_definition'
+require 'lucid/interface_rb/rb_hook'
+require 'lucid/interface_rb/rb_transform'
+require 'lucid/interface_rb/snippet'
 
 begin
   require 'rspec/expectations'
@@ -19,7 +19,7 @@ rescue LoadError
 end
 
 module Lucid
-  module RbSupport
+  module InterfaceRb
     # Raised if a World block returns Nil.
     class NilWorld < StandardError
       def initialize
@@ -34,7 +34,7 @@ module Lucid
         message << "in 2 places:\n\n"
         message << first_proc.backtrace_line('World') << "\n"
         message << second_proc.backtrace_line('World') << "\n\n"
-        message << "Use Ruby modules instead to extend your worlds. See the Lucid::RbSupport::RbLucid#World RDoc\n"
+        message << "Use Ruby modules instead to extend your worlds. See the Lucid::InterfaceRb::RbLucid#World RDoc\n"
         message << "or http://wiki.github.com/cucumber/cucumber/a-whole-new-world.\n\n"
         super(message)
       end
