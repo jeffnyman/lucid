@@ -1,10 +1,10 @@
 require 'lucid/core_ext/instance_exec'
-require 'lucid/rb_support/rb_dsl'
-require 'lucid/rb_support/rb_world'
-require 'lucid/rb_support/rb_step_definition'
-require 'lucid/rb_support/rb_hook'
-require 'lucid/rb_support/rb_transform'
-require 'lucid/rb_support/snippet'
+require 'lucid/interface_rb/rb_lucid'
+require 'lucid/interface_rb/rb_world'
+require 'lucid/interface_rb/rb_step_definition'
+require 'lucid/interface_rb/rb_hook'
+require 'lucid/interface_rb/rb_transform'
+require 'lucid/interface_rb/snippet'
 
 begin
   require 'rspec/expectations'
@@ -19,7 +19,7 @@ rescue LoadError
 end
 
 module Lucid
-  module RbSupport
+  module InterfaceRb
     # Raised if a World block returns Nil.
     class NilWorld < StandardError
       def initialize
@@ -34,26 +34,27 @@ module Lucid
         message << "in 2 places:\n\n"
         message << first_proc.backtrace_line('World') << "\n"
         message << second_proc.backtrace_line('World') << "\n\n"
-        message << "Use Ruby modules instead to extend your worlds. See the Lucid::RbSupport::RbDsl#World RDoc\n"
+        message << "Use Ruby modules instead to extend your worlds. See the Lucid::InterfaceRb::RbLucid#World RDoc\n"
         message << "or http://wiki.github.com/cucumber/cucumber/a-whole-new-world.\n\n"
         super(message)
       end
     end
 
-    # The Ruby implementation of the programming language API.
+    # This module is the Ruby implementation of the TDL API.
     class RbLanguage
       include LanguageSupport::LanguageMethods
-      attr_reader :current_world,
-                  :step_definitions
+      attr_reader :current_world, :step_definitions
 
+      # Get the expressions of various I18n translations of TDL keywords.
+      # In this case the TDL is based on Gherkin.
       Gherkin::I18n.code_keywords.each do |adverb|
-        RbDsl.alias_adverb(adverb)
+        RbLucid.alias_adverb(adverb)
       end
 
       def initialize(runtime)
         @runtime = runtime
         @step_definitions = []
-        RbDsl.rb_language = self
+        RbLucid.rb_language = self
         @world_proc = @world_modules = nil
         @assertions_module = find_best_assertions_module
       end
@@ -118,7 +119,7 @@ module Lucid
       end
 
       def load_code_file(code_file)
-        load File.expand_path(code_file) # This will cause self.add_step_definition, self.add_hook, and self.add_transform to be called from RbDsl
+        load File.expand_path(code_file) # This will cause self.add_step_definition, self.add_hook, and self.add_transform to be called from RbLucid
       end
 
       protected

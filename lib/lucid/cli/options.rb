@@ -1,22 +1,22 @@
 require 'lucid/cli/profile'
 require 'lucid/formatter/ansicolor'
-require 'lucid/rb_support/rb_language'
+require 'lucid/interface_rb/rb_language'
 
 module Lucid
   module CLI
-
     class Options
+
       INDENT = ' ' * 53
-      BUILTIN_FORMATS = {
-        'html'        => ['Lucid::Formatter::Html',        'Generates a nice looking HTML report.'],
-        'pretty'      => ['Lucid::Formatter::Pretty',      'Prints the feature as is - in colours.'],
+      LUCID_FORMATS = {
+        'html'        => ['Lucid::Formatter::Html',        'Generates an HTML report.'],
+        'standard'    => ['Lucid::Formatter::Standard',    'Prints the spec as-is, using color if available.'],
         'progress'    => ['Lucid::Formatter::Progress',    'Prints one character per scenario.'],
-        'rerun'       => ['Lucid::Formatter::Rerun',       'Prints failing files with line numbers.'],
-        'usage'       => ['Lucid::Formatter::Usage',       "Prints where step definitions are used.\n" +
-                                                              "#{INDENT}The slowest step definitions (with duration) are\n" +
+        'rerun'       => ['Lucid::Formatter::Rerun',       'Prints failing specs with line numbers.'],
+        'usage'       => ['Lucid::Formatter::Usage',       "Prints where test definitions are used.\n" +
+                                                              "#{INDENT}The slowest test definitions (with duration) are\n" +
                                                               "#{INDENT}listed first. If --dry-run is used the duration\n" +
-                                                              "#{INDENT}is not shown, and step definitions are sorted by\n" +
-                                                              "#{INDENT}filename instead."],
+                                                              "#{INDENT}is not shown, and test definitions are sorted by\n" +
+                                                              "#{INDENT}file name instead."],
         'stepdefs'    => ['Lucid::Formatter::Stepdefs',    "Prints all test definitions with their locations. Same as\n" +
                                                               "#{INDENT}the usage formatter, except that steps are not printed."],
         'junit'       => ['Lucid::Formatter::Junit',       'Generates a report similar to Ant+JUnit.'],
@@ -24,9 +24,9 @@ module Lucid
         'json_pretty' => ['Lucid::Formatter::JsonPretty',  'Prints the feature as prettified JSON'],
         'debug'       => ['Lucid::Formatter::Debug',       'For developing formatters - prints the calls made to the listeners.']
       }
-      max = BUILTIN_FORMATS.keys.map{|s| s.length}.max
-      FORMAT_HELP = (BUILTIN_FORMATS.keys.sort.map do |key|
-        "  #{key}#{' ' * (max - key.length)} : #{BUILTIN_FORMATS[key][1]}"
+      largest = LUCID_FORMATS.keys.map{|s| s.length}.max
+      FORMAT_LIST = (LUCID_FORMATS.keys.sort.map do |key|
+        "  #{key}#{' ' * (largest - key.length)} : #{LUCID_FORMATS[key][1]}"
       end) + ["Use --format rerun --out features.txt to write out failing",
         "features. You can rerun them with lucid @rerun.txt.",
         "FORMAT can also be the fully qualified class name of",
@@ -43,13 +43,13 @@ module Lucid
       PROFILE_LONG_FLAG = '--profile'
       NO_PROFILE_LONG_FLAG = '--no-profile'
       OPTIONS_WITH_ARGS = ['-r', '--require', '--i18n', '-f', '--format', '-o', '--out',
-                                  '-t', '--tags', '-n', '--name', '-e', '--exclude',
-                                  PROFILE_SHORT_FLAG, PROFILE_LONG_FLAG,
-                                  '-a', '--autoformat', '-l', '--lines', '--port',
-                                  '-I', '--snippet-type']
+                           '-t', '--tags', '-n', '--name', '-e', '--exclude',
+                           PROFILE_SHORT_FLAG, PROFILE_LONG_FLAG,
+                           '-a', '--autoformat', '-l', '--lines', '--port',
+                           '-I', '--snippet-type']
 
       def self.parse(args, out_stream, error_stream, options = {})
-        new(out_stream, error_stream, options).parse!(args)
+        new(out_stream, error_stream, options).parse(args)
       end
 
       def initialize(out_stream = STDOUT, error_stream = STDERR, options = {})
@@ -74,7 +74,7 @@ module Lucid
         @options[key] = value
       end
 
-      def parse!(args)
+      def parse(args)
         @args = args
         @expanded_args = @args.dup
 
@@ -82,13 +82,17 @@ module Lucid
 
         @args.options do |opts|
           opts.banner = ["Lucid: Test Description Language Execution Engine",
-                         "Usage: lucid [options] [ [FILE|DIR|URL][:LINE[:LINE]*] ]+", "",
-                         "Examples:",
-                         "lucid examples/i18n/en/features",
-                         "lucid @rerun.txt (See --format rerun)",
-                         "lucid examples/i18n/it/features/test.feature:6:98:113",
-                         "lucid -s -i http://rubyurl.com/eeCl", "", "",
+                         "Usage: lucid [options] [ [FILE|DIR|URL][:LINE[:LINE]*] ]+", ""
           ].join("\n")
+
+          opts.on("--library-path PATH", "Location of spec project library files.") do |path|
+            @options[:library_path] = path
+          end
+
+          opts.on("--spec-type TYPE", "The file type (extension) for Lucid specifications.") do |type|
+            @options[:spec_type] = type
+          end
+
           opts.on("-r LIBRARY|DIR", "--require LIBRARY|DIR",
                   "Require files before executing the features. If this option",
                   "is not specified, all *.rb files that are siblings or below",
@@ -123,8 +127,8 @@ module Lucid
           end
           opts.on("-f FORMAT", "--format FORMAT",
                   "How Lucid will format spec execution output.",
-                  "(Default: pretty). Available formats:",
-                  *FORMAT_HELP
+                  "(Default: standard). Available formats:",
+                  *FORMAT_LIST
           ) do |v|
             @options[:formats] << [v, @out_stream]
           end
@@ -136,7 +140,7 @@ module Lucid
                   "documentation for a given formatter to see whether to pass",
                   "a file or a directory."
           ) do |v|
-            @options[:formats] << ['pretty', nil] if @options[:formats].empty?
+            @options[:formats] << ['standard', nil] if @options[:formats].empty?
             @options[:formats][-1][1] = v
           end
           opts.on("-t TAG_EXPRESSION", "--tags TAG_EXPRESSION",
@@ -219,7 +223,7 @@ module Lucid
           opts.on("-I", "--snippet-type TYPE",
                   "Use different snippet type (Default: regexp).",
                   "Available types:",
-                  *Lucid::RbSupport::RbLanguage.cli_snippet_type_options
+                  *Lucid::InterfaceRb::RbLanguage.cli_snippet_type_options
           ) do |v|
             @options[:snippet_type] = v.to_sym
           end
@@ -227,17 +231,11 @@ module Lucid
           opts.on("-q", "--quiet", "Alias for --no-snippets --no-source.") do
             @quiet = true
           end
-          opts.on("-b", "--backtrace", "Show full backtrace for all errors.") do
-            Lucid.use_full_backtrace = true
-          end
           opts.on("-S", "--strict", "Fail if there are any undefined or pending steps.") do
             @options[:strict] = true
           end
           opts.on("-w", "--wip", "Fail if there are any passing scenarios.") do
             @options[:wip] = true
-          end
-          opts.on("-v", "--verbose", "Show the files and features loaded.") do
-            @options[:verbose] = true
           end
           opts.on("-g", "--guess", "Guess best match for ambiguous steps.") do
             @options[:guess] = true
@@ -251,10 +249,28 @@ module Lucid
           opts.on("--testdefs DIR", "Lucid will Write test definition metadata to the DIR.") do |dir|
             @options[:testdefs] = dir
           end
+
+          opts.separator ""
+
+          opts.on("-b", "--backtrace", "Show full backtrace for all errors during Lucid execution.") do
+            Lucid.use_full_backtrace = true
+          end
+
+          opts.on("-v", "--verbose", "Show detailed information about Lucid execution.") do
+            @options[:verbose] = true
+          end
+
+          opts.on("--debug", "Show behind-the-scenes information about Lucid execution.") do
+            @options[:debug] = true
+          end
+
+          opts.separator ""
+
           opts.on_tail("--version", "Show Lucid version information.") do
             @out_stream.puts Lucid::VERSION
             Kernel.exit(0)
           end
+
           opts.on_tail("-h", "--help", "Show Lucid execution options.") do
             @out_stream.puts opts.help
             Kernel.exit(0)
@@ -270,9 +286,12 @@ module Lucid
         @args.map! { |a| "#{a}:#{@options[:lines]}" } if @options[:lines]
 
         extract_environment_variables
-        @options[:paths] = @args.dup
 
-        merge_profiles
+        # This line grabs whatever is left over on the command line. That
+        # would have to be the spec repo.
+        @options[:spec_source] = @args.dup
+
+        establish_profile
 
         self
       end
@@ -281,6 +300,7 @@ module Lucid
         @profiles - [@default_profile]
       end
 
+      # @see Lucid::CLI::Configuration.filters
       def filters
         @options.values_at(:name_regexps, :tag_expressions).select{|v| !v.empty?}.first || []
       end
@@ -313,13 +333,13 @@ module Lucid
         @disable_profile_loading
       end
 
-      def merge_profiles
+      def establish_profile
         if @disable_profile_loading
           @out_stream.puts "Disabling profiles..."
           return
         end
 
-        @profiles << @default_profile if default_profile_should_be_used?
+        @profiles << @default_profile if using_default_profile?
 
         @profiles.each do |profile|
           merge_with_profile(profile)
@@ -338,7 +358,7 @@ module Lucid
         reverse_merge(profile_options)
       end
 
-      def default_profile_should_be_used?
+      def using_default_profile?
         @profiles.empty? &&
           profile_loader.lucid_yml_defined? &&
           profile_loader.has_profile?(@default_profile)
@@ -355,10 +375,10 @@ module Lucid
         @options[:name_regexps] += other_options[:name_regexps]
         @options[:tag_expressions] += other_options[:tag_expressions]
         @options[:env_vars] = other_options[:env_vars].merge(@options[:env_vars])
-        if @options[:paths].empty?
-          @options[:paths] = other_options[:paths]
+        if @options[:spec_source].empty?
+          @options[:spec_source] = other_options[:spec_source]
         else
-          @overridden_paths += (other_options[:paths] - @options[:paths])
+          @overridden_paths += (other_options[:spec_source] - @options[:spec_source])
         end
         @options[:source] &= other_options[:source]
         @options[:snippets] &= other_options[:snippets]
@@ -400,7 +420,9 @@ module Lucid
           :tag_expressions  => [],
           :name_regexps => [],
           :env_vars     => {},
-          :diff_enabled => true
+          :diff_enabled => true,
+          :spec_type => "",
+          :library_path => ""
         }
       end
     end

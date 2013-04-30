@@ -6,24 +6,24 @@ module Lucid
     #
     # It's a thin class that directs the handul of methods needed by the
     # programming languages to the right place.
-    class ForProgrammingLanguages
+    class Facade
       extend Forwardable
 
-      def initialize(support_code, user_interface)
-        @support_code, @user_interface = support_code, user_interface
+      def initialize(orchestrator, interface)
+        @orchestrator, @interface = orchestrator, interface
       end
 
-      def_delegators :@user_interface,
+      def_delegators :@interface,
         :embed,
         :ask,
         :puts,
         :features_paths,
         :step_match
 
-      def_delegators :@support_code,
+      def_delegators :@orchestrator,
         :invoke_steps,
         :invoke,
-        :load_programming_language
+        :load_code_language
 
       # Returns a Lucid::Ast::Table for +text_or_table+, which can either
       # be a String:

@@ -1,13 +1,13 @@
 require 'lucid/step_match'
 require 'lucid/core_ext/string'
 require 'lucid/core_ext/proc'
-require 'lucid/rb_support/regexp_argument_matcher'
+require 'lucid/interface_rb/regexp_argument_matcher'
 
 module Lucid
-  module RbSupport
+  module InterfaceRb
     # A Ruby Step Definition holds a Regexp and a Proc, and is created
     # by calling <tt>Given</tt>, <tt>When</tt> or <tt>Then</tt>
-    # in the <tt>step_definitions</tt> ruby files. See also RbDsl.
+    # in the <tt>step_definitions</tt> ruby files. See also RbLucid.
     #
     # Example:
     #

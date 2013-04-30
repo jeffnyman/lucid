@@ -1,7 +1,7 @@
 require 'gherkin/formatter/argument'
 
 module Lucid
-  module RbSupport
+  module InterfaceRb
     class RegexpArgumentMatcher
       def self.arguments_from(regexp, step_name)
         match = regexp.match(step_name)

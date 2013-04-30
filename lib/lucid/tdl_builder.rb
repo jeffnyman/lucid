@@ -5,10 +5,8 @@ require 'lucid/ast/empty_background'
 
 module Lucid
   module Parser
-    # This class conforms to the Gherkin event API and builds the
-    # "legacy" AST. It will be replaced later when we have a new "clean"
-    # AST.
-    class GherkinBuilder
+    # The TDL Builder conforms to the Gherkin event API.
+    class TDLBuilder
       include Gherkin::Rubify
 
       def initialize(path = 'UNKNOWN-FILE')
@@ -97,7 +95,7 @@ module Lucid
       end
 
       def file
-        if Lucid::WINDOWS && !ENV['CUCUMBER_FORWARD_SLASH_PATHS']
+        if Lucid::WINDOWS && !ENV['LUCID_FORWARD_SLASH_PATHS']
           @path.gsub(/\//, '\\')
         else
           @path

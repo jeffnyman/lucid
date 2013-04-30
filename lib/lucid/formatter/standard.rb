@@ -5,14 +5,14 @@ require 'gherkin/formatter/escaping'
 
 module Lucid
   module Formatter
-    # The formatter used for <tt>--format pretty</tt> (the default formatter).
+    # The formatter used for <tt>--format standard</tt> (the default formatter).
     #
     # This formatter prints features to plain text - exactly how they were parsed,
     # just prettier. That means with proper indentation and alignment of table columns.
     #
     # If the output is STDOUT (and not a file), there are bright colours to watch too.
     #
-    class Pretty
+    class Standard
       include FileUtils
       include Console
       include Io
@@ -21,7 +21,7 @@ module Lucid
       attr_reader :runtime
 
       def initialize(runtime, path_or_io, options)
-        @runtime, @io, @options = runtime, ensure_io(path_or_io, "pretty"), options
+        @runtime, @io, @options = runtime, ensure_io(path_or_io, "standard"), options
         @exceptions = []
         @indent = 0
         @prefixes = options[:prefixes] || {}
@@ -43,7 +43,7 @@ module Lucid
           file = File.join(@options[:autoformat], feature.file)
           dir = File.dirname(file)
           mkdir_p(dir) unless File.directory?(dir)
-          @io = ensure_file(file, "pretty")
+          @io = ensure_file(file, "standard")
         end
       end
 

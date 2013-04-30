@@ -1,5 +1,5 @@
 module Lucid
-  module RbSupport
+  module InterfaceRb
     # Wrapper for Before, After and AfterStep hooks
     class RbHook
       attr_reader :tag_expressions

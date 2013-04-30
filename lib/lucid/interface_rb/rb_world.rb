@@ -1,11 +1,11 @@
 require 'gherkin/formatter/ansi_escapes'
 
 module Lucid
-  module RbSupport
+  module InterfaceRb
     # Defines the basic DSL methods available in all Lucid step definitions.
     #
     # You can, and probably should, extend this DSL with your own methods that
-    # make sense in your domain. For more on that, see {Lucid::RbSupport::RbDsl#World}
+    # make sense in your domain. For more on that, see {Lucid::InterfaceRb::RbLucid#World}
     module RbWorld
 
       # @private
@@ -13,7 +13,7 @@ module Lucid
 
       # Call a Transform with a string from another Transform definition
       def Transform(arg)
-        rb = @__lucid_runtime.load_programming_language('rb')
+        rb = @__lucid_runtime.load_code_language('rb')
         rb.execute_transforms([arg]).first
       end
 

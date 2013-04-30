@@ -3,7 +3,7 @@ require 'optparse'
 require 'lucid'
 require 'logger'
 require 'lucid/parser'
-require 'lucid/feature_file'
+require 'lucid/spec_file'
 require 'lucid/cli/configuration'
 
 module Lucid
@@ -31,7 +31,9 @@ module Lucid
           Runtime.new(configuration)
         end
 
-        runtime.run!
+        log.debug("Runtime: #{runtime.inspect}")
+
+        runtime.run
         runtime.write_stepdefs_json
         failure = runtime.results.failure? || Lucid.wants_to_quit
         @kernel.exit(failure ? 1 : 0)
@@ -52,12 +54,17 @@ module Lucid
         return @configuration if @configuration
 
         @configuration = Configuration.new(@out, @err)
-        @configuration.parse!(@args)
+        @configuration.parse(@args)
         Lucid.logger = @configuration.log
+        log.debug("Configuration: #{@configuration.inspect}")
         @configuration
       end
 
       private
+
+      def log
+        Lucid.logger
+      end
 
       def trap_interrupt
         trap('INT') do

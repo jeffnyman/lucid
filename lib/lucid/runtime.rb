@@ -7,9 +7,9 @@ require 'lucid/load_path'
 require 'lucid/language_support/language_methods'
 require 'lucid/formatter/duration'
 require 'lucid/runtime/user_interface'
-require 'lucid/runtime/features_loader'
+require 'lucid/runtime/specs_loader'
 require 'lucid/runtime/results'
-require 'lucid/runtime/support_code'
+require 'lucid/runtime/orchestrator'
 
 module Lucid
   class Runtime
@@ -22,29 +22,29 @@ module Lucid
       require 'lucid/core_ext/disable_mini_and_test_unit_autorun'
       @current_scenario = nil
       @configuration = Configuration.parse(configuration)
-      @support_code = SupportCode.new(self, @configuration)
+      @orchestrator = Orchestrator.new(self, @configuration)
       @results = Results.new(@configuration)
     end
 
     # Allows you to take an existing runtime and change it's configuration
     def configure(new_configuration)
       @configuration = Configuration.parse(new_configuration)
-      @support_code.configure(@configuration)
+      @orchestrator.configure(@configuration)
       @results.configure(@configuration)
     end
 
-    def load_programming_language(language)
-      @support_code.load_programming_language(language)
+    def load_code_language(language)
+      @orchestrator.load_code_language(language)
     end
 
-    def run!
-      load_step_definitions
+    def run
+      load_execution_context
       fire_after_configuration_hook
 
-      tree_walker = @configuration.build_tree_walker(self)
-      self.visitor = tree_walker # Ugly circular dependency, but needed to support World#puts
+      tdl_walker = @configuration.establish_tdl_walker(self)
+      self.visitor = tdl_walker # Ugly circular dependency, but needed to support World#puts
 
-      tree_walker.visit_features(features)
+      tdl_walker.visit_features(specs)
     end
 
     def features_paths
@@ -64,15 +64,15 @@ module Lucid
     end
 
     def step_match(step_name, name_to_report=nil) #:nodoc:
-      @support_code.step_match(step_name, name_to_report)
+      @orchestrator.step_match(step_name, name_to_report)
     end
 
     def unmatched_step_definitions
-      @support_code.unmatched_step_definitions
+      @orchestrator.unmatched_step_definitions
     end
 
     def snippet_text(step_keyword, step_name, multiline_arg_class) #:nodoc:
-      @support_code.snippet_text(Gherkin::I18n.code_keyword_for(step_keyword), step_name, multiline_arg_class)
+      @orchestrator.snippet_text(Gherkin::I18n.code_keyword_for(step_keyword), step_name, multiline_arg_class)
     end
 
     def with_hooks(scenario, skip_hooks=false)
@@ -89,7 +89,7 @@ module Lucid
         return
       end
 
-      @support_code.around(scenario, block)
+      @orchestrator.around(scenario, block)
     end
 
     def before_and_after(scenario, skip_hooks=false) #:nodoc:
@@ -102,28 +102,28 @@ module Lucid
     def before(scenario) #:nodoc:
       return if @configuration.dry_run? || @current_scenario
       @current_scenario = scenario
-      @support_code.fire_hook(:before, scenario)
+      @orchestrator.fire_hook(:before, scenario)
     end
 
     def after(scenario) #:nodoc:
       @current_scenario = nil
       return if @configuration.dry_run?
-      @support_code.fire_hook(:after, scenario)
+      @orchestrator.fire_hook(:after, scenario)
     end
 
     def after_step #:nodoc:
       return if @configuration.dry_run?
-      @support_code.fire_hook(:execute_after_step, @current_scenario)
+      @orchestrator.fire_hook(:execute_after_step, @current_scenario)
     end
 
     def unknown_programming_language?
-      @support_code.unknown_programming_language?
+      @orchestrator.unknown_programming_language?
     end
 
     def write_stepdefs_json
       if(@configuration.testdefs)
         stepdefs = []
-        @support_code.step_definitions.sort{|a,b| a.to_hash['source'] <=> a.to_hash['source']}.each do |stepdef|
+        @orchestrator.step_definitions.sort{|a,b| a.to_hash['source'] <=> a.to_hash['source']}.each do |stepdef|
           stepdef_hash = stepdef.to_hash
           steps = []
           features.each do |feature|
@@ -158,7 +158,6 @@ module Lucid
     end
 
     # Returns Ast::DocString for +string_without_triple_quotes+.
-    #
     def doc_string(string_without_triple_quotes, content_type='', line_offset=0)
       Ast::DocString.new(string_without_triple_quotes,content_type)
     end
@@ -166,20 +165,31 @@ module Lucid
   private
 
     def fire_after_configuration_hook #:nodoc
-      @support_code.fire_hook(:after_configuration, @configuration)
+      @orchestrator.fire_hook(:after_configuration, @configuration)
     end
 
-    def features
-      @loader ||= Runtime::FeaturesLoader.new(
-        @configuration.feature_files,
+    # The specs is used to begin loading the executable specs. This is as
+    # opposed to loading the execution context (code files), which was
+    # already handled. A SpecsLoader instance is created and this is what
+    # makes sure that a spec file can be turned into a code construct
+    # (a SpecFile instance) which in turn can be broken down into an AST.
+    def specs
+      @loader ||= Runtime::SpecsLoader.new(
+        @configuration.spec_files,
         @configuration.filters,
         @configuration.tag_expression)
-      @loader.features
+      @loader.specs
     end
 
-    def load_step_definitions
-      files = @configuration.support_to_load + @configuration.step_defs_to_load
-      @support_code.load_files!(files)
+    # Loading the execution context means getting all of the loadable files
+    # in the spec repository. Loadable files means any code language type
+    # files. These files are sent to an orchestrator instance that will be
+    # responsible for loading them. The loading of these files provides the
+    # execution context for Lucid as it runs executable specs.
+    def load_execution_context
+      files = @configuration.library_context + @configuration.definition_context
+      log.info("Runtime Load Execution Context: #{files}")
+      @orchestrator.load_files(files)
     end
 
     def log

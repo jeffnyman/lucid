@@ -1,5 +1,5 @@
 require 'lucid/ast/comment'
-require 'lucid/ast/features'
+require 'lucid/ast/specs'
 require 'lucid/ast/feature'
 require 'lucid/ast/background'
 require 'lucid/ast/scenario'
@@ -12,7 +12,7 @@ require 'lucid/ast/tags'
 require 'lucid/ast/doc_string'
 require 'lucid/ast/outline_table'
 require 'lucid/ast/examples'
-require 'lucid/ast/tree_walker'
+require 'lucid/ast/tdl_walker'
 
 module Lucid
   # Classes in this module represent the Abstract Syntax Tree (AST)
@@ -22,7 +22,7 @@ module Lucid
   # in order to encourage a less coupled design in the classes
   # that operate on the AST. The only public method is #accept.
   #
-  # The AST can be traversed with a visitor. See Lucid::Format::Pretty
+  # The AST can be traversed with a visitor. See Lucid::Format::Standard
   # for an example.
   module Ast
   end
