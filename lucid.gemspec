@@ -18,6 +18,7 @@ Gem::Specification.new do |gem|
   gem.required_ruby_version = ">= 1.9.3"
   gem.rubygems_version      = ">= 1.6.1"
 
+  gem.add_runtime_dependency 'rake', '>= 10.0.4'
   gem.add_runtime_dependency 'builder', '>= 2.1.2'
   gem.add_runtime_dependency 'diff-lcs', '>= 1.1.3'
   gem.add_runtime_dependency 'gherkin', '~> 2.12.0'

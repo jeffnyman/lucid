@@ -5,13 +5,13 @@ require 'gherkin/parser/parser'
 
 module Lucid
   class SpecFile
-    SPEC_PATTERN = /^([\w\W]*?):([\d:]+)$/ #:nodoc:
+    SPEC_PATTERN     = /^([\w\W]*?):([\d:]+)$/ #:nodoc:
     DEFAULT_ENCODING = "UTF-8" #:nodoc:
     NON_EXEC_PATTERN = /^\s*#|^\s*$/ #:nodoc:
     ENCODING_PATTERN = /^\s*#\s*encoding\s*:\s*([^\s]+)/ #:nodoc:
 
     # The +uri+ argument is the location of the source. It can be a path
-    # or a path:line1:line2 etc. If +source+ is passed, +uri+ is ignored.
+    # or a path:line1:line2 etc.
     def initialize(uri, source=nil)
       @source = source
       _, @path, @lines = *SPEC_PATTERN.match(uri)
@@ -67,13 +67,17 @@ module Lucid
           end
           source
         rescue Errno::EACCES => e
-          e.message << "\nLucid was unable to open #{File.expand_path(@path)}"
+          e.message << "\nLucid was unable to access #{File.expand_path(@path)}."
           raise e
         rescue Errno::ENOENT => e
-          #e.message << ". Please create a #{@path} directory to get started."
-          e.message << ["\nYou don't have a 'specs' directory.  This is the default specification",
-                        "directory that Lucid will use if one is not specified. So either create",
-                        "that directory or specify where your test repository is located."].join("\n")
+          if @path == "specs"
+            e.message << ["\nYou don't have a 'specs' directory. This is the default specification",
+                          "directory that Lucid will use if one is not specified. So either create",
+                          "that directory or specify where your test repository is located."].join("\n")
+          else
+            e.message << ["\nThere is no '#{@path}' directory. Since that is what you specified as",
+                          "your spec repository, this directory must be present."].join("\n")
+          end
           raise e
         end
       end

@@ -82,13 +82,17 @@ module Lucid
 
         @args.options do |opts|
           opts.banner = ["Lucid: Test Description Language Execution Engine",
-                         "Usage: lucid [options] [ [FILE|DIR|URL][:LINE[:LINE]*] ]+", "",
-                         "Examples:",
-                         "lucid examples/i18n/en/features",
-                         "lucid @rerun.txt (See --format rerun)",
-                         "lucid examples/i18n/it/features/test.feature:6:98:113",
-                         "lucid -s -i http://rubyurl.com/eeCl", "", "",
+                         "Usage: lucid [options] [ [FILE|DIR|URL][:LINE[:LINE]*] ]+", ""
           ].join("\n")
+
+          opts.on("--library-path PATH", "Location of spec project library files.") do |path|
+            @options[:library_path] = path
+          end
+
+          opts.on("--spec-type TYPE", "The file type (extension) for Lucid specifications.") do |type|
+            @options[:spec_type] = type
+          end
+
           opts.on("-r LIBRARY|DIR", "--require LIBRARY|DIR",
                   "Require files before executing the features. If this option",
                   "is not specified, all *.rb files that are siblings or below",
@@ -227,9 +231,6 @@ module Lucid
           opts.on("-q", "--quiet", "Alias for --no-snippets --no-source.") do
             @quiet = true
           end
-          opts.on("-b", "--backtrace", "Show full backtrace for all errors.") do
-            Lucid.use_full_backtrace = true
-          end
           opts.on("-S", "--strict", "Fail if there are any undefined or pending steps.") do
             @options[:strict] = true
           end
@@ -249,6 +250,12 @@ module Lucid
             @options[:testdefs] = dir
           end
 
+          opts.separator ""
+
+          opts.on("-b", "--backtrace", "Show full backtrace for all errors during Lucid execution.") do
+            Lucid.use_full_backtrace = true
+          end
+
           opts.on("-v", "--verbose", "Show detailed information about Lucid execution.") do
             @options[:verbose] = true
           end
@@ -263,6 +270,7 @@ module Lucid
             @out_stream.puts Lucid::VERSION
             Kernel.exit(0)
           end
+
           opts.on_tail("-h", "--help", "Show Lucid execution options.") do
             @out_stream.puts opts.help
             Kernel.exit(0)
@@ -281,9 +289,9 @@ module Lucid
 
         # This line grabs whatever is left over on the command line. That
         # would have to be the spec repo.
-        @options[:paths] = @args.dup
+        @options[:spec_source] = @args.dup
 
-        merge_profiles
+        establish_profile
 
         self
       end
@@ -325,13 +333,13 @@ module Lucid
         @disable_profile_loading
       end
 
-      def merge_profiles
+      def establish_profile
         if @disable_profile_loading
           @out_stream.puts "Disabling profiles..."
           return
         end
 
-        @profiles << @default_profile if default_profile_should_be_used?
+        @profiles << @default_profile if using_default_profile?
 
         @profiles.each do |profile|
           merge_with_profile(profile)
@@ -350,7 +358,7 @@ module Lucid
         reverse_merge(profile_options)
       end
 
-      def default_profile_should_be_used?
+      def using_default_profile?
         @profiles.empty? &&
           profile_loader.lucid_yml_defined? &&
           profile_loader.has_profile?(@default_profile)
@@ -367,10 +375,10 @@ module Lucid
         @options[:name_regexps] += other_options[:name_regexps]
         @options[:tag_expressions] += other_options[:tag_expressions]
         @options[:env_vars] = other_options[:env_vars].merge(@options[:env_vars])
-        if @options[:paths].empty?
-          @options[:paths] = other_options[:paths]
+        if @options[:spec_source].empty?
+          @options[:spec_source] = other_options[:spec_source]
         else
-          @overridden_paths += (other_options[:paths] - @options[:paths])
+          @overridden_paths += (other_options[:spec_source] - @options[:spec_source])
         end
         @options[:source] &= other_options[:source]
         @options[:snippets] &= other_options[:snippets]
@@ -412,7 +420,9 @@ module Lucid
           :tag_expressions  => [],
           :name_regexps => [],
           :env_vars     => {},
-          :diff_enabled => true
+          :diff_enabled => true,
+          :spec_type => "",
+          :library_path => ""
         }
       end
     end

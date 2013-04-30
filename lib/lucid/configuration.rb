@@ -31,7 +31,7 @@ module Lucid
     end
 
     def paths
-      @options[:paths]
+      @options[:spec_source]
     end
 
     def autoload_code_paths

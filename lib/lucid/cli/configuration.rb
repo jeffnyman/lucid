@@ -99,7 +99,7 @@ module Lucid
         extract_excluded_files(files)
 
         files.reject! {|f| !File.file?(f)}
-        files.reject! {|f| File.extname(f) == '.feature' }
+        files.reject! {|f| File.extname(f) == ".#{spec_type}" }
         files.reject! {|f| f =~ /^http/}
         files.sort
       end
@@ -109,7 +109,7 @@ module Lucid
       # library path.
       # @see Lucid::Runtime.load_execution_context
       def definition_context
-        spec_repo.reject {|f| f =~ %r{/support/} }
+        spec_repo.reject { |f| f=~ %r{/#{library_path}/} }
       end
 
       # The library context will store an array of all files that are found
@@ -117,10 +117,14 @@ module Lucid
       # via a command line option.
       # @see Lucid::Runtime.load_execution_context
       def library_context
-        support_files = spec_repo.select {|f| f =~ %r{/support/} }
-        env_files = support_files.select {|f| f =~ %r{/support/env\..*} }
-        other_files = support_files - env_files
-        @options[:dry_run] ? other_files : env_files + other_files
+        ###library_files = spec_repo.select {|f| f =~ %r{/support/} }
+        ###driver_file = library_files.select {|f| f =~ %r{/support/env\..*} }
+
+        library_files = spec_repo.select { |f| f =~ %r{/#{library_path}/} }
+        driver_file = library_files.select {|f| f =~ %r{/#{library_path}/env\..*} }
+        non_driver_files = library_files - driver_file
+
+        @options[:dry_run] ? non_driver_files : driver_file + non_driver_files
       end
 
       # The spec files refer to any files found within the spec repository
@@ -132,7 +136,7 @@ module Lucid
           path = path.gsub(/\\/, '/')  # convert \ to /
           path = path.chomp('/')       # removing trailing /
           if File.directory?(path)
-            Dir["#{path}/**/*.feature"].sort
+            Dir["#{path}/**/*.#{spec_type}"].sort
           elsif path[0..0] == '@' and # @listfile.txt
               File.file?(path[1..-1]) # listfile.txt is a file
             IO.read(path[1..-1]).split
@@ -154,6 +158,21 @@ module Lucid
 
         # TODO: Should I be doing this? (See commented line in spec_source)
         with_default_features_path(dirs)
+      end
+
+      # The "spec_type" refers to the file type (or extension) of spec files.
+      # This is how Lucid will recognize the files that should be treated as
+      # specs within a spec repository.
+      def spec_type
+        @options[:spec_type].empty? ? 'spec' : @options[:spec_type]
+      end
+
+      # The "library_path" refers to the location within the spec repository
+      # that holds the logic that supports the basic operations of the
+      # execution. This value will default to 'lucid' but the value of
+      # library_path can be changed via a command line option.
+      def library_path
+        @options[:library_path].empty? ? 'lucid' : @options[:library_path]
       end
 
       def log
@@ -182,14 +201,13 @@ module Lucid
       # changed if a repository location is specified on the command line when
       # calling Lucid.
       def spec_source
-        @options[:paths]
-        #@options[:spec_source].empty? ? ['specs'] : @options[:spec_source]
+        @options[:spec_source]
       end
 
     private
 
       def with_default_features_path(paths)
-        return ['features'] if paths.empty?
+        return ['specs'] if paths.empty?
         paths
       end
 
