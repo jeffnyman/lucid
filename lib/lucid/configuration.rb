@@ -46,7 +46,7 @@ module Lucid
 
     def default_options
       {
-        :autoload_code_paths => ['features/support', 'features/step_definitions']
+        :autoload_code_paths => ['common/support', 'steps']
       }
     end
   end

@@ -125,7 +125,7 @@ module Autotest::LucidMixin
 
     # Unless I do this, all the steps turn up undefined during the rerun...
     unless features_to_run == :all
-      args << 'features/step_definitions' << 'features/support'
+      args << 'steps' << 'common/support'
     end
 
     args = args.join(' ')
