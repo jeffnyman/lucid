@@ -6,7 +6,7 @@ module Lucid
       include Thor::Actions
 
       argument :name,    type: :string,  desc: "Name of the project."
-      argument :browser, type: :string,  desc: "Use for browser-based testing."
+      ##argument :browser, type: :string,  desc: "Use for browser-based testing."
       argument :driver,  type: :string,  desc: "Framework driver to use."
 
       desc "Generates a project structure."
@@ -16,8 +16,8 @@ module Lucid
       end
 
       def spit_back_values
-        puts "Create project '#{name}'"
-        puts "Use for browser-based apps." if use_browser
+        puts "Create project '#{name}' using #{driver}."
+        #puts "Use for browser-based apps." if use_browser
       end
 
       def create_project_directory
@@ -39,11 +39,33 @@ module Lucid
         copy_file "errors.rb", "#{name}/common/support/errors.rb"
       end
 
+      def copy_browser
+        if driver.downcase == 'symbiont'
+          copy_file "browser-symbiont.rb", "#{name}/common/support/browser.rb"
+        end
+      end
+
+      def copy_environment
+        if driver.downcase == 'symbiont'
+          copy_file "env-symbiont.rb", "#{name}/common/support/env.rb"
+        end
+      end
+
+      def copy_events
+        if driver.downcase == 'symbiont'
+          copy_file "events-symbiont.rb", "#{name}/common/support/events.rb"
+        end
+      end
+
+      def copy_gemfile
+        template "Gemfile.tt", "#{name}/Gemfile"
+      end
+
     private
 
-      def use_browser
-        browser == 'true'
-      end
+      #def use_browser
+      #  browser == 'true'
+      #end
     end
   end
 end
