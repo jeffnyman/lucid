@@ -42,7 +42,7 @@ module Lucid
       fire_after_configuration_hook
 
       tdl_walker = @configuration.establish_tdl_walker(self)
-      self.visitor = tdl_walker # Ugly circular dependency, but needed to support World#puts
+      self.visitor = tdl_walker # Ugly circular dependency, but needed to support Domain#puts
 
       tdl_walker.visit_features(specs)
     end

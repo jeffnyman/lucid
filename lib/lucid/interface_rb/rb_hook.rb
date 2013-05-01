@@ -11,7 +11,7 @@ module Lucid
       end
 
       def invoke(location, argument, &block)
-        @rb_language.current_world.lucid_instance_exec(false, location, *[argument, block].compact, &@proc)
+        @rb_language.current_domain.lucid_instance_exec(false, location, *[argument, block].compact, &@proc)
       end
     end
   end

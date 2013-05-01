@@ -2,13 +2,13 @@ require 'gherkin/formatter/ansi_escapes'
 
 module Lucid
   module InterfaceRb
-    # Defines the basic DSL methods available in all Lucid step definitions.
+    # Defines the basic DSL methods available in all Lucid test definitions.
     #
     # You can, and probably should, extend this DSL with your own methods that
-    # make sense in your domain. For more on that, see {Lucid::InterfaceRb::RbLucid#World}
-    module RbWorld
+    # make sense in your own domain.
+    # @see Lucid::InterfaceRb::RbLucid#Domain
+    module RbDomain
 
-      # @private
       AnsiEscapes = Gherkin::Formatter::AnsiEscapes
 
       # Call a Transform with a string from another Transform definition
@@ -118,7 +118,7 @@ module Lucid
         end
       end
 
-      # Prints the list of modules that are included in the World
+      # Prints the list of modules that are included in the Domain
       def inspect
         modules = [self.class]
         (class << self; self; end).instance_eval do

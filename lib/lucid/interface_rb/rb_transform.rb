@@ -29,7 +29,7 @@ module Lucid
       def invoke(arg)
         if matched = match(arg)
           args = matched.captures.empty? ? [arg] : matched.captures
-          @rb_language.current_world.lucid_instance_exec(true, @regexp.inspect, *args, &@proc)
+          @rb_language.current_domain.lucid_instance_exec(true, @regexp.inspect, *args, &@proc)
         end
       end
 

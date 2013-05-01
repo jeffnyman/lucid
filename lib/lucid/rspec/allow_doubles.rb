@@ -5,7 +5,7 @@ require 'rspec/core'
 # stand in place of a production object during execution.
 
 RSpec.configuration.configure_mock_framework
-World(RSpec::Core::MockFrameworkAdapter)
+Domain(RSpec::Core::MockFrameworkAdapter)
 
 Before do
   RSpec::Mocks::setup(self)

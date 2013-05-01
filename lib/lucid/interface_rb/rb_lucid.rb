@@ -11,8 +11,8 @@ module Lucid
           alias_method adverb, :register_rb_step_definition
         end
 
-        def build_rb_world_factory(world_modules, proc)
-          @rb_language.build_rb_world_factory(world_modules, proc)
+        def build_rb_world_factory(domain_modules, proc)
+          @rb_language.build_rb_world_factory(domain_modules, proc)
         end
 
         def register_rb_hook(phase, tag_names, proc)
@@ -28,9 +28,9 @@ module Lucid
         end
       end
 
-      # Registers any number of +world_modules+ (Ruby Modules) and/or a Proc.
+      # Registers any number of +domain_modules+ (Ruby Modules) and/or a Proc.
       # The +proc+ will be executed once before each scenario to create an
-      # Object that the scenario's steps will run within. Any +world_modules+
+      # Object that the scenario's steps will run within. Any +domain_modules+
       # will be mixed into this Object (via Object#extend).
       #
       # This method is typically called from one or more Ruby scripts under
@@ -40,14 +40,14 @@ module Lucid
       #
       # Lucid will not yield anything to the +proc+. Examples:
       #
-      #    World do
+      #    Domain do
       #      MyClass.new
       #    end
       #
-      #    World(MyModule)
+      #    Domain(MyModule)
       #
-      def World(*world_modules, &proc)
-        RbLucid.build_rb_world_factory(world_modules, proc)
+      def Domain(*domain_modules, &proc)
+        RbLucid.build_rb_world_factory(domain_modules, proc)
       end
 
       # Registers a proc that will run before each Scenario. You can register as many
@@ -98,16 +98,16 @@ module Lucid
       # also to the i18n translations whenever a feature of a
       # new language is loaded.
       #
-      # If provided, the +symbol+ is sent to the <tt>World</tt> object
-      # as defined by #World. A new <tt>World</tt> object is created
+      # If provided, the +symbol+ is sent to the <tt>Domain</tt> object
+      # as defined by #Domain. A new <tt>Domain</tt> object is created
       # for each scenario and is shared across step definitions within
       # that scenario. If the +options+ hash contains an <tt>:on</tt>
       # key, the value for this is assumed to be a proc. This proc
-      # will be executed in the context of the <tt>World</tt> object
+      # will be executed in the context of the <tt>Domain</tt> object
       # and then sent the +symbol+.
       #
       # If no +symbol+ if provided then the +&proc+ gets executed in
-      # the context of the <tt>World</tt> object.
+      # the context of the <tt>Domain</tt> object.
       def register_rb_step_definition(regexp, symbol = nil, options = {}, &proc)
         proc_or_sym = symbol || proc
         RbLucid.register_rb_step_definition(regexp, proc_or_sym, options)

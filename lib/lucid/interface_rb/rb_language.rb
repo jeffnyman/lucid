@@ -20,21 +20,21 @@ end
 
 module Lucid
   module InterfaceRb
-    # Raised if a World block returns Nil.
-    class NilWorld < StandardError
+    # Raised if a Domain block returns Nil.
+    class NilDomain < StandardError
       def initialize
-        super("World procs should never return nil")
+        super("Domain procs should never return nil")
       end
     end
 
-    # Raised if there are 2 or more World blocks.
-    class MultipleWorld < StandardError
+    # Raised if there are 2 or more Domain blocks.
+    class MultipleDomain < StandardError
       def initialize(first_proc, second_proc)
-        message = "You can only pass a proc to #World once, but it's happening\n"
-        message << "in 2 places:\n\n"
-        message << first_proc.backtrace_line('World') << "\n"
-        message << second_proc.backtrace_line('World') << "\n\n"
-        message << "Use Ruby modules instead to extend your worlds. See the Lucid::InterfaceRb::RbLucid#World RDoc\n"
+        message = "You can only pass a proc to #Domain once, but it's happening\n"
+        message << "in two places:\n\n"
+        message << first_proc.backtrace_line('Domain') << "\n"
+        message << second_proc.backtrace_line('Domain') << "\n\n"
+        message << "Use Ruby modules instead to extend your worlds. See the Lucid::InterfaceRb::RbLucid#Domain RDoc\n"
         message << "or http://wiki.github.com/cucumber/cucumber/a-whole-new-world.\n\n"
         super(message)
       end
@@ -43,7 +43,7 @@ module Lucid
     # This module is the Ruby implementation of the TDL API.
     class RbLanguage
       include Interface::InterfaceMethods
-      attr_reader :current_world, :step_definitions
+      attr_reader :current_domain, :step_definitions
 
       # Get the expressions of various I18n translations of TDL keywords.
       # In this case the TDL is based on Gherkin.
@@ -55,7 +55,7 @@ module Lucid
         @runtime = runtime
         @step_definitions = []
         RbLucid.rb_language = self
-        @world_proc = @world_modules = nil
+        @domain_proc = @domain_modules = nil
         @assertions_module = find_best_assertions_module
       end
 
@@ -109,13 +109,13 @@ module Lucid
         step_definition
       end
 
-      def build_rb_world_factory(world_modules, proc)
+      def build_rb_world_factory(domain_modules, proc)
         if(proc)
-          raise MultipleWorld.new(@world_proc, proc) if @world_proc
-          @world_proc = proc
+          raise MultipleDomain.new(@domain_proc, proc) if @domain_proc
+          @domain_proc = proc
         end
-        @world_modules ||= []
-        @world_modules += world_modules
+        @domain_modules ||= []
+        @domain_modules += domain_modules
       end
 
       def load_code_file(code_file)
@@ -129,40 +129,40 @@ module Lucid
       end
 
       def end_scenario
-        @current_world = nil
+        @current_domain = nil
       end
 
       private
 
       def create_world
-        if(@world_proc)
-          @current_world = @world_proc.call
-          check_nil(@current_world, @world_proc)
+        if(@domain_proc)
+          @current_domain = @domain_proc.call
+          check_nil(@current_domain, @domain_proc)
         else
-          @current_world = Object.new
+          @current_domain = Object.new
         end
       end
 
       def extend_world
-        @current_world.extend(RbWorld)
-        @current_world.extend(@assertions_module)
-        (@world_modules || []).each do |mod|
-          @current_world.extend(mod)
+        @current_domain.extend(RbDomain)
+        @current_domain.extend(@assertions_module)
+        (@domain_modules || []).each do |mod|
+          @current_domain.extend(mod)
         end
       end
 
       def connect_world(scenario)
-        @current_world.__lucid_runtime = @runtime
-        @current_world.__natural_language = scenario.language
+        @current_domain.__lucid_runtime = @runtime
+        @current_domain.__natural_language = scenario.language
       end
 
       def check_nil(o, proc)
         if o.nil?
           begin
-            raise NilWorld.new
-          rescue NilWorld => e
+            raise NilDomain.new
+          rescue NilDomain => e
             e.backtrace.clear
-            e.backtrace.push(proc.backtrace_line("World"))
+            e.backtrace.push(proc.backtrace_line("Domain"))
             raise e
           end
         else

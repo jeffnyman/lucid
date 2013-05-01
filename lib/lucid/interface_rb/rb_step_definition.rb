@@ -94,7 +94,7 @@ module Lucid
       def invoke(args)
         begin
           args = @rb_language.execute_transforms(args)
-          @rb_language.current_world.lucid_instance_exec(true, regexp_source, *args, &@proc)
+          @rb_language.current_domain.lucid_instance_exec(true, regexp_source, *args, &@proc)
         rescue Lucid::ArityMismatchError => e
           e.backtrace.unshift(self.backtrace_line)
           raise e

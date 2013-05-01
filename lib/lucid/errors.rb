@@ -17,7 +17,7 @@ module Lucid
     end
   end
 
-  # Raised when a StepDefinition's block invokes World#pending
+  # Raised when a StepDefinition's block invokes Domain#pending
   class Pending < StandardError
   end
 
