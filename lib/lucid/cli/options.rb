@@ -20,23 +20,24 @@ module Lucid
         'stepdefs'    => ['Lucid::Formatter::Stepdefs',    "Prints all test definitions with their locations. Same as\n" +
                                                               "#{INDENT}the usage formatter, except that steps are not printed."],
         'junit'       => ['Lucid::Formatter::Junit',       'Generates a report similar to Ant+JUnit.'],
-        'json'        => ['Lucid::Formatter::Json',        'Prints the feature as JSON'],
-        'json_pretty' => ['Lucid::Formatter::JsonPretty',  'Prints the feature as prettified JSON'],
-        'debug'       => ['Lucid::Formatter::Debug',       'For developing formatters - prints the calls made to the listeners.']
+        'json'        => ['Lucid::Formatter::Json',        'Prints the spec as JSON.'],
+        'json_pretty' => ['Lucid::Formatter::JsonPretty',  'Prints the spec as prettified JSON.'],
+        'debug'       => ['Lucid::Formatter::Debug',       'Prints the calls made to the listeners.']
       }
       largest = LUCID_FORMATS.keys.map{|s| s.length}.max
       FORMAT_LIST = (LUCID_FORMATS.keys.sort.map do |key|
         "  #{key}#{' ' * (largest - key.length)} : #{LUCID_FORMATS[key][1]}"
-      end) + ["Use --format rerun --out features.txt to write out failing",
-        "features. You can rerun them with lucid @rerun.txt.",
-        "FORMAT can also be the fully qualified class name of",
-        "your own custom formatter. If the class isn't loaded,",
-        "Lucid will attempt to require a file with a relative",
-        "file name that is the underscore name of the class name.",
-        "Example: --format Foo::BarZap -> Lucid will look for",
-        "foo/bar_zap.rb. You can place the file with this relative",
-        "path underneath your features/support directory or anywhere",
-        "on Ruby's LOAD_PATH, for example in a Ruby gem."
+      end) + ["Use --format rerun --out specs.txt to write out failing",
+              "specs. You can rerun them with lucid @rerun.txt.",
+              "FORMAT can also be the fully qualified class name of",
+              "your own custom formatter. If the class isn't loaded,",
+              "Lucid will attempt to require a file with a relative",
+              "file name that is the underscore name of the class name.",
+              "  Example: --format Formatter::WordDoc",
+              "With that, Lucid will look for formatter/word_doc.rb",
+              "You can place the file with this relative path",
+              "underneath your common/support directory or anywhere",
+              "on Ruby's LOAD_PATH."
       ]
       PROFILE_SHORT_FLAG = '-p'
       NO_PROFILE_SHORT_FLAG = '-P'
@@ -82,7 +83,7 @@ module Lucid
 
         @args.options do |opts|
           opts.banner = ["Lucid: Test Description Language Execution Engine",
-                         "Usage: lucid [options] [ [FILE|DIR|URL][:LINE[:LINE]*] ]+", ""
+                         "Usage: lucid [options] [ [FILE|DIR|URL][:LINE[:LINE]*] ]+", "", ""
           ].join("\n")
 
           opts.on("--library-path PATH", "Location of spec project library files.") do |path|
@@ -92,6 +93,8 @@ module Lucid
           opts.on("--spec-type TYPE", "The file type (extension) for Lucid specifications.") do |type|
             @options[:spec_type] = type
           end
+
+          opts.separator ""
 
           opts.on("-r LIBRARY|DIR", "--require LIBRARY|DIR",
                   "Require files before executing the features. If this option",
@@ -109,22 +112,8 @@ module Lucid
             end
           end
 
-          if(Lucid::JRUBY)
-            opts.on("-j DIR", "--jars DIR",
-                    "Load all the jars under the specified directory.") do |jars|
-              Dir["#{jars}/**/*.jar"].each {|jar| require jar}
-            end
-          end
+          opts.separator ""
 
-          opts.on("--i18n LANG",
-                  "List keywords for a particular language.",
-                  %{Run with "--i18n help" to see all languages}) do |lang|
-            if lang == 'help'
-              list_languages_and_exit
-            else
-              list_keywords_and_exit(lang)
-            end
-          end
           opts.on("-f FORMAT", "--format FORMAT",
                   "How Lucid will format spec execution output.",
                   "(Default: standard). Available formats:",
@@ -132,6 +121,7 @@ module Lucid
           ) do |v|
             @options[:formats] << [v, @out_stream]
           end
+
           opts.on("-o", "--out [FILE|DIR]",
                   "Write output to a file or directory instead of to standard",
                   "console output. This option applies to any specified format",
@@ -143,6 +133,32 @@ module Lucid
             @options[:formats] << ['standard', nil] if @options[:formats].empty?
             @options[:formats][-1][1] = v
           end
+
+          opts.separator ""
+
+          opts.on("-d", "--dry-run", "Invokes formatters without executing the steps.",
+                  "This also omits the loading of your support/env.rb file if it exists.") do
+            @options[:dry_run] = true
+          end
+
+          opts.on("-n NAME", "--name NAME",
+                  "Lucid will only execute features or abilities that match with the name",
+                  "provided. The match can be done on partial information. If this option",
+                  "is provided multiple times, then the match will be performed against",
+                  "each set of provided names."
+          ) do |v|
+            @options[:name_regexps] << /#{v}/
+          end
+
+          opts.on("-l", "--lines LINES", "Run given line numbers. Equivalent to FILE:LINE syntax") do |lines|
+            @options[:lines] = lines
+          end
+
+          opts.on("-e", "--exclude PATTERN",
+                  "Lucid will not use files that match the PATTERN.") do |v|
+            @options[:excludes] << Regexp.new(v)
+          end
+
           opts.on("-t TAG_EXPRESSION", "--tags TAG_EXPRESSION",
                   "Lucid will only execute features or scenarios with tags that match the",
                   "tag expression provided. A single tag expressions can have several tags",
@@ -162,18 +178,9 @@ module Lucid
           ) do |v|
             @options[:tag_expressions] << v
           end
-          opts.on("-n NAME", "--name NAME",
-                  "Lucid will only execute features or abilities that match with the name",
-                  "provided. The match can be done on partial information. If this option",
-                  "is provided multiple times, then the match will be performed against",
-                  "each set of provided names."
-          ) do |v|
-            @options[:name_regexps] << /#{v}/
-          end
-          opts.on("-e", "--exclude PATTERN",
-                  "Lucid will not use files that match the PATTERN.") do |v|
-            @options[:excludes] << Regexp.new(v)
-          end
+
+          opts.separator ""
+
           opts.on(PROFILE_SHORT_FLAG, "#{PROFILE_LONG_FLAG} PROFILE",
                   "Pull commandline arguments from lucid.yml which can be defined as",
                   "strings or arrays. When a 'default' profile is defined and no profile",
@@ -183,10 +190,14 @@ module Lucid
           ) do |v|
             @profiles << v
           end
+
           opts.on(NO_PROFILE_SHORT_FLAG, NO_PROFILE_LONG_FLAG,
             "Disables all profile loading to avoid using the 'default' profile.") do |v|
             @disable_profile_loading = true
           end
+
+          opts.separator ""
+
           opts.on("-c", "--[no-]color",
                   "Specifies whether or not to use ANSI color in the output. If this",
                   "option is not specified, Lucid makes the decision on colored output",
@@ -194,12 +205,9 @@ module Lucid
           ) do |v|
             Lucid::Term::ANSIColor.coloring = v
           end
-          opts.on("-d", "--dry-run", "Invokes formatters without executing the steps.",
-            "This also omits the loading of your support/env.rb file if it exists.") do
-            @options[:dry_run] = true
-          end
+
           opts.on("-a", "--autoformat DIR",
-            "Reformats (pretty prints) feature files and write them to DIRECTORY.",
+            "Reformats (pretty prints) spec files and write them to DIRECTORY.",
             "Be careful if you choose to overwrite the originals.",
             "Implies --dry-run --format pretty.") do |directory|
             @options[:autoformat] = directory
@@ -212,14 +220,17 @@ module Lucid
                   "Lucid will not print multiline strings and tables under steps.") do
             @options[:no_multiline] = true
           end
+
           opts.on("-s", "--no-source",
                   "Lucid will not print the file and line of the test definition with the steps.") do
             @options[:source] = false
           end
+
           opts.on("-i", "--no-snippets",
                   "Lucid will not print snippets (matchers) for pending steps.") do
             @options[:snippets] = false
           end
+
           opts.on("-I", "--snippet-type TYPE",
                   "Use different snippet type (Default: regexp).",
                   "Available types:",
@@ -231,23 +242,44 @@ module Lucid
           opts.on("-q", "--quiet", "Alias for --no-snippets --no-source.") do
             @quiet = true
           end
+
           opts.on("-S", "--strict", "Fail if there are any undefined or pending steps.") do
             @options[:strict] = true
           end
+
           opts.on("-w", "--wip", "Fail if there are any passing scenarios.") do
             @options[:wip] = true
           end
+
           opts.on("-g", "--guess", "Guess best match for ambiguous steps.") do
             @options[:guess] = true
           end
-          opts.on("-l", "--lines LINES", "Run given line numbers. Equivalent to FILE:LINE syntax") do |lines|
-            @options[:lines] = lines
-          end
+
           opts.on("-x", "--expand", "Expand Scenario Outline tables in output.") do
             @options[:expand] = true
           end
+
+          opts.separator ""
+
           opts.on("--testdefs DIR", "Lucid will Write test definition metadata to the DIR.") do |dir|
             @options[:testdefs] = dir
+          end
+
+          if(Lucid::JRUBY)
+            opts.on("-j DIR", "--jars DIR",
+                    "Load all the jars under the specified directory.") do |jars|
+              Dir["#{jars}/**/*.jar"].each {|jar| require jar}
+            end
+          end
+
+          opts.on("--i18n LANG",
+                  "List keywords for a particular language.",
+                  %{Run with "--i18n help" to see all languages}) do |lang|
+            if lang == 'help'
+              list_languages_and_exit
+            else
+              list_keywords_and_exit(lang)
+            end
           end
 
           opts.separator ""
