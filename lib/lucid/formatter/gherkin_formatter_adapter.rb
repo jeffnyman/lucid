@@ -23,10 +23,10 @@ module Lucid
 
       def before_feature_element(feature_element)
         case(feature_element)
-        when Ast::Scenario
+        when AST::Scenario
           @outline = false
           @gf.scenario(feature_element.gherkin_statement)
-        when Ast::ScenarioOutline
+        when AST::ScenarioOutline
           @outline = true
           @gf.scenario_outline(feature_element.gherkin_statement)
         else

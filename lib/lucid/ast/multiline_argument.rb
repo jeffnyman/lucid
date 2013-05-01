@@ -1,7 +1,7 @@
 require 'gherkin/rubify'
 
 module Lucid
-  module Ast
+  module AST
     module MultilineArgument
 
       class << self
@@ -14,11 +14,11 @@ module Lucid
           case(rubify(argument))
           when String
             # TODO: this duplicates work that gherkin does. We should really pass the string to gherkin and let it parse it.
-            Ast::DocString.new(argument, '')
+            AST::DocString.new(argument, '')
           when Gherkin::Formatter::Model::DocString
-            Ast::DocString.new(argument.value, argument.content_type)
+            AST::DocString.new(argument.value, argument.content_type)
           when Array
-            Ast::Table.new(argument.map{|row| row.cells})
+            AST::Table.new(argument.map{|row| row.cells})
           else
             raise ArgumentError, "Don't know how to convert #{argument} into a MultilineArgument"
           end

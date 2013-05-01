@@ -1,5 +1,5 @@
 module Lucid
-  module Ast
+  module AST
 
     class Location
       attr_reader :file, :line
@@ -33,7 +33,7 @@ module Lucid
 
       def location
         raise('Please set @location in the constructor') unless @location
-        raise("@location must be an Ast::Location but is a #{@location.class}") unless @location.is_a?(Location)
+        raise("@location must be an AST::Location but is a #{@location.class}") unless @location.is_a?(Location)
         @location
       end
     end

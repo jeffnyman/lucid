@@ -4,7 +4,7 @@ require 'lucid/ast/table'
 require 'gherkin/rubify'
 
 module Lucid
-  module Ast
+  module AST
     class StepInvocation #:nodoc:
       include Gherkin::Rubify
 
@@ -66,7 +66,7 @@ module Lucid
           rescue Undefined => e
             failed(configuration, e, false)
             status!(:undefined)
-          rescue Lucid::Ast::Table::Different => e
+          rescue Lucid::AST::Table::Different => e
             @different_table = e.table
             failed(configuration, e, false)
             status!(:failed)

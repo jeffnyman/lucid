@@ -22,7 +22,7 @@ module Lucid
       # is created that will hold instances of the high level construct,
       # which is basically the feature.
       def load
-        specs = Ast::Specs.new
+        specs = AST::Specs.new
 
         # Note that "specs" is going to be an instance of Lucid::AST::Specs.
         # It will contain a @specs instance variable that is going to contain

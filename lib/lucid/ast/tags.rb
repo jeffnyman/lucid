@@ -1,7 +1,7 @@
 require 'gherkin/tag_expression'
 
 module Lucid
-  module Ast
+  module AST
     class Tags #:nodoc:
       attr_reader :tags
 

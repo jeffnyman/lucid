@@ -20,7 +20,7 @@ module Lucid
         end
 
         def step(step)
-          @orchestrator.invoke(step.name, Ast::MultilineArgument.from(step.doc_string || step.rows))
+          @orchestrator.invoke(step.name, AST::MultilineArgument.from(step.doc_string || step.rows))
         end
 
         def eof
@@ -54,7 +54,7 @@ module Lucid
       end
 
       def invoke(step_name, multiline_argument=nil)
-        multiline_argument = Lucid::Ast::MultilineArgument.from(multiline_argument)
+        multiline_argument = Lucid::AST::MultilineArgument.from(multiline_argument)
         # It is very important to leave multiline_argument=nil as a vararg. Cuke4Duke needs it that way.
         begin
           step_match(step_name).invoke(multiline_argument)

@@ -3,7 +3,7 @@ require 'lucid/step_match'
 require 'lucid/ast/location'
 
 module Lucid
-  module Ast
+  module AST
     class Step #:nodoc:
       include HasLocation
 

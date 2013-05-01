@@ -3,7 +3,7 @@ require 'gherkin/lexer/i18n_lexer'
 require 'gherkin/formatter/escaping'
 
 module Lucid
-  module Ast
+  module AST
     # Step Definitions that match a plain text Step with a multiline argument table
     # will receive it as an instance of Table. A Table object holds the data of a
     # table parsed from a feature file and lets you access and manipulate the data

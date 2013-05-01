@@ -5,7 +5,7 @@ require 'lucid/ast/location'
 require 'lucid/unit'
 
 module Lucid
-  module Ast
+  module AST
     class Scenario #:nodoc:
       include HasSteps
       include Names

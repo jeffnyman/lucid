@@ -64,7 +64,7 @@ module Lucid
         end
 
         def multiline_argument_class?
-          multiline_argument_class == Ast::Table
+          multiline_argument_class == AST::Table
         end
 
         def self.example

@@ -1,7 +1,7 @@
 require 'lucid/ast/names'
 
 module Lucid
-  module Ast
+  module AST
     class Examples #:nodoc:
       include Names
       include HasLocation

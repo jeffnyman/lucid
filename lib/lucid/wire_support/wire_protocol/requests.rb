@@ -68,15 +68,15 @@ module Lucid
           end
 
           def handle_diff!(tables)
-            table1 = Ast::Table.new(tables[0])
-            table2 = Ast::Table.new(tables[1])
+            table1 = AST::Table.new(tables[0])
+            table2 = AST::Table.new(tables[1])
             table1.diff!(table2)
           end
 
           def handle_diff(tables)
             begin
               handle_diff!(tables)
-            rescue Lucid::Ast::Table::Different
+            rescue Lucid::AST::Table::Different
               @connection.diff_failed
             end
             @connection.diff_ok

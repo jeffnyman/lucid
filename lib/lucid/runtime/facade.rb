@@ -25,7 +25,7 @@ module Lucid
         :invoke,
         :load_code_language
 
-      # Returns a Lucid::Ast::Table for +text_or_table+, which can either
+      # Returns a Lucid::AST::Table for +text_or_table+, which can either
       # be a String:
       #
       #   table(%{
@@ -44,16 +44,16 @@ module Lucid
       #
       def table(text_or_table, file=nil, line_offset=0)
         if Array === text_or_table
-          Ast::Table.new(text_or_table)
+          AST::Table.new(text_or_table)
         else
-          Ast::Table.parse(text_or_table, file, line_offset)
+          AST::Table.parse(text_or_table, file, line_offset)
         end
       end
 
-      # Returns Ast::DocString for +string_without_triple_quotes+.
+      # Returns AST::DocString for +string_without_triple_quotes+.
       #
       def doc_string(string_without_triple_quotes, content_type='', line_offset=0)
-        Ast::DocString.new(string_without_triple_quotes,content_type)
+        AST::DocString.new(string_without_triple_quotes,content_type)
       end
     end
   end

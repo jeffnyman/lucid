@@ -77,8 +77,8 @@ module Lucid
       end
 
       def print_stats(features, options)
-        @failures = runtime.scenarios(:failed).select { |s| s.is_a?(Lucid::Ast::Scenario) || s.is_a?(Lucid::Ast::OutlineTable::ExampleRow) }
-        @failures.collect! { |s| (s.is_a?(Lucid::Ast::OutlineTable::ExampleRow)) ? s.scenario_outline : s }
+        @failures = runtime.scenarios(:failed).select { |s| s.is_a?(Lucid::AST::Scenario) || s.is_a?(Lucid::AST::OutlineTable::ExampleRow) }
+        @failures.collect! { |s| (s.is_a?(Lucid::AST::OutlineTable::ExampleRow)) ? s.scenario_outline : s }
 
         if !@failures.empty?
           @io.puts format_string("Failing Scenarios:", :failed)

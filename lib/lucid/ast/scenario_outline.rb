@@ -3,7 +3,7 @@ require 'lucid/ast/names'
 require 'lucid/ast/empty_background'
 
 module Lucid
-  module Ast
+  module AST
     class ScenarioOutline #:nodoc:
       include HasSteps
       include Names

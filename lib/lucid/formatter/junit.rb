@@ -32,7 +32,7 @@ module Lucid
       end
 
       def before_feature_element(feature_element)
-        @in_examples = Ast::ScenarioOutline === feature_element
+        @in_examples = AST::ScenarioOutline === feature_element
         @steps_start = Time.now
       end
 
@@ -110,7 +110,7 @@ module Lucid
       end
 
       def after_table_row(table_row)
-        return unless @in_examples and Lucid::Ast::OutlineTable::ExampleRow === table_row
+        return unless @in_examples and Lucid::AST::OutlineTable::ExampleRow === table_row
         duration = Time.now - @table_start
         unless @header_row
           name_suffix = " (outline example : #{table_row.name})"

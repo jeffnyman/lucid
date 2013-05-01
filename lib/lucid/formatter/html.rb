@@ -147,8 +147,8 @@ module Lucid
         @scenario_number+=1
         @scenario_red = false
         css_class = {
-          Ast::Scenario        => 'scenario',
-          Ast::ScenarioOutline => 'scenario outline'
+          AST::Scenario        => 'scenario',
+          AST::ScenarioOutline => 'scenario outline'
         }[feature_element.class]
         @builder << "<div class='#{css_class}'>"
       end
@@ -268,14 +268,14 @@ module Lucid
 
       def before_multiline_arg(multiline_arg)
         return if @hide_this_step || @skip_step
-        if Ast::Table === multiline_arg
+        if AST::Table === multiline_arg
           @builder << '<table>'
         end
       end
 
       def after_multiline_arg(multiline_arg)
         return if @hide_this_step || @skip_step
-        if Ast::Table === multiline_arg
+        if AST::Table === multiline_arg
           @builder << '</table>'
         end
       end

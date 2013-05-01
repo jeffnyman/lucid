@@ -1,5 +1,5 @@
 module Lucid
-  module Ast
+  module AST
     module Names
       attr_reader :title, :description
 

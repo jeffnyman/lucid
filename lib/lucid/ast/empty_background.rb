@@ -1,7 +1,7 @@
 require 'lucid/ast/step_collection'
 
 module Lucid
-  module Ast
+  module AST
     class EmptyBackground
       attr_writer :file
       attr_accessor :feature

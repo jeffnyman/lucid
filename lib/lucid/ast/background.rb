@@ -3,7 +3,7 @@ require 'lucid/ast/names'
 require 'lucid/ast/location'
 
 module Lucid
-  module Ast
+  module AST
     class Background #:nodoc:
       include HasSteps
       include Names

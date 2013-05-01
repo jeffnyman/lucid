@@ -3,7 +3,7 @@ require 'lucid/ast/location'
 require 'lucid/ast/location'
 
 module Lucid
-  module Ast
+  module AST
     # Represents the root node of a parsed feature.
     class Feature #:nodoc:
       include Names

@@ -18,7 +18,7 @@ module Lucid
       private
 
       def prepare(arg)
-        return arg unless arg.is_a?(Lucid::Ast::Table)
+        return arg unless arg.is_a?(Lucid::AST::Table)
         arg.raw
       end
     end

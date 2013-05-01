@@ -50,8 +50,8 @@ module Lucid
 
       def examples(examples)
         examples_fields = [
-          Ast::Location.new(file, examples.line),
-          Ast::Comment.new(examples.comments.map{|comment| comment.value}.join("\n")),
+          AST::Location.new(file, examples.line),
+          AST::Comment.new(examples.comments.map{|comment| comment.value}.join("\n")),
           examples.keyword,
           examples.name,
           examples.description,
@@ -110,15 +110,15 @@ module Lucid
         private
 
         def tags
-          Ast::Tags.new(nil, node.tags)
+          AST::Tags.new(nil, node.tags)
         end
 
         def location
-          Ast::Location.new(file, node.line)
+          AST::Location.new(file, node.line)
         end
 
         def comment
-          Ast::Comment.new(node.comments.map{ |comment| comment.value }.join("\n"))
+          AST::Comment.new(node.comments.map{ |comment| comment.value }.join("\n"))
         end
 
         attr_reader :file, :node
@@ -127,7 +127,7 @@ module Lucid
       class FeatureBuilder < Builder
         def result(language)
           background = background(language)
-          feature = Ast::Feature.new(
+          feature = AST::Feature.new(
             location,
             background,
             comment,
@@ -157,14 +157,14 @@ module Lucid
         private
 
         def background(language)
-          return Ast::EmptyBackground.new unless @background_builder
+          return AST::EmptyBackground.new unless @background_builder
           @background ||= @background_builder.result(language)
         end
       end
 
       class BackgroundBuilder < Builder
         def result(language)
-          background = Ast::Background.new(
+          background = AST::Background.new(
             language,
             location,
             comment,
@@ -193,7 +193,7 @@ module Lucid
 
       class ScenarioBuilder < Builder
         def result(background, language, feature_tags)
-          scenario = Ast::Scenario.new(
+          scenario = AST::Scenario.new(
             language,
             location,
             background,
@@ -224,7 +224,7 @@ module Lucid
 
       class ScenarioOutlineBuilder < Builder
         def result(background, language, feature_tags)
-          scenario_outline = Ast::ScenarioOutline.new(
+          scenario_outline = AST::ScenarioOutline.new(
             language,
             location,
             background,
@@ -265,12 +265,12 @@ module Lucid
 
       class StepBuilder < Builder
         def result(language)
-          step = Ast::Step.new(
+          step = AST::Step.new(
             language,
             location,
             node.keyword,
             node.name,
-            Ast::MultilineArgument.from(node.doc_string || node.rows)
+            AST::MultilineArgument.from(node.doc_string || node.rows)
           )
           step.gherkin_statement(node)
           step

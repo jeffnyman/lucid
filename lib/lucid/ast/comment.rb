@@ -1,5 +1,5 @@
 module Lucid
-  module Ast
+  module AST
     # Holds the value of a comment parsed from a feature file:
     #
     #   # Lorem ipsum

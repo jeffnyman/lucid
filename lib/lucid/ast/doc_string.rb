@@ -1,5 +1,5 @@
 module Lucid
-  module Ast
+  module AST
     # Represents an inline argument in a step. Example:
     #
     #   Given the message

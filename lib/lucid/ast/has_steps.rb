@@ -2,7 +2,7 @@ require 'enumerator'
 require 'gherkin/tag_expression'
 
 module Lucid
-  module Ast
+  module AST
     module HasSteps #:nodoc:
       attr_reader :gherkin_statement, :raw_steps, :title, :description
       def gherkin_statement(statement=nil)
@@ -25,13 +25,13 @@ module Lucid
 
       def name_line_lengths
         if name.strip.empty?
-          [Ast::Step::INDENT + @keyword.unpack('U*').length + ': '.length]
+          [AST::Step::INDENT + @keyword.unpack('U*').length + ': '.length]
         else
           name.split("\n").enum_for(:each_with_index).map do |line, line_number|
             if line_number == 0
-              Ast::Step::INDENT + @keyword.unpack('U*').length + ': '.length + line.unpack('U*').length
+              AST::Step::INDENT + @keyword.unpack('U*').length + ': '.length + line.unpack('U*').length
             else
-              Ast::Step::INDENT + Ast::Step::INDENT + line.unpack('U*').length
+              AST::Step::INDENT + AST::Step::INDENT + line.unpack('U*').length
             end
           end
         end

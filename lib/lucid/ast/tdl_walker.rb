@@ -1,5 +1,5 @@
 module Lucid
-  module Ast
+  module AST
     # Walks the AST, executing steps and notifying listeners
     class TDLWalker
       attr_accessor :configuration #:nodoc:

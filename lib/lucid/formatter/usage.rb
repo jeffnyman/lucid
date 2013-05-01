@@ -114,7 +114,7 @@ module Lucid
             key.status = :skipped
             key.mean_duration = 0
           else
-            key.status = Ast::StepInvocation.worst_status(steps.map{|step| step[:status]})
+            key.status = AST::StepInvocation.worst_status(steps.map{|step| step[:status]})
             total_duration = steps.inject(0) {|sum, step| step[:duration] + sum}
             key.mean_duration = total_duration / steps.length
           end

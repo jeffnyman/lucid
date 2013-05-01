@@ -1,5 +1,5 @@
 module Lucid
-  module Ast
+  module AST
     class Specs #:nodoc:
       include Enumerable
 

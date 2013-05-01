@@ -24,6 +24,6 @@ module Lucid
   #
   # The AST can be traversed with a visitor. See Lucid::Format::Standard
   # for an example.
-  module Ast
+  module AST
   end
 end

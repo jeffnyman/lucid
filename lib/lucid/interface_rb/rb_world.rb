@@ -34,7 +34,7 @@ module Lucid
       # @example Passing a multiline string
       #   step "the email should contain:", "Dear sir,\nYou've won a prize!\n"
       # @param [String] name The name of the step
-      # @param [String,Lucid::Ast::DocString,Lucid::Ast::Table] multiline_argument
+      # @param [String,Lucid::AST::DocString,Lucid::AST::Table] multiline_argument
       def step(name, multiline_argument=nil)
         @__lucid_runtime.invoke(name, multiline_argument)
       end
@@ -50,7 +50,7 @@ module Lucid
         @__lucid_runtime.invoke_steps(steps_text, @__natural_language, caller[0])
       end
 
-      # Parse Gherkin into a {Lucid::Ast::Table} object.
+      # Parse Gherkin into a {Lucid::AST::Table} object.
       #
       # Useful in conjunction with the #step method.
       # @example Create a table
@@ -64,7 +64,7 @@ module Lucid
         @__lucid_runtime.table(text_or_table, file, line_offset)
       end
 
-      # Create an {Lucid::Ast::DocString} object
+      # Create an {Lucid::AST::DocString} object
       #
       # Useful in conjunction with the #step method, when
       # want to specify a content type.

@@ -1,5 +1,5 @@
 module Lucid
-  module Ast
+  module AST
     class OutlineTable < Table #:nodoc:
       def initialize(raw, scenario_outline)
         super(raw)

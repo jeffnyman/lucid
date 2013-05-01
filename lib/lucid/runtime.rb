@@ -157,9 +157,9 @@ module Lucid
       end
     end
 
-    # Returns Ast::DocString for +string_without_triple_quotes+.
+    # Returns AST::DocString for +string_without_triple_quotes+.
     def doc_string(string_without_triple_quotes, content_type='', line_offset=0)
-      Ast::DocString.new(string_without_triple_quotes,content_type)
+      AST::DocString.new(string_without_triple_quotes,content_type)
     end
 
   private
