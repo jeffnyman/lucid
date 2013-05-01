@@ -20,7 +20,6 @@ end
 
 module Lucid
   module InterfaceRb
-    # Raised if a Domain block returns Nil.
     class NilDomain < StandardError
       def initialize
         super("Domain procs should never return nil")

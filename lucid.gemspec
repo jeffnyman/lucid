@@ -20,7 +20,6 @@ Gem::Specification.new do |gem|
 
   gem.add_runtime_dependency 'rake', '>= 10.0.4'
   gem.add_runtime_dependency 'thor', '>= 0.18.1'
-  gem.add_runtime_dependency 'rspec', '>= 2.13.0'
   gem.add_runtime_dependency 'builder', '>= 2.1.2'
   gem.add_runtime_dependency 'diff-lcs', '>= 1.1.3'
   gem.add_runtime_dependency 'gherkin', '~> 2.12.0'
