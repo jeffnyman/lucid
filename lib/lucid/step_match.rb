@@ -2,13 +2,13 @@ module Lucid
   class StepMatch #:nodoc:
     attr_reader :step_definition, :step_arguments
 
-    # Creates a new StepMatch. The +name_to_report+ argument is what's
-    # reported, unless it's is, in which case +name_to_report+ is used instead.
-    #
     def initialize(step_definition, name_to_match, name_to_report, step_arguments)
       raise "name_to_match can't be nil" if name_to_match.nil?
       raise "step_arguments can't be nil (but it can be an empty array)" if step_arguments.nil?
-      @step_definition, @name_to_match, @name_to_report, @step_arguments = step_definition, name_to_match, name_to_report, step_arguments
+      @step_definition = step_definition
+      @name_to_match = name_to_match
+      @name_to_report = name_to_report
+      @step_arguments = step_arguments
     end
 
     def args
@@ -25,21 +25,6 @@ module Lucid
       @step_definition.invoke(all_args)
     end
 
-    # Formats the matched arguments of the associated Step. This method
-    # is usually called from visitors, which render output.
-    #
-    # The +format+ can either be a String or a Proc.
-    #
-    # If it is a String it should be a format string according to
-    # <tt>Kernel#sprinf</tt>, for example:
-    #
-    #   '<span class="param">%s</span></tt>'
-    #
-    # If it is a Proc, it should take one argument and return the formatted
-    # argument, for example:
-    #
-    #   lambda { |param| "[#{param}]" }
-    #
     def format_args(format = lambda{|a| a}, &proc)
       @name_to_report || replace_arguments(@name_to_match, @step_arguments, format, &proc)
     end

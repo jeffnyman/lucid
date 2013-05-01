@@ -89,9 +89,9 @@ module Lucid
       end
 
       def begin_rb_scenario(scenario)
-        create_world
-        extend_world
-        connect_world(scenario)
+        create_domain
+        extend_domain
+        connect_domain(scenario)
       end
 
       def register_rb_hook(phase, tag_expressions, proc)
@@ -118,7 +118,9 @@ module Lucid
       end
 
       def load_code_file(code_file)
-        load File.expand_path(code_file) # This will cause self.add_step_definition, self.add_hook, and self.add_transform to be called from RbLucid
+        # This is what will allow self.add_step_definition, self.add_hook,
+        # and self.add_transform to be called from RbLucid.
+        load File.expand_path(code_file)
       end
 
       protected
@@ -133,7 +135,7 @@ module Lucid
 
       private
 
-      def create_world
+      def create_domain
         if(@domain_proc)
           @current_domain = @domain_proc.call
           check_nil(@current_domain, @domain_proc)
@@ -142,7 +144,7 @@ module Lucid
         end
       end
 
-      def extend_world
+      def extend_domain
         @current_domain.extend(RbDomain)
         @current_domain.extend(@assertions_module)
         (@domain_modules || []).each do |mod|
@@ -150,7 +152,7 @@ module Lucid
         end
       end
 
-      def connect_world(scenario)
+      def connect_domain(scenario)
         @current_domain.__lucid_runtime = @runtime
         @current_domain.__natural_language = scenario.language
       end
