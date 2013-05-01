@@ -3,7 +3,7 @@ require 'lucid/step_definition_light'
 
 module Lucid
   module Interface
-    module LanguageMethods
+    module InterfaceMethods
       def around(scenario)
         execute_around(scenario) do
           yield

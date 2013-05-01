@@ -42,7 +42,7 @@ module Lucid
 
     # This module is the Ruby implementation of the TDL API.
     class RbLanguage
-      include Interface::LanguageMethods
+      include Interface::InterfaceMethods
       attr_reader :current_world, :step_definitions
 
       # Get the expressions of various I18n translations of TDL keywords.

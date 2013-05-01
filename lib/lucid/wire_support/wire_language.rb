@@ -12,7 +12,7 @@ module Lucid
     # The wire-protocol (lanugage independent) implementation of the programming
     # language API.
     class WireLanguage
-      include Interface::LanguageMethods
+      include Interface::InterfaceMethods
 
       def initialize(runtime)
         @connections = []
