@@ -3,4 +3,3 @@ source 'https://rubygems.org'
 gem 'lucid'
 <% if driver.downcase == 'symbiont' -%>gem 'symbiont'<% end -%>
 gem 'syntax'
-gem 'rspec'
