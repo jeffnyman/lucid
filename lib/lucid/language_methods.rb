@@ -2,7 +2,7 @@ require 'lucid/step_match'
 require 'lucid/step_definition_light'
 
 module Lucid
-  module LanguageSupport
+  module Interface
     module LanguageMethods
       def around(scenario)
         execute_around(scenario) do
