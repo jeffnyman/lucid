@@ -6,7 +6,7 @@ require 'lucid/configuration'
 require 'lucid/load_path'
 require 'lucid/interface_methods'
 require 'lucid/formatter/duration'
-require 'lucid/runtime/user_interface'
+require 'lucid/runtime/interface_io'
 require 'lucid/runtime/specs_loader'
 require 'lucid/runtime/results'
 require 'lucid/runtime/orchestrator'
@@ -16,7 +16,7 @@ module Lucid
     attr_reader :results
 
     include Formatter::Duration
-    include Runtime::UserInterface
+    include Runtime::InterfaceIO
 
     def initialize(configuration = Configuration.default)
       require 'lucid/core_ext/disable_mini_and_test_unit_autorun'
@@ -48,7 +48,7 @@ module Lucid
     end
 
     def features_paths
-      @configuration.paths
+      @configuration.spec_source
     end
 
     def step_visited(step) #:nodoc:

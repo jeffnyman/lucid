@@ -30,7 +30,7 @@ module Lucid
       @options[:expand]
     end
 
-    def paths
+    def spec_source
       @options[:spec_source]
     end
 
