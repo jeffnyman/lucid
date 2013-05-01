@@ -1,6 +1,6 @@
 module Lucid
   module AST
-    # Holds an Array of Step or StepDefinition
+    # This class holds an array of Step or StepDefinition.
     class StepCollection #:nodoc:
       include Enumerable
 

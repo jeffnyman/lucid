@@ -13,14 +13,15 @@ module Lucid
 
           case(rubify(argument))
           when String
-            # TODO: this duplicates work that gherkin does. We should really pass the string to gherkin and let it parse it.
+            # TODO: This duplicates work that Gherkin already does.
+            # Ideally the string should be passed directly to Gherkin for parsing.
             AST::DocString.new(argument, '')
           when Gherkin::Formatter::Model::DocString
             AST::DocString.new(argument.value, argument.content_type)
           when Array
             AST::Table.new(argument.map{|row| row.cells})
           else
-            raise ArgumentError, "Don't know how to convert #{argument} into a MultilineArgument"
+            raise ArgumentError, "Lucid does not know how to convert #{argument} into a multi-line argument."
           end
         end
 

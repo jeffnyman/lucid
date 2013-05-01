@@ -5,18 +5,12 @@ require 'gherkin/formatter/escaping'
 
 module Lucid
   module Formatter
-    # The formatter used for <tt>--format standard</tt> (the default formatter).
-    #
-    # This formatter prints features to plain text - exactly how they were parsed,
-    # just prettier. That means with proper indentation and alignment of table columns.
-    #
-    # If the output is STDOUT (and not a file), there are bright colours to watch too.
-    #
     class Standard
       include FileUtils
       include Console
       include Io
       include Gherkin::Formatter::Escaping
+
       attr_writer :indent
       attr_reader :runtime
 

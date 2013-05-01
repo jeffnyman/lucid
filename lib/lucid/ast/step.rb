@@ -58,7 +58,7 @@ module Lucid
       end
 
       def first_match(visitor)
-        # feature_element is always a ScenarioOutline in this case
+        # The feature_element is always a ScenarioOutline in this case.
         feature_element.each_example_row do |cells|
           argument_hash       = cells.to_hash
           delimited_arguments = delimit_argument_names(argument_hash)

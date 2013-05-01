@@ -105,14 +105,14 @@ module Lucid
         end
       end
 
-      # This constant is appended to by Cuke4Duke. Do not change its name
       BACKTRACE_FILTER_PATTERNS = [/vendor\/rails|lib\/lucid|bin\/lucid:|lib\/rspec|gems\/|minitest|test\/unit/]
+
       if(Lucid::JRUBY)
         BACKTRACE_FILTER_PATTERNS << /org\/jruby/
       end
+
       PWD_PATTERN = /#{Regexp.escape(Dir.pwd)}\//m
 
-      # This is to work around double ":in " segments in JRuby backtraces. JRuby bug?
       def filter_backtrace(e)
         return e if Lucid.use_full_backtrace
         e.backtrace.each{|line| line.gsub!(PWD_PATTERN, "./")}

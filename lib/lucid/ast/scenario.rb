@@ -38,7 +38,7 @@ module Lucid
         [Unit.new(background.step_invocations + step_invocations)]
       end
 
-      # Returns true if one or more steps failed
+      # Returns true if one or more steps failed.
       def failed?
         steps.failed? || !!@exception
       end
@@ -48,17 +48,17 @@ module Lucid
         @current_visitor.visit_exception(@exception, :failed)
       end
 
-      # Returns true if all steps passed
+      # Returns true if all steps passed.
       def passed?
         !failed?
       end
 
-      # Returns the first exception (if any)
+      # Returns the first exception (if any).
       def exception
         @exception || steps.exception
       end
 
-      # Returns the status
+      # Returns the status.
       def status
         return :failed if @exception
         steps.status

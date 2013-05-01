@@ -21,12 +21,8 @@ module Lucid
         end
       end
 
-      # The +example_sections+ argument must be an Array where each element is another array representing
-      # an Examples section. This array has 3 elements:
-      #
-      # * Examples keyword
-      # * Examples section name
-      # * Raw matrix
+      # The +example_sections+ argument must be an Array where each element
+      # of the arry is another array representing an Examples section.
       def initialize(language, location, background, comment, tags, feature_tags, keyword, title, description, raw_steps, example_sections)
         @language, @location, @background, @comment, @tags, @feature_tags, @keyword, @title, @description, @raw_steps, @example_sections = language, location, background, comment, tags, feature_tags, keyword, title, description, raw_steps, example_sections
         attach_steps(@raw_steps)
@@ -55,8 +51,10 @@ module Lucid
       end
 
       def fail!(exception)
-        # Just a hack for https://rspec.lighthouseapp.com/projects/16211/tickets/413-scenario-outlines-that-fail-with-exception-exit-process
-        # Also see http://groups.google.com/group/cukes/browse_thread/thread/41cd567cb9df4bc3
+        # TODO: This is weak and is in fact just a hack.
+        # This simply makes sure that a scenario outline that encounters
+        # an exception just fails rather than causing a runtime error
+        # and stack trace.
       end
 
       def skip_invoke!
@@ -137,7 +135,7 @@ module Lucid
       end
 
       def raise_missing_examples_error
-        raise MissingExamples, "Missing Example Section for Scenario Outline at #{@location}"
+        raise MissingExamples, "Missing Example section for Scenario Outline at #{@location}."
       end
 
       MissingExamples = Class.new(StandardError)

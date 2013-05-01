@@ -1,12 +1,5 @@
 module Lucid
   module AST
-    # Holds the value of a comment parsed from a feature file:
-    #
-    #   # Lorem ipsum
-    #   # dolor sit amet
-    #
-    # This gets parsed into a Comment with value <tt>"# Lorem ipsum\n# dolor sit amet\n"</tt>
-    #
     class Comment #:nodoc:
       def initialize(value)
         @value = value

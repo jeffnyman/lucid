@@ -89,7 +89,6 @@ module Lucid
 
       # Creates a copy of this table, inheriting any column and header mappings
       # registered with #map_column! and #map_headers!.
-      #
       def dup
         self.class.new(raw.dup, @conversion_procs.dup, @header_mappings.dup, @header_conversion_proc)
       end
