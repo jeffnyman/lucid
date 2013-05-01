@@ -8,6 +8,7 @@ module Lucid
     def project(name)
       puts "Name of project: #{name}"
 
+      Lucid::Generators::Project.start([name])
     end
   end
 end
