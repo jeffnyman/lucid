@@ -132,7 +132,7 @@ module Lucid
       # called from the specs action in a Runtime instance.
       # @see Lucid::Runtime.specs
       def spec_files
-        files = with_default_features_path(spec_source).map do |path|
+        files = with_default_specs_path(spec_source).map do |path|
           path = path.gsub(/\\/, '/')  # convert \ to /
           path = path.chomp('/')       # removing trailing /
           if File.directory?(path)
@@ -157,7 +157,7 @@ module Lucid
         dirs.delete('.') unless spec_source.include?('.')
 
         # TODO: Should I be doing this? (See commented line in spec_source)
-        with_default_features_path(dirs)
+        with_default_specs_path(dirs)
       end
 
       # The "spec_type" refers to the file type (or extension) of spec files.
@@ -206,7 +206,7 @@ module Lucid
 
     private
 
-      def with_default_features_path(paths)
+      def with_default_specs_path(paths)
         return ['specs'] if paths.empty?
         paths
       end

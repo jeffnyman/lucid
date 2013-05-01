@@ -1,5 +1,3 @@
-# Detect the platform we're running on so we can tweak behaviour
-# in various places.
 require 'rbconfig'
 
 module Lucid
@@ -20,7 +18,6 @@ module Lucid
     class << self
       attr_accessor :use_full_backtrace
 
-      # @private
       def file_mode(m, encoding="UTF-8")
         "#{m}:#{encoding}"
       end
