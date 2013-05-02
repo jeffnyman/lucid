@@ -71,8 +71,8 @@ module Lucid
       @orchestrator.unmatched_step_definitions
     end
 
-    def snippet_text(step_keyword, step_name, multiline_arg_class) #:nodoc:
-      @orchestrator.snippet_text(Gherkin::I18n.code_keyword_for(step_keyword), step_name, multiline_arg_class)
+    def matcher_text(step_keyword, step_name, multiline_arg_class) #:nodoc:
+      @orchestrator.matcher_text(Gherkin::I18n.code_keyword_for(step_keyword), step_name, multiline_arg_class)
     end
 
     def with_hooks(scenario, skip_hooks=false)

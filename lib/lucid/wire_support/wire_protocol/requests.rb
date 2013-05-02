@@ -47,11 +47,11 @@ module Lucid
             super(request_params)
           end
 
-          def handle_success(snippet_text)
-            snippet_text
+          def handle_success(matcher_text)
+            matcher_text
           end
 
-          alias :handle_snippet_text :handle_success
+          alias :handle_matcher_text :handle_success
         end
 
         class Invoke < RequestHandler

@@ -8,7 +8,7 @@ module Lucid
         handler.execute(name_to_match, name_to_report)
       end
 
-      def snippet_text(step_keyword, step_name, multiline_arg_class_name)
+      def matcher_text(step_keyword, step_name, multiline_arg_class_name)
         handler = Requests::SnippetText.new(self)
         handler.execute(step_keyword, step_name, multiline_arg_class_name)
       end

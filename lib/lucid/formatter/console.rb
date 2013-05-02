@@ -113,21 +113,21 @@ module Lucid
         s.gsub(/.{1,#{max}}(?:\s|\Z)/){($& + 5.chr).gsub(/\n\005/,"\n").gsub(/\005/,"\n")}.rstrip
       end
 
-      def print_snippets(options)
-        return unless options[:snippets]
+      def print_matchers(options)
+        return unless options[:matchers]
         undefined = runtime.steps(:undefined)
         return if undefined.empty?
 
         unknown_programming_language = runtime.unknown_programming_language?
-        snippets = undefined.map do |step|
+        matchers = undefined.map do |step|
           step_name = Undefined === step.exception ? step.exception.step_name : step.name
           step_multiline_class = step.multiline_arg ? step.multiline_arg.class : nil
-          snippet = @runtime.snippet_text(step.actual_keyword, step_name, step_multiline_class)
-          snippet
+          matcher = @runtime.matcher_text(step.actual_keyword, step_name, step_multiline_class)
+          matcher
         end.compact.uniq
 
         text = "\nYou can implement test definitions for undefined test steps with these matchers:\n\n"
-        text += snippets.join("\n\n")
+        text += matchers.join("\n\n")
         @io.puts format_string(text, :undefined)
 
         if unknown_programming_language

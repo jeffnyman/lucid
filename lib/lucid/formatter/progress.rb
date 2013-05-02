@@ -3,7 +3,6 @@ require 'lucid/formatter/io'
 
 module Lucid
   module Formatter
-    # The formatter used for <tt>--format progress</tt>
     class Progress
       include Console
       include Io
@@ -70,7 +69,7 @@ module Lucid
         print_steps(:pending)
         print_steps(:failed)
         print_stats(features, @options)
-        print_snippets(@options)
+        print_matchers(@options)
         print_passing_wip(@options)
       end
 

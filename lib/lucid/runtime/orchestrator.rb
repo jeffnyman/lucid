@@ -99,10 +99,10 @@ module Lucid
         end.flatten
       end
 
-      def snippet_text(step_keyword, step_name, multiline_arg_class) #:nodoc:
+      def matcher_text(step_keyword, step_name, multiline_arg_class) #:nodoc:
         load_code_language('rb') if unknown_programming_language?
         @supported_languages.map do |programming_language|
-          programming_language.snippet_text(step_keyword, step_name, multiline_arg_class, @configuration.snippet_type)
+          programming_language.matcher_text(step_keyword, step_name, multiline_arg_class, @configuration.matcher_type)
         end.join("\n")
       end
 
