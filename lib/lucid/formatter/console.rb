@@ -114,7 +114,7 @@ module Lucid
       end
 
       def print_snippets(options)
-        return unless options[:snippets]
+        return unless options[:matchers]
         undefined = runtime.steps(:undefined)
         return if undefined.empty?
 

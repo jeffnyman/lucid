@@ -38,8 +38,8 @@ module Lucid
       @options[:autoload_code_paths]
     end
 
-    def snippet_type
-      @options[:snippet_type]
+    def matcher_type
+      @options[:matcher_type]
     end
 
   private

@@ -47,7 +47,7 @@ module Lucid
                            '-t', '--tags', '-n', '--name', '-e', '--exclude',
                            PROFILE_SHORT_FLAG, PROFILE_LONG_FLAG,
                            '-a', '--autoformat', '-l', '--lines', '--port',
-                           '-I', '--snippet-type']
+                           '-I', '--matcher-type']
 
       def self.parse(args, out_stream, error_stream, options = {})
         new(out_stream, error_stream, options).parse(args)
@@ -226,20 +226,20 @@ module Lucid
             @options[:source] = false
           end
 
-          opts.on("-i", "--no-snippets",
-                  "Lucid will not print snippets (matchers) for pending steps.") do
-            @options[:snippets] = false
+          opts.on("-i", "--no-matchers",
+                  "Lucid will not print matchers for pending steps.") do
+            @options[:matchers] = false
           end
 
-          opts.on("-I", "--snippet-type TYPE",
-                  "Use different snippet type (Default: regexp).",
+          opts.on("-I", "--matchers-type TYPE",
+                  "Use different matcher type (Default: regexp).",
                   "Available types:",
-                  *Lucid::InterfaceRb::RbLanguage.cli_snippet_type_options
+                  *Lucid::InterfaceRb::RbLanguage.cli_matcher_type_options
           ) do |v|
-            @options[:snippet_type] = v.to_sym
+            @options[:matcher_type] = v.to_sym
           end
 
-          opts.on("-q", "--quiet", "Alias for --no-snippets --no-source.") do
+          opts.on("-q", "--quiet", "Alias for --no-matchers --no-source.") do
             @quiet = true
           end
 
@@ -310,9 +310,9 @@ module Lucid
         end.parse!
 
         if @quiet
-          @options[:snippets] = @options[:source] = false
+          @options[:matchers] = @options[:source] = false
         else
-          @options[:snippets] = true if @options[:snippets].nil?
+          @options[:matchers] = true if @options[:matchers].nil?
           @options[:source]   = true if @options[:source].nil?
         end
         @args.map! { |a| "#{a}:#{@options[:lines]}" } if @options[:lines]
@@ -413,7 +413,7 @@ module Lucid
           @overridden_paths += (other_options[:spec_source] - @options[:spec_source])
         end
         @options[:source] &= other_options[:source]
-        @options[:snippets] &= other_options[:snippets]
+        @options[:matchers] &= other_options[:matchers]
         @options[:strict] |= other_options[:strict]
         @options[:dry_run] |= other_options[:dry_run]
 

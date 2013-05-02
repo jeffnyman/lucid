@@ -4,7 +4,7 @@ require 'lucid/interface_rb/rb_world'
 require 'lucid/interface_rb/rb_step_definition'
 require 'lucid/interface_rb/rb_hook'
 require 'lucid/interface_rb/rb_transform'
-require 'lucid/interface_rb/snippet'
+require 'lucid/interface_rb/matcher'
 
 begin
   require 'rspec/expectations'
@@ -34,7 +34,6 @@ module Lucid
         message << first_proc.backtrace_line('Domain') << "\n"
         message << second_proc.backtrace_line('Domain') << "\n\n"
         message << "Use Ruby modules instead to extend your worlds. See the Lucid::InterfaceRb::RbLucid#Domain RDoc\n"
-        message << "or http://wiki.github.com/cucumber/cucumber/a-whole-new-world.\n\n"
         super(message)
       end
     end
@@ -84,7 +83,7 @@ module Lucid
       end
 
       def snippet_text(code_keyword, step_name, multiline_arg_class, snippet_type = :regexp)
-        snippet_class = typed_snippet_class(snippet_type)
+        snippet_class = typed_matcher_class(snippet_type)
         snippet_class.new(code_keyword, step_name, multiline_arg_class).to_s
       end
 
@@ -171,19 +170,19 @@ module Lucid
         end
       end
 
-      SNIPPET_TYPES = {
-        :regexp => Snippet::Regexp,
-        :classic => Snippet::Classic,
-        :percent => Snippet::Percent
+      MATCHER_TYPES = {
+        :regexp => Matcher::Regexp,
+        :classic => Matcher::Classic,
+        :percent => Matcher::Percent
       }
 
-      def typed_snippet_class(type)
-        SNIPPET_TYPES.fetch(type || :regexp)
+      def typed_matcher_class(type)
+        MATCHER_TYPES.fetch(type || :regexp)
       end
 
-      def self.cli_snippet_type_options
-        SNIPPET_TYPES.keys.sort_by(&:to_s).map do |type|
-          SNIPPET_TYPES[type].cli_option_string(type)
+      def self.cli_matcher_type_options
+        MATCHER_TYPES.keys.sort_by(&:to_s).map do |type|
+          MATCHER_TYPES[type].cli_option_string(type)
         end
       end
     end

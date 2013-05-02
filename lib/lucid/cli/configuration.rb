@@ -64,8 +64,8 @@ module Lucid
         @options[:testdefs]
       end
 
-      def snippet_type
-        @options[:snippet_type] || :regexp
+      def matcher_type
+        @options[:matcher_type] || :regexp
       end
 
       def establish_tdl_walker(runtime)

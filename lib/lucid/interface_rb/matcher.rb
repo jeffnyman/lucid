@@ -1,10 +1,10 @@
 module Lucid
   module InterfaceRb
-    module Snippet
+    module Matcher
 
       ARGUMENT_PATTERNS = ['"(.*?)"', '(\d+)']
 
-      class BaseSnippet
+      class BaseMatcher
 
         def initialize(code_keyword, pattern, multiline_argument_class)
           @number_of_arguments = 0
@@ -73,7 +73,7 @@ module Lucid
 
       end
 
-      class Regexp < BaseSnippet
+      class Regexp < BaseMatcher
         def typed_pattern
           " (/^#{pattern}$/)"
         end
@@ -83,7 +83,7 @@ module Lucid
         end
       end
 
-      class Classic < BaseSnippet
+      class Classic < BaseMatcher
         def typed_pattern
           " /^#{pattern}$/"
         end
@@ -93,7 +93,7 @@ module Lucid
         end
       end
 
-      class Percent < BaseSnippet
+      class Percent < BaseMatcher
         def typed_pattern
           " %r{^#{pattern}$}"
         end
