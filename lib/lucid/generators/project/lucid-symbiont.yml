@@ -1,0 +1,6 @@
+<% browser = "BROWSER=firefox" %>
+<% std_opts = "-r common -r pages -r steps" %>
+<% rpt_opts = "--format html --out output/specs-report.html" %>
+
+default: <%= std_opts %>
+report: <%= std_opts %> <%= rpt_opts %>
