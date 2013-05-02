@@ -122,7 +122,7 @@ module Lucid
         snippets = undefined.map do |step|
           step_name = Undefined === step.exception ? step.exception.step_name : step.name
           step_multiline_class = step.multiline_arg ? step.multiline_arg.class : nil
-          snippet = @runtime.snippet_text(step.actual_keyword, step_name, step_multiline_class)
+          snippet = @runtime.matcher_text(step.actual_keyword, step_name, step_multiline_class)
           snippet
         end.compact.uniq
 
