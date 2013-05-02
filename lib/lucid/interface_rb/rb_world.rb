@@ -39,13 +39,13 @@ module Lucid
         @__lucid_runtime.invoke(name, multiline_argument)
       end
 
-      # Run a snippet of Gherkin
+      # Run a matcher of Gherkin
       # @example
       #   steps %{
       #     Given the user "Jeff" exists
       #     And I am logged in as "Jeff"
       #   }
-      # @param [String] steps_text The Gherkin snippet to run
+      # @param [String] steps_text The Gherkin matcher to run
       def steps(steps_text)
         @__lucid_runtime.invoke_steps(steps_text, @__natural_language, caller[0])
       end

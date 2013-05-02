@@ -236,7 +236,6 @@ module Lucid
 
       def after_step_result(keyword, step_match, multiline_arg, status, exception, source_indent, background, file_colon_line)
         return if @hide_this_step
-        # print snippet for undefined steps
         if status == :undefined
           keyword = @step.actual_keyword if @step.respond_to?(:actual_keyword)
           step_multiline_class = @step.multiline_arg ? @step.multiline_arg.class : nil
@@ -262,8 +261,8 @@ module Lucid
       end
 
       def extra_failure_content(file_colon_line)
-        @snippet_extractor ||= SnippetExtractor.new
-        "<pre class=\"ruby\"><code>#{@snippet_extractor.snippet(file_colon_line)}</code></pre>"
+        @matcher_extractor ||= MatcherExtractor.new
+        "<pre class=\"ruby\"><code>#{@matcher_extractor.matcher(file_colon_line)}</code></pre>"
       end
 
       def before_multiline_arg(multiline_arg)
@@ -561,18 +560,18 @@ module Lucid
         OrderedXmlMarkup.new(:target => io, :indent => 0)
       end
 
-      class SnippetExtractor #:nodoc:
+      class MatcherExtractor #:nodoc:
         class NullConverter; def convert(code, pre); code; end; end #:nodoc:
         begin; require 'syntax/convertors/html'; @@converter = Syntax::Convertors::HTML.for_syntax "ruby"; rescue LoadError => e; @@converter = NullConverter.new; end
 
-        def snippet(error)
-          raw_code, line = snippet_for(error[0])
+        def matcher(error)
+          raw_code, line = matcher_for(error[0])
           highlighted = @@converter.convert(raw_code, false)
           highlighted << "\n<span class=\"comment\"># gem install syntax to get syntax highlighting</span>" if @@converter.is_a?(NullConverter)
           post_process(highlighted, line)
         end
 
-        def snippet_for(error_line)
+        def matcher_for(error_line)
           if error_line =~ /(.*):(\d+)/
             file = $1
             line = $2.to_i
@@ -591,7 +590,7 @@ module Lucid
             selected_lines.join("\n")
             lines[min..max].join("\n")
           else
-            "# Couldn't get snippet for #{file}"
+            "# Lucid was unable to get a matcher for #{file}"
           end
         end
 

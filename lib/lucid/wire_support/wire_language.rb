@@ -26,11 +26,11 @@ module Lucid
         @connections << Connection.new(config)
       end
 
-      def matcher_text(code_keyword, step_name, multiline_arg_class, snippet_type)
-        snippets = @connections.map do |remote|
+      def matcher_text(code_keyword, step_name, multiline_arg_class, matcher_type)
+        matchers = @connections.map do |remote|
           remote.matcher_text(code_keyword, step_name, multiline_arg_class.to_s)
         end
-        snippets.flatten.join("\n")
+        matchers.flatten.join("\n")
       end
 
       def step_matches(step_name, formatted_step_name)

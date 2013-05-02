@@ -82,9 +82,9 @@ module Lucid
         end.compact
       end
 
-      def matcher_text(code_keyword, step_name, multiline_arg_class, snippet_type = :regexp)
-        snippet_class = typed_matcher_class(snippet_type)
-        snippet_class.new(code_keyword, step_name, multiline_arg_class).to_s
+      def matcher_text(code_keyword, step_name, multiline_arg_class, matcher_type = :regexp)
+        matcher_class = typed_matcher_class(matcher_type)
+        matcher_class.new(code_keyword, step_name, multiline_arg_class).to_s
       end
 
       def begin_rb_scenario(scenario)

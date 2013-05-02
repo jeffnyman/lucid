@@ -227,7 +227,7 @@ module Lucid
 
       def print_summary(features)
         print_stats(features, @options)
-        print_snippets(@options)
+        print_matchers(@options)
         print_passing_wip(@options)
       end
     end
