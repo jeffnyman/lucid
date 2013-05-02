@@ -117,9 +117,6 @@ module Lucid
       # via a command line option.
       # @see Lucid::Runtime.load_execution_context
       def library_context
-        ###library_files = spec_repo.select {|f| f =~ %r{/support/} }
-        ###driver_file = library_files.select {|f| f =~ %r{/support/env\..*} }
-
         library_files = spec_repo.select { |f| f =~ %r{/#{library_path}/} }
         driver_file = library_files.select {|f| f =~ %r{/#{library_path}/env\..*} }
         non_driver_files = library_files - driver_file
@@ -156,7 +153,6 @@ module Lucid
         dirs = spec_source.map { |f| File.directory?(f) ? f : File.dirname(f) }.uniq
         dirs.delete('.') unless spec_source.include?('.')
 
-        # TODO: Should I be doing this? (See commented line in spec_source)
         with_default_specs_path(dirs)
       end
 

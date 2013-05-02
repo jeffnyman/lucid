@@ -34,7 +34,7 @@ module Lucid
       # will be mixed into this Object (via Object#extend).
       #
       # This method is typically called from one or more Ruby scripts under
-      # <tt>features/support</tt>. You can call this method as many times as you
+      # <tt>common/support</tt>. You can call this method as many times as you
       # like (to register more modules), but if you try to register more than
       # one Proc you will get an error.
       #
