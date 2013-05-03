@@ -10,6 +10,6 @@ if(ENV['SIMPLECOV'] && RUBY_VERSION =~ /1\.9/)
 end
 
 require 'lucid/rspec/disallow_options'
-require 'lucid/cli/main'
+require 'lucid/cli/app'
 
 Lucid::CLI::App.new(ARGV.dup).start
