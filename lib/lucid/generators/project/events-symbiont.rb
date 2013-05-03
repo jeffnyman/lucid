@@ -16,12 +16,14 @@ After do |scenario|
     Dir::mkdir('results') if not File.directory?('results')
     screenshot = "./results/FAILED_#{scenario.name.gsub(' ','_').gsub(/[^0-9A-Za-z_]/, '')}.png"
 
-    # This way attempts to save the screenshot as a file.
-    #@browser.driver.save_screenshot(screenshot)
+    if @browser
+      # This way attempts to save the screenshot as a file.
+      #@browser.driver.save_screenshot(screenshot)
 
-    # This way the image is encoded into the results.
-    encoded_img = @browser.driver.screenshot_as(:base64)
-    embed("data:image/png;base64,#{encoded_img}", 'image/png')
+      # This way the image is encoded into the results.
+      encoded_img = @browser.driver.screenshot_as(:base64)
+      embed("data:image/png;base64,#{encoded_img}", 'image/png')
+    end
 
     # This is an alternative way to embed.
     #embed screenshot, 'image/png'
