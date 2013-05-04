@@ -43,9 +43,9 @@ module Lucid
         end
       end
 
-      def copy_environment
+      def copy_driver
         if driver.downcase == 'symbiont'
-          copy_file "env-symbiont.rb", "#{name}/common/support/env.rb"
+          copy_file "driver-symbiont.rb", "#{name}/common/support/driver.rb"
         end
       end
 
