@@ -1,12 +1,16 @@
-# Lucid
+Lucid
+=====
 
-Lucid is a shiv around BDD tools. Currently the only such tool that Lucid intercepts calls to is Cucumber. The reason for this is that many of these BDD tools are highly opinionated in their structure. While most tools do have a way to force the structure to be your way, how this is done is not always consistent.
+Description
+-----------
 
-By way of example, Cucumber expects features to live in a directory called features and step definitions to live in a directory called step_definitions that is under the features directory. When running a feature, all step definitions are loaded unless you explicitly require just the ones you want. If you structure your project differently from how Cucumber expects, then you have to require files explicitly.
+Lucid is a Test Description Language (TDL) execution engine. It is, in many ways, a clone of the popular tool [Cucumber](http://cukes.info/). Lucid is diverging in many ways from Cucumber and similar tools but it does owe much of its initial structure to them.
 
-Lucid allows you to specify configuration options that are then passed to Cucumber.
+This is an alpha release of Lucid as it strives to become its own entity in the world of BDD tools.
 
-## Installation
+
+Installation
+------------
 
 Add this line to your application's Gemfile:
 
@@ -20,11 +24,21 @@ Or install it yourself as:
 
     $ gem install lucid
 
-## Usage
 
-Lucid can be configured project by project through the use of a lucid.yml file that lives in the root of your project. This file will contain configurable options. These options will be indicated by specific declarations.
+Using Lucid
+-----------
 
-## Contributing
+Much more detail on how to use Lucid will be coming soon. One way to get started however is to use the Lucid project generator. If you wanted to create a project directory called 'tutorial' for example, you could do this:
+
+    $ lucid-gen project tutorial
+
+In order to to check what options are available to you from the command line, do this:
+
+    $ lucid --help
+
+
+Contributing
+------------
 
 1. Fork it
 2. Create your feature branch (`git checkout -b my-new-feature`)

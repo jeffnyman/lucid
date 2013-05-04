@@ -1,4 +1,6 @@
-source 'https://rubygems.org'
+source "https://rubygems.org"
 
-# Specify your gem's dependencies in lucid.gemspec
+# All gem dependencies are specified in lucid.gemspec
 gemspec
+
+# gem 'gherkin', :path => '../gherkin'
