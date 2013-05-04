@@ -118,7 +118,7 @@ module Lucid
       # @see Lucid::Runtime.load_execution_context
       def library_context
         library_files = spec_repo.select { |f| f =~ %r{/#{library_path}/} }
-        driver_file = library_files.select {|f| f =~ %r{/#{library_path}/env\..*} }
+        driver_file = library_files.select {|f| f =~ %r{/#{library_path}/driver\..*} }
         non_driver_files = library_files - driver_file
 
         @options[:dry_run] ? non_driver_files : driver_file + non_driver_files
