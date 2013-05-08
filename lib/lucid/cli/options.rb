@@ -307,7 +307,26 @@ module Lucid
             @out_stream.puts opts.help
             Kernel.exit(0)
           end
-        end.parse!
+        end
+        #end.parse!
+
+        begin
+          @args.parse!
+        rescue OptionParser::InvalidOption
+          if $!.to_s =~ /invalid option\:\s+((?:-)?-\S+)/
+            puts "You specified an invalid option: #{$1}"
+            puts "Please run lucid --help to see the list of available options."
+          end
+
+        rescue OptionParser::MissingArgument
+          if $!.to_s =~ /missing argument\:\s+((?:-)?-\S+)/
+            puts "You specified an valid option (#{$1}), but with an invalid argument."
+            puts "Make sure you are providing the expected argument for the option."
+            puts "Run lucid --help to see the list of available options."
+          end
+
+          Kernel.exit(1)
+        end
 
         if @quiet
           @options[:matchers] = @options[:source] = false
