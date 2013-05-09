@@ -71,14 +71,14 @@ module Lucid
           raise e
         rescue Errno::ENOENT => e
           if @path == "specs"
-            e.message << ["\nYou don't have a 'specs' directory. This is the default specification",
-                          "directory that Lucid will use if one is not specified. So either create",
-                          "that directory or specify where your test repository is located."].join("\n")
+            STDOUT.puts ["\nYou don't have a 'specs' directory. This is the default specification",
+                         "directory that Lucid will use if one is not specified. So either create",
+                         "that directory or specify where your test repository is located."].join("\n")
           else
-            e.message << ["\nThere is no '#{@path}' directory. Since that is what you specified as",
-                          "your spec repository, this directory must be present."].join("\n")
+            STDOUT.puts ["\nThere is no '#{@path}' directory. Since that is what you specified as",
+                         "your spec repository, this directory must be present."].join("\n")
           end
-          raise e
+          Kernel.exit(1)
         end
       end
     end
