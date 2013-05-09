@@ -1,6 +1,18 @@
 Change Log and History
 ======================
 
+
+Version 0.0.6 / 2013-05-09
+--------------------------
+
+This version attempts to fix a few issues to improve general operation.
+
+* Lucid now lists an explicit dependency on json. (This was due to [an issue with multi_json](https://github.com/intridea/multi_json/issues/114).)
+* Invalid command line options are now handled better. ([Invalid Command Line Options Needs Better Handling](https://github.com/jnyman/lucid/issues/1).)
+* Lucid now handles missing directories without raising exceptions. ([Extraneous "No File or Directory" Messages](https://github.com/jnyman/lucid/issues/3).)
+* The default generator project recognizes a missing Symbiont gem. ([Stack Trace When Symbiont Not Installed](https://github.com/jnyman/lucid/issues/5).)
+
+
 Version 0.0.5 / 2013-05-04
 --------------------------
 
