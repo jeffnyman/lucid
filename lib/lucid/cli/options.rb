@@ -436,6 +436,8 @@ module Lucid
         @options[:strict] |= other_options[:strict]
         @options[:dry_run] |= other_options[:dry_run]
 
+        @options[:library_path] += other_options[:library_path]
+
         @profiles += other_options.profiles
         @expanded_args += other_options.expanded_args
 

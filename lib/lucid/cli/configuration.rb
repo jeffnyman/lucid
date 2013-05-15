@@ -90,17 +90,24 @@ module Lucid
       def spec_repo
         requires = @options[:require].empty? ? require_dirs : @options[:require]
 
+        log.info("Spec Repo Require From: #{requires}")
+
         files = requires.map do |path|
           path = path.gsub(/\\/, '/')   # convert \ to /
           path = path.gsub(/\/$/, '')   # removing trailing /
           File.directory?(path) ? Dir["#{path}/**/*"] : path
         end.flatten.uniq
 
+        log.info("Spec Repo Files (Before Reject): #{files}")
+
         extract_excluded_files(files)
 
         files.reject! {|f| !File.file?(f)}
         files.reject! {|f| File.extname(f) == ".#{spec_type}" }
         files.reject! {|f| f =~ /^http/}
+
+        log.info("Spec Repo Files (After Reject): #{files}")
+
         files.sort
       end
 
@@ -109,7 +116,7 @@ module Lucid
       # library path.
       # @see Lucid::Runtime.load_execution_context
       def definition_context
-        spec_repo.reject { |f| f=~ %r{/#{library_path}/} }
+        spec_repo.reject { |f| f=~ %r{common} }
       end
 
       # The library context will store an array of all files that are found
@@ -117,8 +124,10 @@ module Lucid
       # via a command line option.
       # @see Lucid::Runtime.load_execution_context
       def library_context
-        library_files = spec_repo.select { |f| f =~ %r{/#{library_path}/} }
-        driver_file = library_files.select {|f| f =~ %r{/#{library_path}/driver\..*} }
+        library_files = spec_repo.select { |f| f =~ %r{common} }
+
+        #driver_file = library_files.select {|f| f =~ %r{/#{library_path}/driver\..*} }
+        driver_file = library_files.select {|f| f =~ %r{common\/support\/driver} }
         non_driver_files = library_files - driver_file
 
         @options[:dry_run] ? non_driver_files : driver_file + non_driver_files
@@ -141,8 +150,6 @@ module Lucid
             path
           end
         end.flatten.uniq
-
-        log.info("Spec Files: #{files}")
 
         extract_excluded_files(files)
         files
@@ -167,9 +174,9 @@ module Lucid
       # that holds the logic that supports the basic operations of the
       # execution. This value will default to 'lucid' but the value of
       # library_path can be changed via a command line option.
-      def library_path
-        @options[:library_path].empty? ? 'lucid' : @options[:library_path]
-      end
+      #def library_path
+      #  @options[:library_path].empty? ? 'common' : @options[:library_path]
+      #end
 
       def log
         logger = Logger.new(@out_stream)
@@ -252,7 +259,7 @@ module Lucid
       end
 
       def require_dirs
-        spec_location + Dir['vendor/{gems,plugins}/*/lucid']
+        spec_location + Dir['common', 'pages', 'steps']
       end
 
     end
