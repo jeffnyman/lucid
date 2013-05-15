@@ -76,7 +76,7 @@ module Lucid
         # TODO: rename this method to multiline_string
         @__lucid_runtime.doc_string(string_without_triple_quotes, content_type, line_offset)
       end
-      
+
       # Print a message to the output.
       #
       # @note Lucid might surprise you with the behavior of this method. Instead

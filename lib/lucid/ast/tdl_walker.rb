@@ -26,10 +26,12 @@ module Lucid
         end
       end
 
-      def visit_feature(feature)
-        broadcast(feature) do
-          feature.accept(self)
-        end
+      #def visit_feature(feature)
+        #broadcast(feature) do
+        #  feature.accept(self)
+        #end
+      def visit_feature(feature, &block)
+        broadcast(feature, &block)
       end
 
       def visit_comment(comment)
@@ -63,10 +65,11 @@ module Lucid
         end
       end
 
-      def visit_background(background)
-        broadcast(background) do
-          background.accept(self)
-        end
+      def visit_background(background, &block)
+        #broadcast(background) do
+        #  background.accept(self)
+        #end
+        broadcast(background, &block)
       end
 
       def visit_background_name(keyword, name, file_colon_line, source_indent)
