@@ -16,8 +16,12 @@ module Lucid
       module ExamplesArray #:nodoc:
         def accept(visitor)
           return if Lucid.wants_to_quit
-          each do |examples|
-            visitor.visit_examples(examples)
+          return if self.empty?
+
+          visitor.visit_examples_array(self) do
+            each do |examples|
+              examples.accept(visitor)
+            end
           end
         end
       end
@@ -40,7 +44,7 @@ module Lucid
           visitor.visit_steps(steps)
 
           skip_invoke! if @background.failed?
-          visitor.visit_examples_array(examples_array) unless examples_array.empty?
+          examples_array.accept(visitor)
         end
       end
 

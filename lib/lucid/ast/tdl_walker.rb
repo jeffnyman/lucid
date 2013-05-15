@@ -64,16 +64,12 @@ module Lucid
         broadcast(keyword, name, file_colon_line, source_indent)
       end
 
-      def visit_examples_array(examples_array)
-        broadcast(examples_array) do
-          examples_array.accept(self)
-        end
+      def visit_examples_array(examples_array, &block)
+        broadcast(examples_array, &block)
       end
 
-      def visit_examples(examples)
-        broadcast(examples) do
-          examples.accept(self)
-        end
+      def visit_examples(examples, &block)
+        broadcast(examples, &block)
       end
 
       def visit_examples_name(keyword, name)
