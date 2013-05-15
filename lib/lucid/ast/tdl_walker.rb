@@ -20,10 +20,8 @@ module Lucid
       # are initially the same concept. When the spec is visited, the high
       # level construct (feature, ability) is determined.
       # @see Lucid::Runtime.run
-      def visit_features(features)
-        broadcast(features) do
-          features.accept(self)
-        end
+      def visit_features(features, &block)
+        broadcast(features, &block)
       end
 
       def visit_feature(feature, &block)

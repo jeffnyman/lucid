@@ -44,7 +44,8 @@ module Lucid
       tdl_walker = @configuration.establish_tdl_walker(self)
       self.visitor = tdl_walker # Ugly circular dependency, but needed to support Domain#puts
 
-      tdl_walker.visit_features(specs)
+      #tdl_walker.visit_features(specs)
+      specs.accept(tdl_walker)
     end
 
     def features_paths
