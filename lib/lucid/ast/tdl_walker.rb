@@ -26,10 +26,6 @@ module Lucid
         end
       end
 
-      #def visit_feature(feature)
-        #broadcast(feature) do
-        #  feature.accept(self)
-        #end
       def visit_feature(feature, &block)
         broadcast(feature, &block)
       end
@@ -44,10 +40,8 @@ module Lucid
         broadcast(comment_line)
       end
 
-      def visit_tags(tags)
-        broadcast(tags) do
-          tags.accept(self)
-        end
+      def visit_tags(tags, &block)
+        broadcast(tags, &block)
       end
 
       def visit_tag_name(tag_name)
@@ -66,9 +60,6 @@ module Lucid
       end
 
       def visit_background(background, &block)
-        #broadcast(background) do
-        #  background.accept(self)
-        #end
         broadcast(background, &block)
       end
 
