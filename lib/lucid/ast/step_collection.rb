@@ -15,8 +15,12 @@ module Lucid
 
       def accept(visitor)
         return if Lucid.wants_to_quit
-        @steps.each do |step|
-          visitor.visit_step(step)
+
+        visitor.visit_steps(self) do
+          @steps.each do |step|
+            #visitor.visit_step(step)
+            step.accept(visitor)
+          end
         end
       end
 
