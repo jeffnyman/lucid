@@ -42,14 +42,16 @@ module Lucid
 
       def visit_step_result(visitor)
         visitor.visit_step_result(
-          keyword,
-          @step_match,
-          (@different_table || @multiline_arg),
-          @status,
-          @reported_exception,
-          source_indent,
-          @background,
-          file_colon_line
+          StepResult.new(
+            keyword,
+            @step_match,
+            (@different_table || @multiline_arg),
+            @status,
+            @reported_exception,
+            source_indent,
+            @background,
+            file_colon_line
+          )
         )
       end
 
