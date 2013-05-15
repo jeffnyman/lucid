@@ -76,13 +76,7 @@ module Lucid
         # TODO: rename this method to multiline_string
         @__lucid_runtime.doc_string(string_without_triple_quotes, content_type, line_offset)
       end
-
-      # @deprecated Use {#puts} instead.
-      def announce(*messages)
-        STDERR.puts AnsiEscapes.failed + "WARNING: #announce is deprecated. Use #puts instead:" + caller[0] + AnsiEscapes.reset
-        puts(*messages)
-      end
-
+      
       # Print a message to the output.
       #
       # @note Lucid might surprise you with the behavior of this method. Instead
