@@ -6,7 +6,7 @@ module Lucid
       include Names
       include HasLocation
       attr_writer :outline_table
-      attr_reader :comment, :keyword
+      attr_reader :comment, :keyword, :outline_table
 
       def initialize(location, comment, keyword, title, description, outline_table)
         @location, @comment, @keyword, @title, @description, @outline_table = location, comment, keyword, title, description, outline_table
@@ -25,7 +25,7 @@ module Lucid
         visitor.visit_examples(self) do
           comment.accept(visitor)
           visitor.visit_examples_name(keyword, name)
-          visitor.visit_outline_table(@outline_table)
+          outline_table.accept(visitor)
         end
       end
 

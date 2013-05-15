@@ -35,8 +35,11 @@ module Lucid
 
       def accept(visitor)
         return if Lucid.wants_to_quit
-        invoke(visitor.runtime, visitor.configuration)
-        visit_step_result(visitor)
+
+        visitor.visit_step(self) do
+          invoke(visitor.runtime, visitor.configuration)
+          visit_step_result(visitor)
+        end
       end
 
       def visit_step_result(visitor)

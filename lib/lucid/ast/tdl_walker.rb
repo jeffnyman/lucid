@@ -11,7 +11,7 @@ module Lucid
       def execute(scenario, skip_hooks)
         runtime.with_hooks(scenario, skip_hooks) do
           scenario.skip_invoke! if scenario.failed?
-          visit_steps(scenario.steps)
+          scenario.steps.accept(self)
         end
       end
 
@@ -74,26 +74,20 @@ module Lucid
         broadcast(keyword, name)
       end
 
-      def visit_outline_table(outline_table)
-        broadcast(outline_table) do
-          outline_table.accept(self)
-        end
+      def visit_outline_table(outline_table, &block)
+        broadcast(outline_table, &block)
       end
 
       def visit_scenario_name(keyword, name, file_colon_line, source_indent)
         broadcast(keyword, name, file_colon_line, source_indent)
       end
 
-      def visit_steps(steps)
-        broadcast(steps) do
-          steps.accept(self)
-        end
+      def visit_steps(steps, &block)
+        broadcast(steps, &block)
       end
 
-      def visit_step(step)
-        broadcast(step) do
-          step.accept(self)
-        end
+      def visit_step(step, &block)
+        broadcast(step, &block)
       end
 
       def visit_step_result(keyword, step_match, multiline_arg, status, exception, source_indent, background, file_colon_line)
@@ -122,16 +116,12 @@ module Lucid
         broadcast(string)
       end
 
-      def visit_table_row(table_row)
-        broadcast(table_row) do
-          table_row.accept(self)
-        end
+      def visit_table_row(table_row, &block)
+        broadcast(table_row, &block)
       end
 
-      def visit_table_cell(table_cell)
-        broadcast(table_cell) do
-          table_cell.accept(self)
-        end
+      def visit_table_cell(table_cell, &block)
+        broadcast(table_cell, &block)
       end
 
       def visit_table_cell_value(value, status)
