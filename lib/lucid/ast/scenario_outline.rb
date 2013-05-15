@@ -11,7 +11,7 @@ module Lucid
 
       attr_accessor :feature
       attr_reader :feature_tags
-      attr_reader :comment, :tags
+      attr_reader :comment, :tags, :keyword
 
       module ExamplesArray #:nodoc:
         def accept(visitor)
@@ -33,13 +33,15 @@ module Lucid
         return if Lucid.wants_to_quit
         raise_missing_examples_error unless @example_sections
 
-        comment.accept(visitor)
-        tags.accept(visitor)
-        visitor.visit_scenario_name(@keyword, name, file_colon_line, source_indent(first_line_length))
-        visitor.visit_steps(steps)
+        visitor.visit_feature_element(self) do
+          comment.accept(visitor)
+          tags.accept(visitor)
+          visitor.visit_scenario_name(keyword, name, file_colon_line, source_indent(first_line_length))
+          visitor.visit_steps(steps)
 
-        skip_invoke! if @background.failed?
-        visitor.visit_examples_array(examples_array) unless examples_array.empty?
+          skip_invoke! if @background.failed?
+          visitor.visit_examples_array(examples_array) unless examples_array.empty?
+        end
       end
 
       def to_units(background)

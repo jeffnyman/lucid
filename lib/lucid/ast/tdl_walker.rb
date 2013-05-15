@@ -50,11 +50,10 @@ module Lucid
         broadcast(keyword, name)
       end
 
-      # +feature_element+ is either Scenario or ScenarioOutline
-      def visit_feature_element(feature_element)
-        broadcast(feature_element) do
-          feature_element.accept(self)
-        end
+      # Note that a feature_element refers to either a Scenario or
+      # a ScenarioOutline.
+      def visit_feature_element(feature_element, &block)
+        broadcast(feature_element, &block)
       end
 
       def visit_background(background, &block)
