@@ -9,6 +9,7 @@ module Lucid
       include Names
       include HasLocation
       attr_accessor :feature
+      attr_accessor :comment
 
       def initialize(language, location, comment, keyword, title, description, raw_steps)
         @language, @location, @comment, @keyword, @title, @description, @raw_steps = language, location, comment, keyword, title, description, raw_steps
@@ -36,17 +37,8 @@ module Lucid
 
       def accept(visitor)
         return if Lucid.wants_to_quit
-        #visitor.visit_comment(@comment) unless @comment.empty?
-        #visitor.visit_background_name(@keyword, name, file_colon_line, source_indent(first_line_length))
-        #with_visitor(hook_context, visitor) do
-        #  visitor.runtime.before(hook_context)
-        #  skip_invoke! if failed?
-        #  visitor.visit_steps(step_invocations)
-        #  @failed = step_invocations.any? { |step_invocation| step_invocation.exception || step_invocation.status != :passed }
-        #  visitor.runtime.after(hook_context) if @failed || feature_elements.empty?
-        #end
         visitor.visit_background(self) do
-          visitor.visit_comment(@comment) unless @comment.empty?
+          comment.accept(visitor)
           visitor.visit_background_name(@keyword, name, file_colon_line, source_indent(first_line_length))
           with_visitor(hook_context, visitor) do
             visitor.runtime.before(hook_context)
