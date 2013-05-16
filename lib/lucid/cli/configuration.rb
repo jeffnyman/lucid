@@ -100,7 +100,6 @@ module Lucid
 
       # @see Lucid::Runtime.load_execution_context
       def definition_context
-        #spec_requires.reject { |f| f=~ %r{common} }
         spec_requires.reject { |f| f=~ %r{#{library_path}} }
       end
 

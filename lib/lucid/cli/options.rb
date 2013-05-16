@@ -469,18 +469,18 @@ module Lucid
 
       def default_options
         {
-          :strict       => false,
-          :require      => [],
-          :dry_run      => false,
-          :formats      => [],
-          :excludes     => [],
+          :strict           => false,
+          :require          => [],
+          :dry_run          => false,
+          :formats          => [],
+          :excludes         => [],
           :tag_expressions  => [],
-          :name_regexps => [],
-          :env_vars     => {},
-          :diff_enabled => true,
-          :spec_type => "",
-          :library_path => "",
-          :driver_file => ""
+          :name_regexps     => [],
+          :env_vars         => {},
+          :diff_enabled     => true,
+          :spec_type        => "",
+          :library_path     => "",
+          :driver_file      => ""
         }
       end
     end
