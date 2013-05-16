@@ -83,23 +83,17 @@ module Lucid
       def spec_requires
         requires = @options[:require].empty? ? require_dirs : @options[:require]
 
-        log.info("Spec Requires From: #{requires}")
-
         files = requires.map do |path|
           path = path.gsub(/\\/, '/')   # convert \ to /
           path = path.gsub(/\/$/, '')   # removing trailing /
           File.directory?(path) ? Dir["#{path}/**/*"] : path
         end.flatten.uniq
 
-        log.info("Spec Require Files (Before Reject): #{files}")
-
         extract_excluded_files(files)
 
         files.reject! {|f| !File.file?(f)}
         files.reject! {|f| File.extname(f) == ".#{spec_type}" }
         files.reject! {|f| f =~ /^http/}
-
-        log.info("Spec Require Files (After Reject): #{files}")
 
         files.sort
       end
@@ -115,6 +109,9 @@ module Lucid
 
         #driver_file = library_files.select {|f| f =~ %r{/#{library_path}/driver\..*} }
         driver_file = library_files.select {|f| f =~ %r{common\/support\/driver} }
+
+        log.info("Driver File Found: #{driver_file}")
+
         non_driver_files = library_files - driver_file
 
         @options[:dry_run] ? non_driver_files : driver_file + non_driver_files
