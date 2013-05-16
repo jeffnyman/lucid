@@ -121,7 +121,7 @@ module Lucid
       @orchestrator.unknown_programming_language?
     end
 
-    def write_stepdefs_json
+    def write_testdefs_json
       if(@configuration.testdefs)
         stepdefs = []
         @orchestrator.step_definitions.sort{|a,b| a.to_hash['source'] <=> a.to_hash['source']}.each do |stepdef|
