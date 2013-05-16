@@ -26,7 +26,7 @@ module Lucid
       @results = Results.new(@configuration)
     end
 
-    # Allows you to take an existing runtime and change it's configuration
+    # Used to take an existing runtime and change its configuration.
     def configure(new_configuration)
       @configuration = Configuration.parse(new_configuration)
       @orchestrator.configure(@configuration)
@@ -42,9 +42,8 @@ module Lucid
       fire_after_configuration_hook
 
       tdl_walker = @configuration.establish_tdl_walker(self)
-      self.visitor = tdl_walker # Ugly circular dependency, but needed to support Domain#puts
+      self.visitor = tdl_walker
 
-      #tdl_walker.visit_features(specs)
       specs.accept(tdl_walker)
     end
 
