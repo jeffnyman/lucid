@@ -120,12 +120,9 @@ module Lucid
         @options[:dry_run] ? non_driver_files : driver_file + non_driver_files
       end
 
-      # The spec files refer to any files found within the spec repository
-      # that match the specification file type. Note that this method is
-      # called from the specs action in a Runtime instance.
       # @see Lucid::Runtime.specs
       def spec_files
-        files = with_default_specs_path(spec_source).map do |path|
+        files = specs_path(spec_source).map do |path|
           path = path.gsub(/\\/, '/')  # convert \ to /
           path = path.chomp('/')       # removing trailing /
           if File.directory?(path)
@@ -146,23 +143,16 @@ module Lucid
         dirs = spec_source.map { |f| File.directory?(f) ? f : File.dirname(f) }.uniq
         dirs.delete('.') unless spec_source.include?('.')
 
-        with_default_specs_path(dirs)
+        specs_path(dirs)
       end
 
-      # The "spec_type" refers to the file type (or extension) of spec files.
-      # This is how Lucid will recognize the files that should be treated as
-      # specs within a spec repository.
       def spec_type
         @options[:spec_type].empty? ? 'spec' : @options[:spec_type]
       end
 
-      # The "library_path" refers to the location within the spec repository
-      # that holds the logic that supports the basic operations of the
-      # execution. This value will default to 'lucid' but the value of
-      # library_path can be changed via a command line option.
-      #def library_path
-      #  @options[:library_path].empty? ? 'common' : @options[:library_path]
-      #end
+      def library_path
+        @options[:library_path].empty? ? 'common' : @options[:library_path]
+      end
 
       def log
         logger = Logger.new(@out_stream)
@@ -191,7 +181,7 @@ module Lucid
 
     private
 
-      def with_default_specs_path(paths)
+      def specs_path(paths)
         return ['specs'] if paths.empty?
         paths
       end
