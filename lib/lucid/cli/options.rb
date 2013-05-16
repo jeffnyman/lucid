@@ -94,6 +94,10 @@ module Lucid
             @options[:spec_type] = type
           end
 
+          opts.on("--driver-file FILE", "The file for Lucid to connect to an execution library.") do |file|
+            @options[:driver_file] = file
+          end
+
           opts.separator ""
 
           opts.on("-r LIBRARY|DIR", "--require LIBRARY|DIR",
@@ -475,7 +479,8 @@ module Lucid
           :env_vars     => {},
           :diff_enabled => true,
           :spec_type => "",
-          :library_path => ""
+          :library_path => "",
+          :driver_file => ""
         }
       end
     end

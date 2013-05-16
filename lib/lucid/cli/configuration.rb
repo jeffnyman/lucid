@@ -100,21 +100,20 @@ module Lucid
 
       # @see Lucid::Runtime.load_execution_context
       def definition_context
-        spec_requires.reject { |f| f=~ %r{common} }
+        #spec_requires.reject { |f| f=~ %r{common} }
+        spec_requires.reject { |f| f=~ %r{#{library_path}} }
       end
 
       # @see Lucid::Runtime.load_execution_context
       def library_context
-        library_files = spec_requires.select { |f| f =~ %r{common} }
+        library_files = spec_requires.select { |f| f =~ %r{#{library_path}} }
+        driver = library_files.select {|f| f =~ %r{#{driver_file}} }
 
-        #driver_file = library_files.select {|f| f =~ %r{/#{library_path}/driver\..*} }
-        driver_file = library_files.select {|f| f =~ %r{common\/support\/driver} }
+        log.info("Driver File Found: #{driver}")
 
-        log.info("Driver File Found: #{driver_file}")
+        non_driver_files = library_files - driver
 
-        non_driver_files = library_files - driver_file
-
-        @options[:dry_run] ? non_driver_files : driver_file + non_driver_files
+        @options[:dry_run] ? non_driver_files : driver + non_driver_files
       end
 
       # @see Lucid::Runtime.specs
@@ -149,6 +148,10 @@ module Lucid
 
       def library_path
         @options[:library_path].empty? ? 'common' : @options[:library_path]
+      end
+
+      def driver_file
+        @options[:driver_file].empty? ? 'driver' : @options[:driver_file]
       end
 
       def log
@@ -228,7 +231,7 @@ module Lucid
       end
 
       def require_dirs
-        spec_location + Dir['common', 'pages', 'steps']
+        spec_location + Dir["#{library_path}", 'pages', 'steps']
       end
 
     end
