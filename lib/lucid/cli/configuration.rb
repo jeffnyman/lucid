@@ -80,17 +80,10 @@ module Lucid
         end
       end
 
-      # The spec_repo is used to get all of the files that are in the
-      # "spec source" location. This location defaults to 'specs' but can
-      # be changed via a command line option. The spec repo will remove
-      # any directory names and, perhaps counter-intuitively, any spec
-      # files. The reason for this is that, by default, the "spec repo"
-      # contains everything that Lucid will need, whether that be
-      # test spec files or code files to support them.
-      def spec_repo
+      def spec_requires
         requires = @options[:require].empty? ? require_dirs : @options[:require]
 
-        log.info("Spec Repo Require From: #{requires}")
+        log.info("Spec Requires From: #{requires}")
 
         files = requires.map do |path|
           path = path.gsub(/\\/, '/')   # convert \ to /
@@ -98,7 +91,7 @@ module Lucid
           File.directory?(path) ? Dir["#{path}/**/*"] : path
         end.flatten.uniq
 
-        log.info("Spec Repo Files (Before Reject): #{files}")
+        log.info("Spec Require Files (Before Reject): #{files}")
 
         extract_excluded_files(files)
 
@@ -106,25 +99,19 @@ module Lucid
         files.reject! {|f| File.extname(f) == ".#{spec_type}" }
         files.reject! {|f| f =~ /^http/}
 
-        log.info("Spec Repo Files (After Reject): #{files}")
+        log.info("Spec Require Files (After Reject): #{files}")
 
         files.sort
       end
 
-      # The definition context refers to any files that are found in the spec
-      # repository that are not spec files and that are not contained in the
-      # library path.
       # @see Lucid::Runtime.load_execution_context
       def definition_context
-        spec_repo.reject { |f| f=~ %r{common} }
+        spec_requires.reject { |f| f=~ %r{common} }
       end
 
-      # The library context will store an array of all files that are found
-      # in the library_path. This path defaults to 'lucid' but can be changed
-      # via a command line option.
       # @see Lucid::Runtime.load_execution_context
       def library_context
-        library_files = spec_repo.select { |f| f =~ %r{common} }
+        library_files = spec_requires.select { |f| f =~ %r{common} }
 
         #driver_file = library_files.select {|f| f =~ %r{/#{library_path}/driver\..*} }
         driver_file = library_files.select {|f| f =~ %r{common\/support\/driver} }
@@ -155,7 +142,6 @@ module Lucid
         files
       end
 
-      # A call to spec_location will return the location of a spec repository.
       def spec_location
         dirs = spec_source.map { |f| File.directory?(f) ? f : File.dirname(f) }.uniq
         dirs.delete('.') unless spec_source.include?('.')
@@ -199,10 +185,6 @@ module Lucid
         @options[:formats]
       end
 
-      # The "spec_source" refers to the location of the spec repository. This
-      # value will default to 'specs' but the value of spec_source can be
-      # changed if a repository location is specified on the command line when
-      # calling Lucid.
       def spec_source
         @options[:spec_source]
       end
