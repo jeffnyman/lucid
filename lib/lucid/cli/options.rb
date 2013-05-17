@@ -17,7 +17,7 @@ module Lucid
                                                               "#{INDENT}listed first. If --dry-run is used the duration\n" +
                                                               "#{INDENT}is not shown, and test definitions are sorted by\n" +
                                                               "#{INDENT}file name instead."],
-        'stepdefs'    => ['Lucid::Formatter::Stepdefs',    "Prints all test definitions with their locations. Same as\n" +
+        'testdefs'    => ['Lucid::Formatter::Testdefs',    "Prints all test definitions with their locations. Same as\n" +
                                                               "#{INDENT}the usage formatter, except that steps are not printed."],
         'junit'       => ['Lucid::Formatter::Junit',       'Generates a report similar to Ant+JUnit.'],
         'json'        => ['Lucid::Formatter::Json',        'Prints the spec as JSON.'],

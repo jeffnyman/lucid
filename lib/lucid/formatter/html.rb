@@ -214,7 +214,6 @@ module Lucid
         move_progress
       end
 
-      #def before_step_result(keyword, step_match, multiline_arg, status, exception, source_indent, background, file_colon_line)
       def before_step_result(step_result)
         @step_match = step_result.step_match
         @hide_this_step = false
@@ -225,17 +224,13 @@ module Lucid
           end
           @exceptions << step_result.exception
         end
-        #if status != :failed && @in_background ^ background
         if step_result.status != :failed && @in_background ^ step_result.background
           @hide_this_step = true
           return
         end
-        #@status = status
         @status = step_result.status
         return if @hide_this_step
-        #set_scenario_color(status)
         set_scenario_color(step_result.status)
-        #@builder << "<li id='#{@step_id}' class='step #{status}'>"
         @builder << "<li id='#{@step_id}' class='step #{step_result.status}'>"
       end
 

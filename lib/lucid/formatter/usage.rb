@@ -30,7 +30,6 @@ module Lucid
         @duration = Time.now - @start_time
       end
 
-      #def after_step_result(keyword, step_match, multiline_arg, status, exception, source_indent, background, file_colon_line)
       def after_step_result(step_result)
         step_definition = step_result.step_definition
         unless step_definition.nil? # nil if it's from a scenario outline
