@@ -26,7 +26,7 @@ module Lucid
       @results = Results.new(@configuration)
     end
 
-    # Allows you to take an existing runtime and change it's configuration
+    # Used to take an existing runtime and change its configuration.
     def configure(new_configuration)
       @configuration = Configuration.parse(new_configuration)
       @orchestrator.configure(@configuration)
@@ -42,9 +42,9 @@ module Lucid
       fire_after_configuration_hook
 
       tdl_walker = @configuration.establish_tdl_walker(self)
-      self.visitor = tdl_walker # Ugly circular dependency, but needed to support Domain#puts
+      self.visitor = tdl_walker
 
-      tdl_walker.visit_features(specs)
+      specs.accept(tdl_walker)
     end
 
     def features_paths
@@ -120,13 +120,13 @@ module Lucid
       @orchestrator.unknown_programming_language?
     end
 
-    def write_stepdefs_json
+    def write_testdefs_json
       if(@configuration.testdefs)
         stepdefs = []
         @orchestrator.step_definitions.sort{|a,b| a.to_hash['source'] <=> a.to_hash['source']}.each do |stepdef|
           stepdef_hash = stepdef.to_hash
           steps = []
-          features.each do |feature|
+          specs.each do |feature|
             feature.feature_elements.each do |feature_element|
               feature_element.raw_steps.each do |step|
                 args = stepdef.arguments_from(step.name)

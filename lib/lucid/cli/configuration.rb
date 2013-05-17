@@ -80,14 +80,7 @@ module Lucid
         end
       end
 
-      # The spec_repo is used to get all of the files that are in the
-      # "spec source" location. This location defaults to 'specs' but can
-      # be changed via a command line option. The spec repo will remove
-      # any directory names and, perhaps counter-intuitively, any spec
-      # files. The reason for this is that, by default, the "spec repo"
-      # contains everything that Lucid will need, whether that be
-      # test spec files or code files to support them.
-      def spec_repo
+      def spec_requires
         requires = @options[:require].empty? ? require_dirs : @options[:require]
 
         files = requires.map do |path|
@@ -101,35 +94,30 @@ module Lucid
         files.reject! {|f| !File.file?(f)}
         files.reject! {|f| File.extname(f) == ".#{spec_type}" }
         files.reject! {|f| f =~ /^http/}
+
         files.sort
       end
 
-      # The definition context refers to any files that are found in the spec
-      # repository that are not spec files and that are not contained in the
-      # library path.
       # @see Lucid::Runtime.load_execution_context
       def definition_context
-        spec_repo.reject { |f| f=~ %r{/#{library_path}/} }
+        spec_requires.reject { |f| f=~ %r{#{library_path}} }
       end
 
-      # The library context will store an array of all files that are found
-      # in the library_path. This path defaults to 'lucid' but can be changed
-      # via a command line option.
       # @see Lucid::Runtime.load_execution_context
       def library_context
-        library_files = spec_repo.select { |f| f =~ %r{/#{library_path}/} }
-        driver_file = library_files.select {|f| f =~ %r{/#{library_path}/driver\..*} }
-        non_driver_files = library_files - driver_file
+        library_files = spec_requires.select { |f| f =~ %r{#{library_path}} }
+        driver = library_files.select {|f| f =~ %r{#{driver_file}} }
 
-        @options[:dry_run] ? non_driver_files : driver_file + non_driver_files
+        log.info("Driver File Found: #{driver}")
+
+        non_driver_files = library_files - driver
+
+        @options[:dry_run] ? non_driver_files : driver + non_driver_files
       end
 
-      # The spec files refer to any files found within the spec repository
-      # that match the specification file type. Note that this method is
-      # called from the specs action in a Runtime instance.
       # @see Lucid::Runtime.specs
       def spec_files
-        files = with_default_specs_path(spec_source).map do |path|
+        files = specs_path(spec_source).map do |path|
           path = path.gsub(/\\/, '/')  # convert \ to /
           path = path.chomp('/')       # removing trailing /
           if File.directory?(path)
@@ -142,33 +130,27 @@ module Lucid
           end
         end.flatten.uniq
 
-        log.info("Spec Files: #{files}")
-
         extract_excluded_files(files)
         files
       end
 
-      # A call to spec_location will return the location of a spec repository.
       def spec_location
         dirs = spec_source.map { |f| File.directory?(f) ? f : File.dirname(f) }.uniq
         dirs.delete('.') unless spec_source.include?('.')
 
-        with_default_specs_path(dirs)
+        specs_path(dirs)
       end
 
-      # The "spec_type" refers to the file type (or extension) of spec files.
-      # This is how Lucid will recognize the files that should be treated as
-      # specs within a spec repository.
       def spec_type
         @options[:spec_type].empty? ? 'spec' : @options[:spec_type]
       end
 
-      # The "library_path" refers to the location within the spec repository
-      # that holds the logic that supports the basic operations of the
-      # execution. This value will default to 'lucid' but the value of
-      # library_path can be changed via a command line option.
       def library_path
-        @options[:library_path].empty? ? 'lucid' : @options[:library_path]
+        @options[:library_path].empty? ? 'common' : @options[:library_path]
+      end
+
+      def driver_file
+        @options[:driver_file].empty? ? 'driver' : @options[:driver_file]
       end
 
       def log
@@ -192,17 +174,13 @@ module Lucid
         @options[:formats]
       end
 
-      # The "spec_source" refers to the location of the spec repository. This
-      # value will default to 'specs' but the value of spec_source can be
-      # changed if a repository location is specified on the command line when
-      # calling Lucid.
       def spec_source
         @options[:spec_source]
       end
 
     private
 
-      def with_default_specs_path(paths)
+      def specs_path(paths)
         return ['specs'] if paths.empty?
         paths
       end
@@ -252,7 +230,7 @@ module Lucid
       end
 
       def require_dirs
-        spec_location + Dir['vendor/{gems,plugins}/*/lucid']
+        spec_location + Dir["#{library_path}", 'pages', 'steps']
       end
 
     end

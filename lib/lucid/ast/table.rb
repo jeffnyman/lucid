@@ -179,7 +179,7 @@ module Lucid
       def accept(visitor) #:nodoc:
         return if Lucid.wants_to_quit
         cells_rows.each do |row|
-          visitor.visit_table_row(row)
+          row.accept(visitor)
         end
         nil
       end
@@ -631,8 +631,10 @@ module Lucid
 
         def accept(visitor)
           return if Lucid.wants_to_quit
-          each do |cell|
-            visitor.visit_table_cell(cell)
+          visitor.visit_table_row(self) do
+            each do |cell|
+              cell.accept(visitor)
+            end
           end
           nil
         end
@@ -687,7 +689,10 @@ module Lucid
 
         def accept(visitor)
           return if Lucid.wants_to_quit
-          visitor.visit_table_cell_value(value, status)
+
+          visitor.visit_table_cell(self) do
+            visitor.visit_table_cell_value(value, status)
+          end
         end
 
         def inspect!

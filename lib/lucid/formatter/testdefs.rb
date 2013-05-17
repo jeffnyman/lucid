@@ -2,7 +2,7 @@ require 'lucid/formatter/usage'
 
 module Lucid
   module Formatter
-    class Stepdefs < Usage
+    class Testdefs < Usage
       def print_steps(stepdef_key)
       end
 

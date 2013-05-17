@@ -23,11 +23,16 @@ module Lucid
 
       def accept(visitor)
         return if Lucid.wants_to_quit
-        start = Time.now
-        self.each do |feature|
-          visitor.visit_feature(feature)
+
+        visitor.visit_features(self) do
+          start = Time.now
+
+          self.each do |feature|
+            feature.accept(visitor)
+          end
+
+          @duration = Time.now - start
         end
-        @duration = Time.now - start
       end
 
       def step_count

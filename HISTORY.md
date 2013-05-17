@@ -2,6 +2,19 @@ Change Log and History
 ======================
 
 
+Version 0.0.7 / 2013-05-17
+--------------------------
+
+This version mainly makes a lot of internal changes and many of those are predicated upon keeping pace with the changes that Cucumber is making as they move to their 2.0 release.
+
+Two specific changes worth calling out:
+
+* Lucid will now let you reliably configure a library path.
+* Lucid will allow you to configure the name of the driver file. (This was due to a [planned enhancement[(https://github.com/jnyman/lucid/issues/2)].)
+
+The driver file in Cucumber is env.rb. In Lucid this defaults to driver.rb. Now, however, you can override that default. Regarding the library path, this is equivalent to what Cucumber refers to as the "support" directory. The main reason for these changes is that Lucid is trying to be a little more configurable than Cucumber.
+
+
 Version 0.0.6 / 2013-05-09
 --------------------------
 

@@ -6,6 +6,7 @@ module Lucid
       include Names
       include HasLocation
       attr_writer :outline_table
+      attr_reader :comment, :keyword, :outline_table
 
       def initialize(location, comment, keyword, title, description, outline_table)
         @location, @comment, @keyword, @title, @description, @outline_table = location, comment, keyword, title, description, outline_table
@@ -20,9 +21,12 @@ module Lucid
 
       def accept(visitor)
         return if Lucid.wants_to_quit
-        visitor.visit_comment(@comment) unless @comment.empty?
-        visitor.visit_examples_name(@keyword, name)
-        visitor.visit_outline_table(@outline_table)
+
+        visitor.visit_examples(self) do
+          comment.accept(visitor)
+          visitor.visit_examples_name(keyword, name)
+          outline_table.accept(visitor)
+        end
       end
 
       def skip_invoke!
@@ -39,7 +43,7 @@ module Lucid
 
       def to_sexp
         sexp = [:examples, @keyword, name]
-        comment = @comment.to_sexp
+        comment = comment.to_sexp
         sexp += [comment] if comment
         sexp += [@outline_table.to_sexp]
         sexp

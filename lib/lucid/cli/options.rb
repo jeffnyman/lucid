@@ -17,7 +17,7 @@ module Lucid
                                                               "#{INDENT}listed first. If --dry-run is used the duration\n" +
                                                               "#{INDENT}is not shown, and test definitions are sorted by\n" +
                                                               "#{INDENT}file name instead."],
-        'stepdefs'    => ['Lucid::Formatter::Stepdefs',    "Prints all test definitions with their locations. Same as\n" +
+        'testdefs'    => ['Lucid::Formatter::Testdefs',    "Prints all test definitions with their locations. Same as\n" +
                                                               "#{INDENT}the usage formatter, except that steps are not printed."],
         'junit'       => ['Lucid::Formatter::Junit',       'Generates a report similar to Ant+JUnit.'],
         'json'        => ['Lucid::Formatter::Json',        'Prints the spec as JSON.'],
@@ -92,6 +92,10 @@ module Lucid
 
           opts.on("--spec-type TYPE", "The file type (extension) for Lucid specifications.") do |type|
             @options[:spec_type] = type
+          end
+
+          opts.on("--driver-file FILE", "The file for Lucid to connect to an execution library.") do |file|
+            @options[:driver_file] = file
           end
 
           opts.separator ""
@@ -436,6 +440,8 @@ module Lucid
         @options[:strict] |= other_options[:strict]
         @options[:dry_run] |= other_options[:dry_run]
 
+        @options[:library_path] += other_options[:library_path]
+
         @profiles += other_options.profiles
         @expanded_args += other_options.expanded_args
 
@@ -463,17 +469,18 @@ module Lucid
 
       def default_options
         {
-          :strict       => false,
-          :require      => [],
-          :dry_run      => false,
-          :formats      => [],
-          :excludes     => [],
+          :strict           => false,
+          :require          => [],
+          :dry_run          => false,
+          :formats          => [],
+          :excludes         => [],
           :tag_expressions  => [],
-          :name_regexps => [],
-          :env_vars     => {},
-          :diff_enabled => true,
-          :spec_type => "",
-          :library_path => ""
+          :name_regexps     => [],
+          :env_vars         => {},
+          :diff_enabled     => true,
+          :spec_type        => "",
+          :library_path     => "",
+          :driver_file      => ""
         }
       end
     end
