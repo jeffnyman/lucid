@@ -147,7 +147,7 @@ module Lucid
           @io.puts format_string("\nThe --wip switch was used, so nothing was expected to pass. These scenarios passed:", :failed)
           print_elements(passed, :passed, "scenarios")
         else
-          @io.puts format_string("\nThe --wip switch was used, so any failures were expected. All is good.\n", :passed)
+          @io.puts format_string("\nThe --wip switch was used, so any non-passing scenarios were expected.\n", :passed)
         end
       end
 

@@ -54,11 +54,6 @@ module Lucid
         if @configuration.wip?
           scenarios(:passed).any?
         else
-          puts "*** Configuration strict? #{@configuration.strict?}"
-          puts "*** Any undefined steps? #{steps(:undefined).any?}"
-          puts "*** Any failed scenarios? #{scenarios(:failed).any?}"
-          puts "*** Any failed steps? #{steps(:failed).any?}"
-          puts "*** Any pending steps? #{steps(:pending).any?}"
           scenarios(:failed).any? || steps(:failed).any? ||
           (@configuration.strict? && (steps(:undefined).any? || steps(:pending).any?))
         end
