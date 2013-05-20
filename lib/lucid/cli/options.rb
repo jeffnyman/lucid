@@ -441,6 +441,8 @@ module Lucid
         @options[:dry_run] |= other_options[:dry_run]
 
         @options[:library_path] += other_options[:library_path]
+        @options[:spec_type] += other_options[:spec_type]
+        @options[:driver_file] += other_options[:driver_file]
 
         @profiles += other_options.profiles
         @expanded_args += other_options.expanded_args

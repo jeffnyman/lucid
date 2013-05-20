@@ -36,6 +36,7 @@ module Lucid
         runtime.run
         runtime.write_testdefs_json
         failure = runtime.results.failure? || Lucid.wants_to_quit
+        puts "*** Have I failed? #{failure}"
         @kernel.exit(failure ? 1 : 0)
       rescue ProfilesNotDefinedError, YmlLoadError, ProfileNotFound => e
         @err.puts(e.message)
