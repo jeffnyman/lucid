@@ -71,6 +71,7 @@ module Lucid
         print_stats(features, @options)
         print_matchers(@options)
         print_passing_wip(@options)
+        print_failing_strict(@options)
       end
 
       CHARS = {
