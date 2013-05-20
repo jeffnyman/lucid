@@ -151,6 +151,17 @@ module Lucid
         end
       end
 
+      def print_failing_strict(options)
+        return unless options[:strict]
+        undefined = runtime.steps(:undefined)
+        pending = runtime.steps(:pending)
+        if undefined.any? || pending.any?
+          @io.puts format_string("\nThe --strict switch was used, so nothing was expected to be undefined or pending. These scenarios violate that:", :failed)
+          print_elements(undefined, :undefined, "steps")
+          print_elements(pending, :pending, "steps")
+        end
+      end
+
       def embed(file, mime_type, label)
         # no-op
       end
