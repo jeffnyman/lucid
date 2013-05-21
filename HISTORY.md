@@ -2,6 +2,15 @@ Change Log and History
 ======================
 
 
+Version 0.0.8 / 2013-05-20
+--------------------------
+
+This version is being released to bring in two specific bug fixes.
+
+* Certain profile options were not being recognized. ([Spec Type Specified in Profile Not Recognized](https://github.com/jnyman/lucid/issues/10).)
+* The strict mode now works more as intended. ([Using "strict" Does Not Return Errors](https://github.com/jnyman/lucid/issues/8).)
+
+
 Version 0.0.7 / 2013-05-17
 --------------------------
 

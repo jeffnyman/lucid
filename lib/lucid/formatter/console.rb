@@ -147,7 +147,18 @@ module Lucid
           @io.puts format_string("\nThe --wip switch was used, so nothing was expected to pass. These scenarios passed:", :failed)
           print_elements(passed, :passed, "scenarios")
         else
-          @io.puts format_string("\nThe --wip switch was used, so any failures were expected. All is good.\n", :passed)
+          @io.puts format_string("\nThe --wip switch was used, so any non-passing scenarios were expected.\n", :passed)
+        end
+      end
+
+      def print_failing_strict(options)
+        return unless options[:strict]
+        undefined = runtime.steps(:undefined)
+        pending = runtime.steps(:pending)
+        if undefined.any? || pending.any?
+          @io.puts format_string("\nThe --strict switch was used, so nothing was expected to be undefined or pending. These scenarios violate that:", :failed)
+          print_elements(undefined, :undefined, "steps")
+          print_elements(pending, :pending, "steps")
         end
       end
 
