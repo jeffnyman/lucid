@@ -36,23 +36,8 @@ module Lucid
 
         visitor.visit_step(self) do
           invoke(visitor.runtime, visitor.configuration)
-          visit_step_result(visitor)
+          step_result.accept(visitor)
         end
-      end
-
-      def visit_step_result(visitor)
-        visitor.visit_step_result(
-          StepResult.new(
-            keyword,
-            @step_match,
-            (@different_table || @multiline_arg),
-            @status,
-            @reported_exception,
-            source_indent,
-            @background,
-            file_colon_line
-          )
-        )
       end
 
       def invoke(runtime, configuration)
@@ -147,13 +132,10 @@ module Lucid
       end
 
       def actual_keyword
-        #repeat_keywords = rubify([language.keywords('but'), language.keywords('and')]).flatten.uniq.reject{|kw| kw == '* '}
-        #if repeat_keywords.index(@step.keyword) && previous
         keywords = Keywords.new(language)
         if keywords.repeat_keyword?(keyword) && previous
           previous.actual_keyword
         else
-          #keyword == '* ' ? language.code_keywords.first : keyword
           keyword == '* ' ? keywords.star_code_keyword : keyword
         end
       end
@@ -222,6 +204,22 @@ module Lucid
       def to_sexp
         [:step_invocation, @step.line, @step.keyword, @name, (@multiline_arg.nil? ? nil : @multiline_arg.to_sexp)].compact
       end
+
+      private
+
+      def step_result
+        StepResult.new(
+          keyword,
+          @step_match,
+          (@different_table || @multiline_arg),
+          @status,
+          @reported_exception,
+          source_indent,
+          @background,
+          file_colon_line
+        )
+      end
+
     end
   end
 end

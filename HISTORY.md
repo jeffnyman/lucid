@@ -2,6 +2,16 @@ Change Log and History
 ======================
 
 
+Version 0.0.9 / 2013-05-22
+--------------------------
+
+This version is being released to introduce a few more behind-the-scenes logic refactorings and also to fix a specific bug.
+
+* Lucid was still indicating it could use non-Ruby languages. ([Matchers In Different Languages?](https://github.com/jnyman/lucid/issues/11).)
+
+As a note, this is the final "patch" version of Lucid prior to going to a semantic versioning approach. Lucid will next enter the initial development phase.
+
+
 Version 0.0.8 / 2013-05-20
 --------------------------
 
@@ -19,7 +29,7 @@ This version mainly makes a lot of internal changes and many of those are predic
 Two specific changes worth calling out:
 
 * Lucid will now let you reliably configure a library path.
-* Lucid will allow you to configure the name of the driver file. (This was due to a [planned enhancement[(https://github.com/jnyman/lucid/issues/2)].)
+* Lucid will allow you to configure the name of the driver file. (This was due to a [planned enhancement](https://github.com/jnyman/lucid/issues/2)].)
 
 The driver file in Cucumber is env.rb. In Lucid this defaults to driver.rb. Now, however, you can override that default. Regarding the library path, this is equivalent to what Cucumber refers to as the "support" directory. The main reason for these changes is that Lucid is trying to be a little more configurable than Cucumber.
 

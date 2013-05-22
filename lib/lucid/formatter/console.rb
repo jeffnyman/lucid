@@ -131,9 +131,9 @@ module Lucid
         @io.puts format_string(text, :undefined)
 
         if unknown_programming_language
-          @io.puts format_string("\nIf you want matchers in a different programming language," +
-                                 "\njust make sure a file with the appropriate file extension" +
-                                 "\nexists where Lucid looks for test definitions.", :failed)
+          @io.puts format_string("\nNote: no test definitions were found in this repository or any" +
+                                 "\nother associated locations. These test definition files should" +
+                                 "\nbe where you put any of the suggested matchers.", :failed)
         end
 
         @io.puts
