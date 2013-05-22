@@ -105,11 +105,11 @@ module Lucid
       #  end
       #end
 
-      def visit_step_result(step_result)
-        broadcast(step_result) do
-          step_result.accept(self)
-        end
-      end
+      #def visit_step_result(step_result)
+      #  broadcast(step_result) do
+      #    step_result.accept(self)
+      #  end
+      #end
 
       #def visit_step_name(keyword, step_match, status, source_indent, background, file_colon_line) #:nodoc:
       #  broadcast(keyword, step_match, status, source_indent, background, file_colon_line)
