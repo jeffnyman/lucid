@@ -5,8 +5,8 @@ module Lucid
         super(raw)
         @scenario_outline = scenario_outline
         @cells_class = ExampleRow
-        example_rows.each do |cells|
-          cells.create_step_invocations!(scenario_outline)
+        example_rows.each do |example_row|
+          example_row.create_step_invocations!(scenario_outline)
         end
       end
 
@@ -56,7 +56,7 @@ module Lucid
           end
         end
 
-        attr_reader :scenario_outline # https://rspec.lighthouseapp.com/projects/16211/tickets/342
+        attr_reader :scenario_outline
 
         def initialize(table, cells)
           super

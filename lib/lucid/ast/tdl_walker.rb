@@ -8,13 +8,6 @@ module Lucid
         @runtime, @listeners, @configuration = runtime, listeners, configuration
       end
 
-      def execute(scenario, skip_hooks)
-        runtime.with_hooks(scenario, skip_hooks) do
-          scenario.skip_invoke! if scenario.failed?
-          scenario.steps.accept(self)
-        end
-      end
-
       # This is being used to forward on messages from the AST to
       # the formatters. This is being done in lieu of the explicit
       # forwarding that was previously done.
