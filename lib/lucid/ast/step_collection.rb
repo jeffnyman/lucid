@@ -23,7 +23,8 @@ module Lucid
       end
 
       def step_invocations(background = false)
-        StepCollection.new(@steps.map{ |step|
+        #StepCollection.new(@steps.map{ |step|
+        StepInvocations.new(@steps.map{ |step|
           i = step.step_invocation
           i.background = background
           i
