@@ -44,19 +44,20 @@ module Lucid
         @exception ||= ((failed = @steps.detect {|step| step.exception}) && failed.exception)
       end
 
-      def failed?
-        status == :failed
-      end
-
-      def passed?
-        !failed?
-      end
-
       def status
         @steps.each do |step_invocation|
           return step_invocation.status if step_invocation.status != :passed
         end
         :passed
+      end
+
+      def failed?
+        status == :failed
+      end
+
+      def previous_step(step)
+        i = @steps.index(step) || -1
+        @steps[i-1]
       end
 
       def length
@@ -66,7 +67,7 @@ module Lucid
       def to_sexp
         @steps.map{|step| step.to_sexp}
       end
-      
+
     end
   end
 end

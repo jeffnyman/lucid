@@ -26,7 +26,8 @@ module Lucid
         @step_invocations ||= steps.step_invocations(true)
       end
 
-      def step_collection(scenario_step_invocations)
+      #def step_collection(scenario_step_invocations)
+      def create_step_invocations(scenario_step_invocations)
         if(@first_collection_created)
           steps.step_invocations(true).dup(scenario_step_invocations)
         else
