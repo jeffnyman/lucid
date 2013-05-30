@@ -15,7 +15,6 @@ module Lucid
 
       module ExamplesArray #:nodoc:
         def accept(visitor)
-          return if Lucid.wants_to_quit
           return if self.empty?
 
           visitor.visit_examples_array(self) do
@@ -34,7 +33,6 @@ module Lucid
       end
 
       def accept(visitor)
-        return if Lucid.wants_to_quit
         raise_missing_examples_error unless @example_sections
 
         visitor.visit_feature_element(self) do

@@ -47,7 +47,6 @@ module Lucid
       end
 
       def accept(visitor)
-        return if Lucid.wants_to_quit
         # The only time a Step is visited is when it is in a ScenarioOutline.
         # Otherwise it's always StepInvocation that gets visited instead.
         visitor.visit_step(self) do

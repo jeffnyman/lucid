@@ -37,6 +37,7 @@ module Lucid
       end
 
       def broadcast_message(message, *args, &block)
+        return self if Lucid.wants_to_quit
         message = message.to_s.gsub('visit_', '')
         if block_given?
           send_to_all("before_#{message}", *args)

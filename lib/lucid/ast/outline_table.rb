@@ -11,7 +11,6 @@ module Lucid
       end
 
       def accept(visitor)
-        return if Lucid.wants_to_quit
         visitor.visit_outline_table(self) do
           cells_rows.each do |row|
             row.accept(visitor)
@@ -84,8 +83,6 @@ module Lucid
         end
 
         def accept(visitor)
-          return if Lucid.wants_to_quit
-          #visitor.configuration.expand? ? accept_expand(visitor) : accept_plain(visitor)
           if visitor.configuration.expand?
             accept_expand(visitor)
           else

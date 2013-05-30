@@ -19,7 +19,6 @@ module Lucid
       end
 
       def accept(visitor)
-        return if Lucid.wants_to_quit
         visitor.visit_doc_string(self)
       end
 

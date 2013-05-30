@@ -20,8 +20,6 @@ module Lucid
       end
 
       def accept(visitor)
-        return if Lucid.wants_to_quit
-
         visitor.visit_examples(self) do
           comment.accept(visitor)
           visitor.visit_examples_name(keyword, name)
