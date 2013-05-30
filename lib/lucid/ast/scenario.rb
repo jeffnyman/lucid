@@ -22,6 +22,7 @@ module Lucid
       end
 
       def accept(visitor)
+        background.accept(visitor)
         visitor.visit_feature_element(self) do
           comment.accept(visitor)
           tags.accept(visitor)
@@ -43,13 +44,11 @@ module Lucid
       end
 
       def to_units(background)
-        #[Unit.new(background.step_invocations + step_invocations)]
         [Unit.new(step_invocations)]
       end
 
       # Returns true if one or more steps failed.
       def failed?
-        #steps.failed? || !!@exception
         step_invocations.failed? || !!@exception
       end
 
@@ -66,14 +65,12 @@ module Lucid
 
       # Returns the first exception (if any).
       def exception
-        #@exception || steps.exception
         @exception || step_invocations.exception
       end
 
       # Returns the status.
       def status
         return :failed if @exception
-        #steps.status
         step_invocations.status
       end
 
@@ -83,7 +80,6 @@ module Lucid
         sexp += [comment] if comment
         tags = @tags.to_sexp
         sexp += tags if tags.any?
-        #sexp += steps.to_sexp if steps.any?
         sexp += step_invocations.to_sexp if step_invocations.any?
         sexp
       end
@@ -95,20 +91,15 @@ module Lucid
       end
 
       def skip_invoke!
-        #steps.skip_invoke!
         step_invocations.skip_invoke!
       end
 
-      #def steps
-        #@steps ||= @background.step_collection(step_invocations)
       def step_invocations
         @step_invocation ||= @background.create_step_invocations(my_step_invocations)
       end
 
       private
 
-      #def step_invocations
-        #@raw_steps.map{|step| step.step_invocation}
       def steps
         StepCollection.new(@raw_steps)
       end

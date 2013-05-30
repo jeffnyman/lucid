@@ -12,14 +12,12 @@ module Lucid
       def accept(visitor)
         visitor.visit_steps(self) do
           @steps.each do |step|
-            #visitor.visit_step(step)
             step.accept(visitor)
           end
         end
       end
 
       def step_invocations(background = false)
-        #StepCollection.new(@steps.map{ |step|
         StepInvocations.new(@steps.map{ |step|
           i = step.step_invocation
           i.background = background

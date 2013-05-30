@@ -11,7 +11,7 @@ module Lucid
 
       attr_accessor :feature
       attr_reader :feature_tags
-      attr_reader :comment, :tags, :keyword
+      attr_reader :comment, :tags, :keyword, :background
 
       module ExamplesArray #:nodoc:
         def accept(visitor)
@@ -33,6 +33,7 @@ module Lucid
       end
 
       def accept(visitor)
+        background.accept(visitor)
         raise_missing_examples_error unless @example_sections
 
         visitor.visit_feature_element(self) do
