@@ -36,6 +36,8 @@ In order to to check what options are available to you from the command line, do
 
     $ lucid --help
 
+You should also check out some of my [blog posts related to Lucid](http://testerstories.com/?cat=24). They will take you through workflows of using the tool.
+
 
 Contributing
 ------------
