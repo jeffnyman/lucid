@@ -30,12 +30,10 @@ module Lucid
       end
 
       def accept(visitor)
-        return if Lucid.wants_to_quit
         visitor.visit_feature(self) do
           comment.accept(visitor)
           tags.accept(visitor)
           visitor.visit_feature_name(@keyword, indented_name)
-          background.accept(visitor)
           @feature_elements.each do |feature_element|
             feature_element.accept(visitor)
           end

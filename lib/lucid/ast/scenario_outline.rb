@@ -11,11 +11,10 @@ module Lucid
 
       attr_accessor :feature
       attr_reader :feature_tags
-      attr_reader :comment, :tags, :keyword
+      attr_reader :comment, :tags, :keyword, :background
 
       module ExamplesArray #:nodoc:
         def accept(visitor)
-          return if Lucid.wants_to_quit
           return if self.empty?
 
           visitor.visit_examples_array(self) do
@@ -34,7 +33,7 @@ module Lucid
       end
 
       def accept(visitor)
-        return if Lucid.wants_to_quit
+        background.accept(visitor)
         raise_missing_examples_error unless @example_sections
 
         visitor.visit_feature_element(self) do
@@ -70,7 +69,7 @@ module Lucid
 
       def step_invocations(cells)
         step_invocations = steps.step_invocations_from_cells(cells)
-        @background.step_collection(step_invocations)
+        @background.create_step_invocations(step_invocations)
       end
 
       def each_example_row(&proc)

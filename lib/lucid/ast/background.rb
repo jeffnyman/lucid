@@ -26,7 +26,7 @@ module Lucid
         @step_invocations ||= steps.step_invocations(true)
       end
 
-      def step_collection(scenario_step_invocations)
+      def create_step_invocations(scenario_step_invocations)
         if(@first_collection_created)
           steps.step_invocations(true).dup(scenario_step_invocations)
         else
@@ -36,7 +36,7 @@ module Lucid
       end
 
       def accept(visitor)
-        return if Lucid.wants_to_quit
+        return if @already_visited
         visitor.visit_background(self) do
           comment.accept(visitor)
           visitor.visit_background_name(@keyword, name, file_colon_line, source_indent(first_line_length))
@@ -48,6 +48,7 @@ module Lucid
             visitor.runtime.after(hook_context) if @failed || feature_elements.empty?
           end
         end
+        @already_visited = true
       end
 
       def with_visitor(scenario, visitor)

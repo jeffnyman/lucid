@@ -5,13 +5,12 @@ module Lucid
         super(raw)
         @scenario_outline = scenario_outline
         @cells_class = ExampleRow
-        example_rows.each do |cells|
-          cells.create_step_invocations!(scenario_outline)
+        example_rows.each do |example_row|
+          example_row.create_step_invocations!(scenario_outline)
         end
       end
 
       def accept(visitor)
-        return if Lucid.wants_to_quit
         visitor.visit_outline_table(self) do
           cells_rows.each do |row|
             row.accept(visitor)
@@ -57,7 +56,7 @@ module Lucid
           end
         end
 
-        attr_reader :scenario_outline # https://rspec.lighthouseapp.com/projects/16211/tickets/342
+        attr_reader :scenario_outline
 
         def initialize(table, cells)
           super
@@ -84,8 +83,6 @@ module Lucid
         end
 
         def accept(visitor)
-          return if Lucid.wants_to_quit
-          #visitor.configuration.expand? ? accept_expand(visitor) : accept_plain(visitor)
           if visitor.configuration.expand?
             accept_expand(visitor)
           else

@@ -10,7 +10,6 @@ module Lucid
       end
 
       def accept(visitor)
-        return if Lucid.wants_to_quit
         return if empty?
 
         visitor.visit_comment(self) do

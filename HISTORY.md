@@ -2,6 +2,14 @@ Change Log and History
 ======================
 
 
+Version 0.1.0 / 2013-06-02
+--------------------------
+
+The main focus of this release is some back end changes to simplify and speed up Lucid operation. Of particular note, this release has modified the Lucid Symbiont project that gets generated from the lucid-gen tool. There were errors in that project that made working with browsers problematic.
+
+Lucid is now entering its "initial development phase", notwithstanding the fact that Lucid has already been in initial development. At this point Lucid has proven stable enough to write a series of blog articles on describing how to use it. That, for the time being, is serving as the "public API" or reference implementation. Upcoming releases will more often than not be focusing on feature inclusion as opposed to small updates and internal fixes.
+
+
 Version 0.0.9 / 2013-05-22
 --------------------------
 

@@ -5,7 +5,7 @@ module Symbiont
 
     def self.start
       unless @@browser
-        target = ENV['BROWSER']
+        target = ENV['BROWSER'] || 'firefox'
         @@browser = watir_browser(target)
       end
       @@browser
@@ -13,6 +13,7 @@ module Symbiont
 
     def self.stop
       @@browser.quit if @@browser
+      @@browser = false
     end
 
   private

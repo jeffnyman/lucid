@@ -26,8 +26,6 @@ module Lucid
       # are initially the same concept. When the spec is visited, the high
       # level construct (feature, ability) is determined.
       def accept(visitor)
-        return if Lucid.wants_to_quit
-
         visitor.visit_features(self) do
           start = Time.now
 
