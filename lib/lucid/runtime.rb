@@ -19,7 +19,10 @@ module Lucid
     include Runtime::InterfaceIO
 
     def initialize(configuration = Configuration.default)
-      require 'lucid/core_ext/disable_autorunners'
+      if defined?(Test::Unit::Runner)
+        Test::Unit::Runner.module_eval("@@stop_auto_run = true")
+      end
+
       @current_scenario = nil
       @configuration = Configuration.parse(configuration)
       @orchestrator = Orchestrator.new(self, @configuration)

@@ -2,6 +2,16 @@ Change Log and History
 ======================
 
 
+Version 0.1.1 / 2013-06-04
+--------------------------
+
+This patch release was needed to fix one issue and update a gem dependency.
+
+* The Symbiont project generator now no longer has any logic in the driver.rb file, which is necessary in order to allow the --dry-run option to work without error.
+
+* I am trusting multi_json again by including just it and not forcing Ruby's built-in json gem. This is based on the issue [Incorrectly Reporting Old or Stdlib Json?](https://github.com/intridea/multi_json/issues/114) that I originally raised and finally had a response with the [Remove stdlib warning since it's doing more harm than good](https://github.com/intridea/multi_json/pull/122) update to multi_json.
+
+
 Version 0.1.0 / 2013-06-02
 --------------------------
 
