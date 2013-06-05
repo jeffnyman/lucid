@@ -24,7 +24,7 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'diff-lcs', '>= 1.1.3'
   gem.add_runtime_dependency 'gherkin', '~> 2.12.0'
   gem.add_runtime_dependency 'multi_json', '~> 1.7.5'
-  
+
   gem.post_install_message = %{
 (::) (::) (::) (::) (::) (::) (::) (::) (::) (::) (::) (::)
 
