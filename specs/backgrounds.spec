@@ -8,10 +8,10 @@ Ability: Allow Backgrounds in Spec Files
     Given a file named "specs/spec_with_passing_background.spec" with:
     """
     Feature: Test Spec with a Passing Background
-
+    
     Background:
       Given a code of "THX1138"
-
+    
     Scenario: Valid Background Context
       Then the code is "THX1138"
     """
@@ -31,13 +31,13 @@ Ability: Allow Backgrounds in Spec Files
     Then it should pass with:
     """
     Feature: Test Spec with a Passing Background
-
+    
       Background: 
         Given a code of "THX1138"
 
       Scenario: Valid Background Context
         Then the code is "THX1138"
-
+    
     1 scenario (1 passed)
     2 steps (2 passed)
     """

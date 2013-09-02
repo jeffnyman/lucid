@@ -5,5 +5,14 @@ Given (/^a project with no spec repository$/) do
 end
 
 When (/^the command `([^`]*)` is executed$/) do |command|
-  run_standard(command)
+  run_standard(unescape(command))
+end
+
+When (/^the following code is executed:$/) do |code|
+  code = code.gsub("\n", ';')
+  run_standard %{ruby -e "#{code}"}  
+end
+
+Then('the scenario should pass') do
+  assert_exit_status 0
 end
