@@ -131,19 +131,17 @@ module Lucid
         classname = @feature_name
         name = "#{@scenario}#{suffix}"
         pending = [:pending, :undefined].include?(status) && ( !@options[:strict])
-        passed = (status == :passed || pending)
-
+        
         @builder.testcase(:classname => classname, :name => name, :time => "%.6f" % duration) do
-          if (passed == false && status != :skipped)
+          if status == :skipped || pending
+            @builder.skipped
+            @skipped += 1
+          elsif status != :passed
             @builder.failure(:message => "#{status.to_s} #{name}", :type => status.to_s) do
               @builder.cdata! @output
               @builder.cdata!(format_exception(exception)) if exception
             end
             @failures += 1
-          end
-          if (status == :skipped || pending)
-            @builder.skipped
-            @skipped += 1
           end
           @builder.tag!('system-out')
           @builder.tag!('system-err')
