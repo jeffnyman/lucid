@@ -13,7 +13,7 @@ require 'lucid/runtime/orchestrator'
 
 module Lucid
   class Runtime
-    attr_reader :results
+    attr_reader :results, :orchestrator
 
     include Formatter::Duration
     include Runtime::InterfaceIO

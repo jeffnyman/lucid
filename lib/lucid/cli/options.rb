@@ -27,7 +27,7 @@ module Lucid
       largest = LUCID_FORMATS.keys.map{|s| s.length}.max
       FORMAT_LIST = (LUCID_FORMATS.keys.sort.map do |key|
         "  #{key}#{' ' * (largest - key.length)} : #{LUCID_FORMATS[key][1]}"
-      end) + ["Use --format rerun --out specs.txt to write out failing",
+      end) + ["Use --format rerun --out rerun.txt to write out failing",
               "specs. You can rerun them with lucid @rerun.txt.",
               "FORMAT can also be the fully qualified class name of",
               "your own custom formatter. If the class isn't loaded,",
