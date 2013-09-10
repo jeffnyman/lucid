@@ -242,10 +242,11 @@ module Lucid
       end
 
       # Returns a new Table where the headers are redefined. See #map_headers!
-      def map_headers(mappings={})
-        table = self.dup
-        table.map_headers!(mappings)
-        table
+      def map_headers(mappings={}, &block)
+        #table = self.dup
+        #table.map_headers!(mappings)
+        #table
+        self.class.new raw.dump, @conversion_procs.dup, mappings, block
       end
 
       # Change how #hashes converts column values. The +column_name+ argument identifies the column
