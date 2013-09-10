@@ -46,7 +46,7 @@ module Lucid
       OPTIONS_WITH_ARGS = ['-r', '--require', '--i18n', '-f', '--format', '-o', '--out',
                            '-t', '--tags', '-n', '--name', '-e', '--exclude',
                            PROFILE_SHORT_FLAG, PROFILE_LONG_FLAG,
-                           '-a', '--autoformat', '-l', '--lines', '--port',
+                           '--lines', '--port',
                            '-I', '--matcher-type']
 
       def self.parse(args, out_stream, error_stream, options = {})
@@ -208,16 +208,6 @@ module Lucid
                   "based on your platform and the output destination."
           ) do |v|
             Lucid::Term::ANSIColor.coloring = v
-          end
-
-          opts.on("-a", "--autoformat DIR",
-            "Reformats (pretty prints) spec files and write them to DIRECTORY.",
-            "Be careful if you choose to overwrite the originals.",
-            "Implies --dry-run --format pretty.") do |directory|
-            @options[:autoformat] = directory
-            Lucid::Term::ANSIColor.coloring = false
-            @options[:dry_run] = true
-            @quiet = true
           end
 
           opts.on("-m", "--no-multiline",
