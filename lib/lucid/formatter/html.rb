@@ -22,6 +22,7 @@ module Lucid
         @header_red = nil
         @delayed_messages = []
         @img_id = 0
+        @inside_outline = false
       end
 
       def embed(src, mime_type, label)
@@ -171,8 +172,10 @@ module Lucid
       end
 
       def before_outline_table(outline_table)
+        @inside_outline = true
         @outline_row = 0
         @builder << '<table>'
+        @inside_outline = false
       end
 
       def after_outline_table(outline_table)
@@ -325,7 +328,7 @@ module Lucid
         attributes = {:id => "#{@row_id}_#{@col_index}", :class => 'step'}
         attributes[:class] += " #{status}" if status
         build_cell(@cell_type, value, attributes)
-        set_scenario_color(status)
+        set_scenario_color(status) if @inside_outline
         @col_index += 1
       end
 
