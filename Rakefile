@@ -7,3 +7,5 @@ RSpec::Core::RakeTask.new do |c|
   options += ['--format', 'documentation']
   c.rspec_opts = options
 end
+
+task :default => :spec

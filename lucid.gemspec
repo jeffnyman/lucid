@@ -21,8 +21,8 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'thor', '>= 0.18.1'
   gem.add_runtime_dependency 'builder', '>= 2.1.2'
   gem.add_runtime_dependency 'diff-lcs', '>= 1.1.3'
-  gem.add_runtime_dependency 'gherkin', '~> 2.12.0'
-  gem.add_runtime_dependency 'multi_json', '~> 1.7.5'
+  gem.add_runtime_dependency 'gherkin', '>= 2.12.0'
+  gem.add_runtime_dependency 'multi_json', '>= 1.7.5', '< 2.0'
   
   gem.add_development_dependency 'rspec', '>= 2.14'
   gem.add_development_dependency 'simplecov', '>= 0.7.1'
