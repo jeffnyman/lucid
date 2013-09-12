@@ -1,7 +1,7 @@
 Lucid
 =====
 
-[![[Build Status](https://secure.travis-ci.org/jnyman/lucid.png)](http://travis-ci.org/jnyman/lucid)
+[![Build Status](https://secure.travis-ci.org/jnyman/lucid.png)](http://travis-ci.org/jnyman/lucid)
 
 Description
 -----------
