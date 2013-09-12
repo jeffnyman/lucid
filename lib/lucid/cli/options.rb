@@ -10,6 +10,7 @@ module Lucid
       LUCID_FORMATS = {
         'html'        => ['Lucid::Formatter::Html',        'Generates an HTML report.'],
         'standard'    => ['Lucid::Formatter::Standard',    'Prints the spec as-is, using color if available.'],
+        'condensed'   => ['Lucid::Formatter::Condensed',   'Output only spec file and scenarios.'],
         'progress'    => ['Lucid::Formatter::Progress',    'Prints one character per scenario.'],
         'rerun'       => ['Lucid::Formatter::Rerun',       'Prints failing specs with line numbers.'],
         'usage'       => ['Lucid::Formatter::Usage',       "Prints where test definitions are used.\n" +
