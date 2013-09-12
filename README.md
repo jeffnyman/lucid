@@ -4,7 +4,7 @@ Lucid
 [![Build Status](https://secure.travis-ci.org/jnyman/lucid.png)](http://travis-ci.org/jnyman/lucid)
 [![Dependency Status](https://gemnasium.com/jnyman/lucid.png)](https://gemnasium.com/jnyman/lucid)
 [![Gem Version](https://badge.fury.io/rb/lucid.png)](http://badge.fury.io/rb/lucid)
-[![Coverage Status](https://coveralls.io/repos/codegram/lucid/badge.png?branch=develop)](https://coveralls.io/r/codegram/lucid)
+[![Coverage Status](https://coveralls.io/repos/jnyman/lucid/badge.png?branch=develop)](https://coveralls.io/r/jnyman/lucid)
 
 Description
 -----------
