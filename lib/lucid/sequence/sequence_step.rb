@@ -9,13 +9,13 @@ module Sequence
     
     def initialize(phrase, sequence, data)
       @key = self.class.sequence_key(phrase, data, :define)
-      puts "*** Sequence Step - Key: #{@key}"
+      #puts "*** Sequence Step - Key: #{@key}"
 
       @phrase_params = scan_parameters(phrase, :define)
-      puts "*** Sequence Step - Phrase Params: #{@phrase_params}"
+      #puts "*** Sequence Step - Phrase Params: #{@phrase_params}"
       
       transformed_steps = preprocess(sequence)
-      puts "*** Sequence Step - Steps: \n#{transformed_steps}"
+      #puts "*** Sequence Step - Steps: \n#{transformed_steps}"
 
       @template = SequenceTemplate::Engine.new(transformed_steps)
       puts "\n*** Sequence Step - Template: #{@template.inspect}\n"

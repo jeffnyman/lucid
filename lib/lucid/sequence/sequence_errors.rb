@@ -20,5 +20,12 @@ module Sequence
       super("An empty or blank parameter occurred in '#{text}'.")
     end
   end
+
+  class InvalidElementError < SequenceError
+    def initialize(tag, invalid_element)
+      msg = "The invalid element '#{invalid_element}' occurs in the parameter '#{tag}'."
+      super(msg)
+    end
+  end
   
 end
