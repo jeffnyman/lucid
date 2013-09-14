@@ -1,7 +1,11 @@
+require 'lucid/sequence/sequence_template'
+
 module Sequence
   class SequenceStep
     
     attr_reader :key
+    attr_reader :template
+    attr_reader :phrase_params
     
     def initialize(phrase, sequence, data)
       @key = self.class.sequence_key(phrase, data, :define)
@@ -12,6 +16,9 @@ module Sequence
       
       transformed_steps = preprocess(sequence)
       puts "*** Sequence Step - Steps: \n#{transformed_steps}"
+
+      @template = SequenceTemplate::Engine.new(transformed_steps)
+      puts "\n*** Sequence Step - Template: #{@template.inspect}\n"
     end
     
     def self.sequence_key(phrase, data, mode)
