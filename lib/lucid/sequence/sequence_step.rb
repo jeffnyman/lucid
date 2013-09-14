@@ -6,7 +6,12 @@ module Sequence
     def initialize(phrase, sequence, data)
       @key = self.class.sequence_key(phrase, data, :define)
       puts "*** Sequence Step - Key: #{@key}"
+
+      @phrase_params = scan_parameters(phrase, :define)
+      puts "*** Sequence Step - Phrase Params: #{@phrase_params}"
       
+      transformed_steps = preprocess(sequence)
+      puts "*** Sequence Step - Steps: \n#{transformed_steps}"
     end
     
     def self.sequence_key(phrase, data, mode)
@@ -33,6 +38,39 @@ module Sequence
       key = normalized + (data ? '_T' : '')
       
       return key
+    end
+
+    # "Scanning parameters" means that a phrase will be scanned to find any
+    # text between chevrons or double quotes. These will be placed into an
+    # array.
+    def scan_parameters(phrase, mode)
+      pattern = case mode
+                  when :define
+                    /<((?:[^\\<>]|\\.)*)>/
+                  when :invoke
+                    /"((?:[^\\"]|\\.)*)"/
+                end
+
+      result = phrase.scan(pattern)
+      params = result.flatten.compact
+
+      # Any escaped double quotes need to be replaced by a double quote.
+      params.map! { |item| item.sub(/\\"/, '"') } if mode == :invoke
+      
+      return params
+    end
+    
+    def preprocess(sequence)
+      # Split text into individual lines and make sure to remove any lines
+      # with hash style comments.
+      lines = sequence.split(/\r\n?|\n/)
+      processed = lines.reject { |line| line =~ /\s*#/ }
+
+      return processed.join("\n")
+    end
+    
+    def expand(phrase, data)
+      
     end
     
   end

@@ -8,5 +8,10 @@ module Sequence
       SequenceGroup.instance.add_sequence(phrase, sequence, data)
     end
     
+    def invoke_sequence(phrase, data = nil)
+      group = SequenceGroup.instance()
+      generated_steps = group.generate_steps(phrase, data)
+    end
+    
   end
 end

@@ -6,3 +6,7 @@ Given(/^the step "(?:Given|When|Then|\*) \[((?:[^\\\]]|\\.)+)\](:?)" is defined 
   data_provided = (table == ':')
   add_sequence(phrase, sequence, data_provided)
 end
+
+When(/^\[((?:[^\\\]]|\\.)+)\]$/) do |phrase|
+  invoke_sequence(phrase)
+end

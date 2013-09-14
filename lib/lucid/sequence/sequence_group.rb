@@ -16,6 +16,13 @@ module Sequence
       return @sequence_steps
     end
     
+    def generate_steps(phrase, data = nil)
+      data_table =! data.nil?
+      sequence = find_sequence(phrase, data_table)
+      raise UnknownSequenceError.new(phrase) if sequence.nil?
+      return sequence.expand(phrase, data)
+    end
+    
     def find_sequence(phrase, data)
       key = SequenceStep.sequence_key(phrase, data, :invoke)
       return sequence_steps[key]
