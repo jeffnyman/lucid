@@ -9,10 +9,16 @@ module Sequence
       def initialize(source)
         @source = source
       end
+      
+      def output(context)
+        return source
+      end
     end
     
     class EOLine
-      
+      def output(context)
+        return "\n"
+      end
     end
     
     class Engine
@@ -70,6 +76,23 @@ module Sequence
         raise InvalidElementError.new(text, matching[0]) if matching
       end
       
+      def variables
+        @variables ||= begin
+          vars = @generated_source.each_with_object([]) do |element, result|
+          end
+          vars.flatten.uniq
+        end
+        return @variables
+      end
+      
+      def output(context)
+        return '' if @generated_source.empty?
+        result = @generated_source.each_with_object('') do |element, item|
+          item << element.output(context)
+        end
+        return result
+      end
+      
       def generate(source)
         input_lines = source.split(/\r\n?|\n/)
 
@@ -84,12 +107,13 @@ module Sequence
         end
 
         template_lines = raw_lines.map { |line| generate_line(line) }
+        return generate_sections(template_lines.flatten)
       end
 
       def generate_line(line)
-        puts "generate.line: line = #{line}"
+        #puts "generate.line: line = #{line}"
         line_rep = line.map { |item| generate_couple(item) }
-        puts "generate.line: line_rep = #{line_rep}"
+        #puts "generate.line: line_rep = #{line_rep}"
 
         line_to_despace = line_rep.all? do |item|
           case item
@@ -103,6 +127,8 @@ module Sequence
         if line_to_despace
           line_rep_ending(line_rep)
         end
+        
+        #puts "generate.line: final_line_rep = #{line_rep}"
         
         return line_rep
       end
@@ -118,6 +144,14 @@ module Sequence
                  end
         
         return result
+      end
+      
+      def generate_sections(sequence)
+        generated = sequence.each_with_object([]) do |element, result|
+          result << element
+        end
+        
+        return generated
       end
       
       def line_rep_ending(line)
