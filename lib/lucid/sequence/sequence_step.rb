@@ -1,27 +1,35 @@
 require 'lucid/sequence/sequence_template'
+require 'lucid/sequence/sequence_errors'
 
 module Sequence
   class SequenceStep
     
     attr_reader :key
+    attr_reader :values
     attr_reader :template
     attr_reader :phrase_params
     
     def initialize(phrase, sequence, data)
       @key = self.class.sequence_key(phrase, data, :define)
-      puts "*** [Sequence Step] - Key: #{@key}"
+      #puts "*** [Sequence Step] - Key: #{@key}"
 
       @phrase_params = scan_parameters(phrase, :define)
-      puts "*** [Sequence Step] - Phrase Params: #{@phrase_params}"
+      #puts "*** [Sequence Step] - Phrase Params: #{@phrase_params}"
       
       transformed_steps = preprocess(sequence)
-      puts "*** [Sequence Step] - Steps: \n#{transformed_steps}"
+      #puts "*** [Sequence Step] - Steps: \n#{transformed_steps}"
 
       @template = SequenceTemplate::Engine.new(transformed_steps)
-      puts "\n*** [Sequence Step] - Template: #{@template.inspect}\n"
+      #puts "\n*** [Sequence Step] - Template: #{@template.inspect}\n"
 
       phrase_variables = template.variables
-      puts "\n*** [Sequence Step] - Phrase Variables: #{phrase_variables}"
+      #puts "\n*** [Sequence Step] - Phrase Variables: #{phrase_variables}"
+      
+      @values = validate_phrase_values(@phrase_params, phrase_variables)
+      @values.concat(phrase_variables)
+      #puts "*** [Sequence Step] - Values: #{@values}"
+      
+      @values.uniq!
     end
     
     def self.sequence_key(phrase, data, mode)
@@ -79,8 +87,37 @@ module Sequence
       return processed.join("\n")
     end
     
+    def validate_phrase_values(params, phrase_variables)
+      params.each do |param|
+        #puts "****** param: #{param}"
+        unless phrase_variables.include? param
+          raise UselessPhraseParameter.new(param)
+        end
+      end
+      
+      phrase_variables.each do |variable|
+        #puts "****** variable: #{variable}"
+      end
+      
+      return phrase_params.dup
+    end
+    
     def expand(phrase, data)
-      return template.output(nil)
+      params = validate_params(phrase, data)
+      return template.output(nil, params)
+    end
+    
+    def validate_params(phrase, data)
+      sequence_parameters = {}
+      
+      quoted_values = scan_parameters(phrase, :invoke)
+      quoted_values.each_with_index do |val, index|
+        sequence_parameters[phrase_params[index]] = val
+      end
+
+      #puts "****** sequence_parameters: #{sequence_parameters}"
+
+      return sequence_parameters
     end
     
   end

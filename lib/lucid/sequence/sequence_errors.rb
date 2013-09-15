@@ -27,5 +27,11 @@ module Sequence
       super(msg)
     end
   end
+
+  class UselessPhraseParameter < SequenceError
+    def initialize(param)
+      super("The phrase parameter '#{param}' does not appear in any step.")
+    end
+  end
   
 end

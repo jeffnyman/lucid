@@ -10,13 +10,42 @@ module Sequence
         @source = source
       end
       
-      def output(context)
+      def output(context, params)
         return source
       end
     end
     
+    class UnaryElement
+      attr_reader :name
+      
+      def initialize(name)
+        @name = name
+      end
+      
+      def retrieve_value_from(context, params)
+        actual_value = params[name]
+        
+        return actual_value
+      end
+    end
+    
+    class Placeholder < UnaryElement
+      def output(context, params)
+        actual_value = retrieve_value_from(context, params)
+        
+        #puts "&&&&&&&&& Actual Value: #{actual_value} (#{actual_value.inspect})"
+        
+        result = case actual_value
+                   when String
+                     actual_value
+                 end
+        
+        return result
+      end
+    end
+    
     class EOLine
-      def output(context)
+      def output(context, params)
         return "\n"
       end
     end
@@ -67,6 +96,7 @@ module Sequence
         # Check if the text matched is a ? or a / character. If the next bit
         # of text after the ? or / is a invalid element of if there is an
         # invalid element at all, an error will be raised.
+        #puts "&&&&&&&&&&&&&&&& text = #{text}"
         if text =~ /^[\?\/]/
           matching = InvalidInternalElements.match(text[1..-1])
         else
@@ -74,21 +104,36 @@ module Sequence
         end
 
         raise InvalidElementError.new(text, matching[0]) if matching
+        
+        result = case text[0, 1]
+                   when '/'
+                     #
+                   else
+                     Placeholder.new(text)
+                 end
+        
+        return result
       end
       
       def variables
         @variables ||= begin
           vars = @generated_source.each_with_object([]) do |element, result|
+            case element
+              when Placeholder
+                result << element.name
+              else
+                # noop
+            end
           end
           vars.flatten.uniq
         end
         return @variables
       end
       
-      def output(context)
+      def output(context, params)
         return '' if @generated_source.empty?
         result = @generated_source.each_with_object('') do |element, item|
-          item << element.output(context)
+          item << element.output(context, params)
         end
         return result
       end
