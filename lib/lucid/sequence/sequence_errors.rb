@@ -33,5 +33,32 @@ module Sequence
       super("The phrase parameter '#{param}' does not appear in any step.")
     end
   end
+
+  class DataTableNotFound < SequenceError
+    def initialize(phrase)
+      msg = "The step with phrase [#{phrase}]: requires a data table."
+      super(msg)
+    end
+  end
+
+  class UnknownParameterError < SequenceError
+    def initialize(name)
+      super("Unknown sequence step parameter '#{name}'.")
+    end
+  end
+
+  class AmbiguousParameterValue < SequenceError
+    def initialize(name, phrase, table)
+      msg = "The sequence parameter '#{name}' has value '#{phrase}' and '#{table}'."
+      super(msg)
+    end
+  end
+
+  class UnreachableStepParameter < SequenceError
+    def initialize(param)
+      msg = "The step parameter '#{param}' does not appear in the phrase."
+      super(msg)
+    end
+  end
   
 end

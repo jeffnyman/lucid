@@ -2,12 +2,14 @@ require 'lucid/sequence/sequence_template'
 require 'lucid/sequence/sequence_errors'
 
 module Sequence
-  class SequenceStep
+  class SequencePhrase
     
     attr_reader :key
     attr_reader :values
     attr_reader :template
     attr_reader :phrase_params
+
+    ParameterConstant = { 'quotes' => '""'}
     
     def initialize(phrase, sequence, data)
       @key = self.class.sequence_key(phrase, data, :define)
@@ -49,11 +51,11 @@ module Sequence
                     /"([^\\"]|\\.)*"/
                 end
 
-      # Here 'normalized' means that for a given phrase, any bit of text
+      # Here 'patterned' means that for a given phrase, any bit of text
       # between quotes or chevrons is replaced by the letter X.
-      normalized = new_phrase.gsub(pattern, 'X')
+      patterned = new_phrase.gsub(pattern, 'X')
 
-      key = normalized + (data ? '_T' : '')
+      key = patterned + (data ? '_T' : '')
       
       return key
     end
@@ -69,9 +71,14 @@ module Sequence
                     /"((?:[^\\"]|\\.)*)"/
                 end
 
+      
+      # If the sequence phrase is:
+      # Given the step "When [checking a triangle with <side1>, <side2>, <side3> as sides]" is defined to mean:
+      # The result will be: [["side1"], ["side2"], ["side3"]]
+      # The params will be: ["side1", "side2", "side3"]
       result = phrase.scan(pattern)
       params = result.flatten.compact
-
+      
       # Any escaped double quotes need to be replaced by a double quote.
       params.map! { |item| item.sub(/\\"/, '"') } if mode == :invoke
       
@@ -89,21 +96,31 @@ module Sequence
     
     def validate_phrase_values(params, phrase_variables)
       params.each do |param|
-        #puts "****** param: #{param}"
+        puts "****** param: #{param}"
         unless phrase_variables.include? param
           raise UselessPhraseParameter.new(param)
         end
       end
-      
-      phrase_variables.each do |variable|
-        #puts "****** variable: #{variable}"
+
+      unless data_table_required?
+        phrase_variables.each do |variable|
+          puts "****** variable: #{variable}"
+          unless params.include?(variable) || ParameterConstant.include?(variable)
+            raise UnreachableStepParameter.new(variable)
+          end
+        end  
       end
-      
+            
       return phrase_params.dup
+    end
+
+    def data_table_required?
+      return key =~ /_T$/
     end
     
     def expand(phrase, data)
       params = validate_params(phrase, data)
+      params = ParameterConstant.merge(params)
       return template.output(nil, params)
     end
     
@@ -115,9 +132,34 @@ module Sequence
         sequence_parameters[phrase_params[index]] = val
       end
 
-      #puts "****** sequence_parameters: #{sequence_parameters}"
+      unless data.nil?
+        data.each do |row|
+          (key, value) = validate_row(row, sequence_parameters)
+          if sequence_parameters.include? key
+            if sequence_parameters[key].kind_of?(Array)
+              sequence_parameters[key] << value
+            else
+              sequence_parameters[key] = [sequence_parameters[key], value]
+            end
+          else
+            sequence_parameters[key] = value
+          end
+        end
+      end
 
       return sequence_parameters
+    end
+    
+    def validate_row(row, params)
+      (key, value) = row
+
+      raise UnknownParameterError.new(key) unless values.include? key
+
+      if (phrase_params.include? key) && (params[key] != value)
+        raise AmbiguousParameterValue.new(key, params[key], value)
+      end
+
+      return row
     end
     
   end

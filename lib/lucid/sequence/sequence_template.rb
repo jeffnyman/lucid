@@ -24,6 +24,10 @@ module Sequence
       
       def retrieve_value_from(context, params)
         actual_value = params[name]
+
+        if actual_value.nil? && context.respond_to?(name.to_sym)
+          actual_value = context.send(name.to_sym)
+        end
         
         return actual_value
       end
@@ -33,11 +37,15 @@ module Sequence
       def output(context, params)
         actual_value = retrieve_value_from(context, params)
         
-        #puts "&&&&&&&&& Actual Value: #{actual_value} (#{actual_value.inspect})"
-        
         result = case actual_value
+                   when NilClass
+                     ''
+                   when Array
+                     actual_value.join('<br/>')
                    when String
                      actual_value
+                   else
+                     actual_value.to_s()
                  end
         
         return result
@@ -49,6 +57,17 @@ module Sequence
         return "\n"
       end
     end
+
+    class Section < UnaryElement
+      attr_reader :children
+
+      def initialize(name)
+        super(name)
+        @children = []
+      end
+    end
+    
+    SectionEndMarker = Struct.new(:name)
     
     class Engine
       attr_reader :source
@@ -76,20 +95,37 @@ module Sequence
         
         until scanner.eos?
           tag_literal = scanner.scan(/<(?:[^\\<>]|\\.)*>/)
-          #puts "self.parse: tag_literal = #{tag_literal}"
-
+          
           unless tag_literal.nil?
             result << [:dynamic, tag_literal.gsub(/^<|>$/, '')]
           end
 
           text_literal = scanner.scan(/(?:[^\\<>]|\\.)+/)
-          #puts "self.parse: text_literal = #{text_literal}"
           result << [:static, text_literal] unless text_literal.nil?
+
+          identify_parse_error(line) if tag_literal.nil? && text_literal.nil?
         end
 
-        #puts "self.parse: result = #{result}"
-        
         return result
+      end
+
+      def self.identify_parse_error(line)
+        no_escaped = line.gsub(/\\[<>]/, '--')
+        unbalance = 0
+
+        no_escaped.each_char do |ch|
+          case ch
+            when '<'
+              unbalance += 1
+            when '>'
+              unbalance -= 1
+          end
+
+          raise StandardError, "Nested opening chevron '<'." if unbalance > 1
+          raise StandardError, "Missing opening chevron '<'." if unbalance < 0
+        end
+
+        raise StandardError, "Missing closing chevron '>'." if unbalance == 1
       end
       
       def parse_element(text)
@@ -107,7 +143,7 @@ module Sequence
         
         result = case text[0, 1]
                    when '/'
-                     #
+                     SectionEndMarker.new(text[1..-1])
                    else
                      Placeholder.new(text)
                  end
@@ -121,6 +157,8 @@ module Sequence
             case element
               when Placeholder
                 result << element.name
+              when Section
+                result.concat(element.variables)
               else
                 # noop
             end
@@ -156,24 +194,30 @@ module Sequence
       end
 
       def generate_line(line)
-        #puts "generate.line: line = #{line}"
         line_rep = line.map { |item| generate_couple(item) }
-        #puts "generate.line: line_rep = #{line_rep}"
-
+        section_item = nil
+        
         line_to_despace = line_rep.all? do |item|
           case item
             when StaticText
               item.source =~ /\s+/
+            when Section, SectionEndMarker
+              if section_item.nil?
+                section_item = item
+                true
+              else
+                false
+              end
             else
               false
           end
         end
 
-        if line_to_despace
+        if line_to_despace && ! section_item.nil?
+          line_rep = [section_item]
+        else
           line_rep_ending(line_rep)
         end
-        
-        #puts "generate.line: final_line_rep = #{line_rep}"
         
         return line_rep
       end
@@ -192,16 +236,54 @@ module Sequence
       end
       
       def generate_sections(sequence)
+        open_sections = []
+        
         generated = sequence.each_with_object([]) do |element, result|
-          result << element
+          case element
+            when Section
+              open_sections << element
+            when SectionEndMarker
+              validate_section_end(element, open_sections)
+              result << open_sections.pop()
+            else
+              if open_sections.empty?
+                result << element
+              else
+                open_sections.last.add_child(element)
+              end
+            end
+          end
+
+        unless open_sections.empty?
+          error_message =  "Unterminated section #{open_sections.last}."
+          raise StandardError, error_message
         end
         
         return generated
       end
+
+      def validate_section_end(marker, sections)
+        if sections.empty?
+          msg = "End of section</#{marker.name}> found while no corresponding section is open."
+          raise StandardError, msg
+        end
+
+        if marker.name != sections.last.name
+          msg = "End of section</#{marker.name}> does not match current section '#{sections.last.name}'."
+          raise StandardError, msg
+        end
+      end
       
       def line_rep_ending(line)
-        line << EOLine.new
+        if line.last.is_a?(SectionEndMarker)
+          section_end = line.pop()
+          line << EOLine.new
+          line << section_end
+        else
+          line << EOLine.new
+        end
       end
+      
     end # class: Engine
     
   end

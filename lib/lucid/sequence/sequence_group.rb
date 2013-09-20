@@ -1,12 +1,12 @@
 require 'singleton'
-require 'lucid/sequence/sequence_step'
+require 'lucid/sequence/sequence_phrase'
 
 module Sequence
   class SequenceGroup
     include Singleton
     
     def add_sequence(phrase, sequence, data)
-      new_sequence = SequenceStep.new(phrase, sequence, data)
+      new_sequence = SequencePhrase.new(phrase, sequence, data)
       raise DuplicateSequenceError.new(phrase) if find_sequence(phrase, data)
       sequence_steps[new_sequence.key] = new_sequence
     end
@@ -23,8 +23,12 @@ module Sequence
       return sequence.expand(phrase, data)
     end
     
+    def clear
+      sequence_steps.clear
+    end
+    
     def find_sequence(phrase, data)
-      key = SequenceStep.sequence_key(phrase, data, :invoke)
+      key = SequencePhrase.sequence_key(phrase, data, :invoke)
       return sequence_steps[key]
     end
   end

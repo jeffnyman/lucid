@@ -10,3 +10,11 @@ end
 When(/^\[((?:[^\\\]]|\\.)+)\]$/) do |phrase|
   invoke_sequence(phrase)
 end
+
+When(/^\[([^\]]+)\]:$/) do |phrase, data_table|
+  unless data_table.kind_of?(Lucid::AST::Table)
+    raise Sequence::DataTableNotFound.new(phrase)
+  end
+
+  invoke_sequence(phrase, data_table.raw)
+end
