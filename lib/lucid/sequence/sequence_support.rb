@@ -11,7 +11,7 @@ module Sequence
     def invoke_sequence(phrase, data = nil)
       # It's necessary to generate textual versions of all the steps that
       # are to be executed.
-      group = SequenceGroup.instance()
+      group = SequenceGroup.instance
       generated_steps = group.generate_steps(phrase, data)
       
       # This statement causes Lucid to execute the generated test steps.
