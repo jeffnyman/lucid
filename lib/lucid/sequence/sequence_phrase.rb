@@ -96,7 +96,6 @@ module Sequence
     
     def validate_phrase_values(params, phrase_variables)
       params.each do |param|
-        puts "****** param: #{param}"
         unless phrase_variables.include? param
           raise UselessPhraseParameter.new(param)
         end
@@ -104,7 +103,6 @@ module Sequence
 
       unless data_table_required?
         phrase_variables.each do |variable|
-          puts "****** variable: #{variable}"
           unless params.include?(variable) || ParameterConstant.include?(variable)
             raise UnreachableStepParameter.new(variable)
           end
