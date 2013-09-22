@@ -14,7 +14,20 @@ module Sequence
           And   login is clicked
         EXAMPLE
       end
-
+      
+      let(:conditional_template) do
+        example = <<-EXAMPLE
+          When  the first name is "<first_name>"
+          And   the last name is "<last_name>"
+          <?age>
+          And   the age is "<age>"
+          </age>
+          <?ssn>
+          And   the ssn is "<ssn>"
+          </ssn>
+        EXAMPLE
+      end
+      
       subject { Engine.new(example_template) }
       
       context 'parsing' do
@@ -156,6 +169,15 @@ module Sequence
           text = example_template.sub(/user_name/, 'user%name')
           msg = "The invalid element '%' occurs in the parameter 'user%name'."
           expect { Engine.new(text)}.to raise_error(Sequence::InvalidElementError, msg)
+        end
+
+        it 'should accept conditional sections' do
+          expect { Engine.new(conditional_template) }.not_to raise_error
+          instance = Engine.new(conditional_template)
+          elements = instance.instance_variable_get(:@generated_source)
+          sections = elements.select { |e| e.is_a?(Section) }
+          names = sections.map { |e| e.to_s }
+          expect(names).to eq(%w(<?age> <?ssn>))
         end
       end
       

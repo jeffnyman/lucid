@@ -89,6 +89,32 @@ module Sequence
         raise NotImplementedError, msg
       end
     end
+
+    class ConditionalSection < Section
+      attr_reader :existence
+      
+      def initialize(name, generate)
+        super(name)
+        @existence = generate
+      end
+      
+      def output(context, params)
+        value = retrieve_value_from(context, params)
+        if (!value.nil? && existence) || (value.nil? && !existence)
+          result = children.each_with_object('') do |child, item|
+            item << child.render(context, params)
+          end
+        else
+          result = ''
+        end
+        
+        return result
+      end
+      
+      def to_s
+        return "<?#{name}>"
+      end
+    end
     
     SectionEndMarker = Struct.new(:name)
     
@@ -173,6 +199,8 @@ module Sequence
         result = case text[0, 1]
                    when '/'
                      SectionEndMarker.new(text[1..-1])
+                   when '?'
+                     ConditionalSection.new(text[1..-1], true)
                    else
                      Placeholder.new(text)
                  end
