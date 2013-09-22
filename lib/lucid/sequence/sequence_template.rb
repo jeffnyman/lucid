@@ -102,7 +102,7 @@ module Sequence
         value = retrieve_value_from(context, params)
         if (!value.nil? && existence) || (value.nil? && !existence)
           result = children.each_with_object('') do |child, item|
-            item << child.render(context, params)
+            item << child.output(context, params)
           end
         else
           result = ''

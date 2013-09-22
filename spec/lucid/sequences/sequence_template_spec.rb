@@ -179,6 +179,24 @@ module Sequence
           names = sections.map { |e| e.to_s }
           expect(names).to eq(%w(<?age> <?ssn>))
         end
+
+        it 'should indicate when a section has no closing tag' do
+          text = conditional_template.sub(/<\/age>/, '')
+          msg = 'Unterminated section <?age>.'
+          expect { Engine.new(text) }.to raise_error(StandardError, msg)
+        end
+
+        it 'should indicate when a closing tag has no corresponding opening tag' do
+          text = conditional_template.sub(/<\/age>/, '</test>')
+          msg = "End of section </test> does not match current section 'age'."
+          expect { Engine.new(text) }.to raise_error(StandardError, msg)
+        end
+
+        it 'should indicate when a closing tag is found without opening tag' do
+          text = conditional_template.sub(/<\?ssn>/, '</test>')
+          msg = "End of section </test> found while no corresponding section is open."
+          expect { Engine.new(text) }.to raise_error(StandardError, msg)
+        end
       end
       
       context 'rendering a template' do
@@ -187,8 +205,92 @@ module Sequence
           instance = Engine.new ''
           expect(instance.variables).to be_empty
         end
+
+        it 'should generate the text with the actual values for parameters' do
+          locals = { 'user_name' => 'jnyman' }
+          generated_text = subject.output(Object.new, locals)
+          expected = <<-RESULT
+          Given the login page
+          When  the username is "jnyman"
+          And   the password is ""
+          And   login is clicked
+          RESULT
+
+          expect(generated_text).to eq(expected)
+        end
+
+        it 'should generate the text with the actual non-string values for parameters' do
+          locals = { 'user_name' => 'jnyman', 'password' => 12345 }
+          generated_text = subject.output(Object.new, locals)
+
+          expected = <<-RESULT
+          Given the login page
+          When  the username is "jnyman"
+          And   the password is "12345"
+          And   login is clicked
+          RESULT
+
+          expect(generated_text).to eq(expected)
+        end
+
+        it 'should generate the text with the actual values in context' do
+          ContextObject = Struct.new(:user_name, :password)
+          context = ContextObject.new('superb', 'tester')
+          generated_text = subject.output(context, { 'user_name' => 'jnyman' })
+
+          expected = <<-RESULT
+          Given the login page
+          When  the username is "jnyman"
+          And   the password is "tester"
+          And   login is clicked
+          RESULT
+
+          expect(generated_text).to eq(expected)
+        end
+        
+        it 'should handle an empty source template' do
+          instance = Engine.new('')
+          expect(instance.output(nil, {})).to be_empty
+        end
+
+        it 'should generate conditional sections' do
+          instance = Engine.new(conditional_template)
+          locals = { 'first_name' => 'Jeff',
+                     'last_name' => 'Nyman' ,
+                     'age' => '41'
+          }
+          generated_text = instance.output(Object.new, locals)
+          expected = <<-RESULT
+          When  the first name is "Jeff"
+          And   the last name is "Nyman"
+          And   the age is "41"
+          RESULT
+          expect(generated_text).to eq(expected)
+          
+          locals['age'] = nil
+          locals['ssn'] = '000-00-0000'
+          generated_text = instance.output(Object.new, locals)
+
+          expected = <<-RESULT
+          When  the first name is "Jeff"
+          And   the last name is "Nyman"
+          And   the ssn is "000-00-0000"
+          RESULT
+          expect(generated_text).to eq(expected)
+        end
+
+        it 'should generate multi-valued actual text from parameters' do
+          locals = { 'user_name' => %w(jnyman tester) }
+          generated_text = subject.output(Object.new, locals)
+          expected = <<-RESULT
+          Given the login page
+          When  the username is "jnyman<br/>tester"
+          And   the password is ""
+          And   login is clicked
+          RESULT
+          expect(generated_text).to eq(expected)
+        end
       end
-      
       
     end
     
