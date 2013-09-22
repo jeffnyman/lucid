@@ -9,7 +9,7 @@ module Sequence
     attr_reader :template
     attr_reader :phrase_params
 
-    ParameterConstant = { 'quotes' => '""'}
+    ParameterConstant = { 'quotes' => '"""'}
     
     def initialize(phrase, sequence, data)
       @key = self.class.sequence_key(phrase, data, :define)
@@ -71,11 +71,6 @@ module Sequence
                     /"((?:[^\\"]|\\.)*)"/
                 end
 
-      
-      # If the sequence phrase is:
-      # Given the step "When [checking a triangle with <side1>, <side2>, <side3> as sides]" is defined to mean:
-      # The result will be: [["side1"], ["side2"], ["side3"]]
-      # The params will be: ["side1", "side2", "side3"]
       result = phrase.scan(pattern)
       params = result.flatten.compact
       
@@ -94,13 +89,20 @@ module Sequence
       return processed.join("\n")
     end
     
+    # The goal of this method is to check for various inconsistencies that
+    # can occur between parameter names in the sequence phrase and those
+    # in the actual steps.
     def validate_phrase_values(params, phrase_variables)
+      # This covers the case when phrase names a parameter that never
+      # occurs in any of the steps.
       params.each do |param|
         unless phrase_variables.include? param
           raise UselessPhraseParameter.new(param)
         end
       end
 
+      # This covers the case when a step has a parameter that never appears
+      # in the sequence phrase and when data table is not being used.
       unless data_table_required?
         phrase_variables.each do |variable|
           unless params.include?(variable) || ParameterConstant.include?(variable)
@@ -108,7 +110,7 @@ module Sequence
           end
         end  
       end
-            
+      
       return phrase_params.dup
     end
 

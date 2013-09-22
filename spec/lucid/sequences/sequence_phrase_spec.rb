@@ -112,7 +112,7 @@ module Sequence
 
         instance = SequencePhrase.new(phrase, quoted_steps, true)
         actual = instance.expand(phrase, [])
-        expected = quoted_steps.gsub(/<quotes>/, '""')
+        expected = quoted_steps.gsub(/<quotes>/, '"""')
         expect(actual).to eq(expected)
       end
     end
