@@ -1,11 +1,11 @@
 Autotest.add_discovery do
-  if File.directory?('features')
-    if ENV['AUTOFEATURE'] =~ /true/i
-      "lucid"
-    elsif ENV['AUTOFEATURE'] =~ /false/i
+  if File.directory?('specs')
+    if ENV['AUTOSPEC'] =~ /true/i
+      'lucid'
+    elsif ENV['AUTOSPEC'] =~ /false/i
       # noop
     else
-      puts "(Not running features. To run features in autotest, set AUTOFEATURE=true.)"
+      puts '(Not running specs. To run specs in autotest, set AUTOSPEC=true.)'
     end
   end
 end
