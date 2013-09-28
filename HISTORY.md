@@ -2,6 +2,14 @@ Change Log and History
 ======================
 
 
+Version 0.2.0 / 2013-09-28
+--------------------------
+
+This release introduces a fairly major change, which is that of sequences. The idea is that you can define sequence phrases that are used to stand in for a set of steps. That set of steps is the sequence. This is essentially a macro-like functionality for Lucid. It's uncertain how long this functionality will exist since it potentially harbors some questionable design choices when it comes to an expressive TDL.
+
+This release also introduces a new formatter called "condensed." This formatter is used simply to display a much more limited set of information about the scenarios that are being executed. Specifically, all that gets returned are the scenario titles, essentially hiding all of the steps. Pass/fail information is still reported.
+
+
 Version 0.1.1 / 2013-06-04
 --------------------------
 
