@@ -22,6 +22,7 @@ module Lucid
         @header_red = nil
         @delayed_messages = []
         @img_id = 0
+        @inside_outline = false
       end
 
       def embed(src, mime_type, label)
@@ -171,8 +172,10 @@ module Lucid
       end
 
       def before_outline_table(outline_table)
+        @inside_outline = true
         @outline_row = 0
         @builder << '<table>'
+        @inside_outline = false
       end
 
       def after_outline_table(outline_table)
@@ -257,6 +260,7 @@ module Lucid
       end
 
       def exception(exception, status)
+        return if @hide_this_step
         build_exception_detail(exception)
       end
 
@@ -325,7 +329,7 @@ module Lucid
         attributes = {:id => "#{@row_id}_#{@col_index}", :class => 'step'}
         attributes[:class] += " #{status}" if status
         build_cell(@cell_type, value, attributes)
-        set_scenario_color(status)
+        set_scenario_color(status) if @inside_outline
         @col_index += 1
       end
 
@@ -405,7 +409,8 @@ module Lucid
         @builder.script do
           @builder.text!("makeRed('lucid-header');") unless @header_red
           @header_red = true
-          @builder.text!("makeRed('scenario_#{@scenario_number}');") unless @scenario_red
+          scenario_or_background = @in_background ? "background" : "scenario"
+          @builder.text!("makeRed('#{scenario_or_background}_#{@scenario_number}');") unless @scenario_red
           @scenario_red = true
         end
       end
@@ -413,7 +418,8 @@ module Lucid
       def set_scenario_color_pending
         @builder.script do
           @builder.text!("makeYellow('lucid-header');") unless @header_red
-          @builder.text!("makeYellow('scenario_#{@scenario_number}');") unless @scenario_red
+          scenario_or_background = @in_background ? "background" : "scenario"
+          @builder.text!("makeYellow('#{scenario_or_background}_#{@scenario_number}');") unless @scenario_red
         end
       end
 

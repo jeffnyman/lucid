@@ -2,7 +2,7 @@ AfterConfiguration do |config|
   puts("Specs are being executed from: #{config.spec_location}")
 end
 
-Before('~@practice') do
+Before('~@practice','~@sequence') do
   @browser = Symbiont::Browser.start
 end
 

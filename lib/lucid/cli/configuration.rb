@@ -186,12 +186,6 @@ module Lucid
       end
 
       def formatters(runtime)
-        # TODO: Remove the autoformat functionality; use the Gherkin CLI instead.
-        if @options[:autoformat]
-          require 'lucid/formatter/standard'
-          return [Formatter::Standard.new(runtime, nil, @options)]
-        end
-
         @options[:formats].map do |format|
           # The name will be a name, like 'standard'. The route will be the
           # location where output is sent to, such as 'STDOUT'.

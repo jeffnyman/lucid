@@ -10,6 +10,7 @@ module Lucid
       LUCID_FORMATS = {
         'html'        => ['Lucid::Formatter::Html',        'Generates an HTML report.'],
         'standard'    => ['Lucid::Formatter::Standard',    'Prints the spec as-is, using color if available.'],
+        'condensed'   => ['Lucid::Formatter::Condensed',   'Output only spec file and scenarios.'],
         'progress'    => ['Lucid::Formatter::Progress',    'Prints one character per scenario.'],
         'rerun'       => ['Lucid::Formatter::Rerun',       'Prints failing specs with line numbers.'],
         'usage'       => ['Lucid::Formatter::Usage',       "Prints where test definitions are used.\n" +
@@ -27,7 +28,7 @@ module Lucid
       largest = LUCID_FORMATS.keys.map{|s| s.length}.max
       FORMAT_LIST = (LUCID_FORMATS.keys.sort.map do |key|
         "  #{key}#{' ' * (largest - key.length)} : #{LUCID_FORMATS[key][1]}"
-      end) + ["Use --format rerun --out specs.txt to write out failing",
+      end) + ["Use --format rerun --out rerun.txt to write out failing",
               "specs. You can rerun them with lucid @rerun.txt.",
               "FORMAT can also be the fully qualified class name of",
               "your own custom formatter. If the class isn't loaded,",
@@ -46,7 +47,7 @@ module Lucid
       OPTIONS_WITH_ARGS = ['-r', '--require', '--i18n', '-f', '--format', '-o', '--out',
                            '-t', '--tags', '-n', '--name', '-e', '--exclude',
                            PROFILE_SHORT_FLAG, PROFILE_LONG_FLAG,
-                           '-a', '--autoformat', '-l', '--lines', '--port',
+                           '--lines', '--port',
                            '-I', '--matcher-type']
 
       def self.parse(args, out_stream, error_stream, options = {})
@@ -208,16 +209,6 @@ module Lucid
                   "based on your platform and the output destination."
           ) do |v|
             Lucid::Term::ANSIColor.coloring = v
-          end
-
-          opts.on("-a", "--autoformat DIR",
-            "Reformats (pretty prints) spec files and write them to DIRECTORY.",
-            "Be careful if you choose to overwrite the originals.",
-            "Implies --dry-run --format pretty.") do |directory|
-            @options[:autoformat] = directory
-            Lucid::Term::ANSIColor.coloring = false
-            @options[:dry_run] = true
-            @quiet = true
           end
 
           opts.on("-m", "--no-multiline",

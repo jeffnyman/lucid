@@ -73,7 +73,9 @@ module Lucid
           if @path == "specs"
             STDOUT.puts ["\nYou don't have a 'specs' directory. This is the default specification",
                          "directory that Lucid will use if one is not specified. So either create",
-                         "that directory or specify where your test repository is located."].join("\n")
+                         "that directory or specify where your test repository is located.\n\n"].join("\n")
+            #e.message << "."
+            raise e
           else
             STDOUT.puts ["\nThere is no '#{@path}' directory. Since that is what you specified as",
                          "your spec repository, this directory must be present."].join("\n")

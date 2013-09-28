@@ -1,6 +1,11 @@
 Lucid
 =====
 
+[![Build Status](https://secure.travis-ci.org/jnyman/lucid.png)](http://travis-ci.org/jnyman/lucid)
+[![Dependency Status](https://gemnasium.com/jnyman/lucid.png)](https://gemnasium.com/jnyman/lucid)
+[![Gem Version](https://badge.fury.io/rb/lucid.png)](http://badge.fury.io/rb/lucid)
+[![Coverage Status](https://coveralls.io/repos/jnyman/lucid/badge.png?branch=master)](https://coveralls.io/r/jnyman/lucid)
+
 Description
 -----------
 
@@ -42,8 +47,12 @@ You should also check out some of my [blog posts related to Lucid](http://tester
 Contributing
 ------------
 
-1. Fork it
+[Suggest an Improvement](https://github.com/jnyman/lucid/issues) or [Report a Bug](https://github.com/jnyman/lucid/issues)
+
+To work on Lucid:
+
+1. Fork the project.
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
+5. Create a new [pull request](https://help.github.com/articles/using-pull-requests)
