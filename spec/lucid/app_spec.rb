@@ -11,15 +11,15 @@ module Lucid
       let(:kernel) { double(:kernel) }
       subject { App.new(args, stdin, stdout, stderr, kernel) }
       
-      describe "start" do
-        context "passed a runtime" do
+      describe 'start' do
+        context 'passed a runtime' do
           let(:runtime) { double('runtime').as_null_object }
           
           def do_start
             subject.start(runtime)
           end
           
-          it "configures the runtime" do
+          it 'configures the runtime' do
             configuration = double('Configuration').as_null_object
             Configuration.stub(:new => configuration)
             runtime.should_receive(:configure).with(configuration)
@@ -27,7 +27,7 @@ module Lucid
             do_start
           end
           
-          it "uses that runtime for running and reporting results" do
+          it 'uses that runtime for running and reporting results' do
             results = double('results', :failure? => true)
             runtime.should_receive(:run)
             runtime.stub(:results).and_return(results)

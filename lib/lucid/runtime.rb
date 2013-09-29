@@ -50,7 +50,7 @@ module Lucid
       specs.accept(tdl_walker)
     end
 
-    def features_paths
+    def specs_paths
       @configuration.spec_source
     end
 
