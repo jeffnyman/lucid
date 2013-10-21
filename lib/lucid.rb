@@ -4,7 +4,6 @@ $:.unshift(File.dirname(__FILE__)) unless
 require 'yaml'
 require 'logger'
 require 'lucid/platform'
-require 'lucid/parser'
 require 'lucid/runtime'
 require 'lucid/cli/app'
 require 'lucid/step_definitions'

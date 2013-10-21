@@ -1,17 +1,17 @@
 begin
-  require 'symbiont'
-  require 'symbiont/factory'
+  require 'fluent'
+  require 'fluent/factory'
 rescue LoadError
-  STDOUT.puts ["The Symbiont test execution library is not installed.",
-               "The driver file is currently set to use the Symbiont library but",
-               "that gem was not found. Run the following command:", "",
-               "  gem install symbiont"].join("\n")
+  STDOUT.puts ['The Fluent test execution library is not installed.',
+               'The driver file is currently set to use the Fluent library but',
+               'that gem was not found. Run the following command:', '',
+               '  gem install fluent'].join("\n")
   Kernel.exit(1)
 end
 
-Domain(Symbiont::Factory)
+Domain(Fluent::Factory)
 
-module Symbiont
+module Fluent
   module Browser
 
     @@browser = false

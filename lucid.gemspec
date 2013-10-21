@@ -2,15 +2,15 @@
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
-require "lucid/platform"
+require 'lucid/platform'
 
 Gem::Specification.new do |gem|
   gem.name        = 'lucid'
   gem.version     = Lucid::VERSION
-  gem.authors     = ["Jeff Nyman"]
+  gem.author      = 'Jeff Nyman'
   gem.description = 'Test Description Language Execution Engine'
   gem.summary     = "lucid-#{gem.version}"
-  gem.email       = ['jeffnyman@gmail.com']
+  gem.email       = 'jeffnyman@gmail.com'
   gem.license     = 'MIT'
   gem.homepage    = 'https://github.com/jnyman/lucid'
   gem.platform    = Gem::Platform::RUBY
@@ -39,5 +39,5 @@ Gem::Specification.new do |gem|
   gem.test_files       = gem.files.grep(%r{^(test|spec|features)/})
   gem.executables      = gem.files.grep(%r{^bin/}).map { |f| File.basename(f) }
   gem.rdoc_options     = ["--charset=UTF-8"]
-  gem.require_paths    = ["lib"]
+  gem.require_paths    = %w(lib)
 end

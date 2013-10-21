@@ -101,15 +101,15 @@ module Lucid
 
           opts.separator ""
 
-          opts.on("-r LIBRARY|DIR", "--require LIBRARY|DIR",
-                  "Require files before executing the features. If this option",
-                  "is not specified, all *.rb files that are siblings or below",
-                  "the features will be loaded automatically. Automatic loading",
-                  "is disabled when this option is specified. That means all",
-                  "loading becomes explicit.",
+          opts.on('-r LIBRARY|DIR', '--require LIBRARY|DIR',
+                  'Require files before executing the features. If this option',
+                  'is not specified, all *.rb files that are siblings or below',
+                  'the features will be loaded automatically. Automatic loading',
+                  'is disabled when this option is specified. That means all',
+                  'loading becomes explicit.',
                   "Files under directories named \"support\" will always be",
-                  "loaded first.",
-                  "This option can be specified multiple times.") do |v|
+                  'loaded first.',
+                  'This option can be specified multiple times.') do |v|
             @options[:require] << v
             if(Lucid::JRUBY && File.directory?(v))
               require 'java'
@@ -117,91 +117,91 @@ module Lucid
             end
           end
 
-          opts.separator ""
+          opts.separator ''
 
-          opts.on("-f FORMAT", "--format FORMAT",
-                  "How Lucid will format spec execution output.",
-                  "(Default: standard). Available formats:",
+          opts.on('-f FORMAT', '--format FORMAT',
+                  'How Lucid will format spec execution output.',
+                  '(Default: standard). Available formats:',
                   *FORMAT_LIST
           ) do |v|
             @options[:formats] << [v, @out_stream]
           end
 
-          opts.on("-o", "--out [FILE|DIR]",
-                  "Write output to a file or directory instead of to standard",
-                  "console output. This option applies to any specified format",
-                  "option (via the --format switch) or to the default format",
-                  "if no format was specified. You can check the specific",
-                  "documentation for a given formatter to see whether to pass",
-                  "a file or a directory."
+          opts.on('-o', '--out [FILE|DIR]',
+                  'Write output to a file or directory instead of to standard',
+                  'console output. This option applies to any specified format',
+                  'option (via the --format switch) or to the default format',
+                  'if no format was specified. You can check the specific',
+                  'documentation for a given formatter to see whether to pass',
+                  'a file or a directory.'
           ) do |v|
             @options[:formats] << ['standard', nil] if @options[:formats].empty?
             @options[:formats][-1][1] = v
           end
 
-          opts.separator ""
+          opts.separator ''
 
-          opts.on("-d", "--dry-run", "Invokes formatters without executing the steps.",
-                  "This also omits the loading of your support/env.rb file if it exists.") do
+          opts.on('-d', '--dry-run', 'Invokes formatters without executing the steps.',
+                  'This also omits the loading of your common/support/driver.rb file if it exists.') do
             @options[:dry_run] = true
           end
 
-          opts.on("-n NAME", "--name NAME",
-                  "Lucid will only execute features or abilities that match with the name",
+          opts.on('-n NAME', '--name NAME',
+                  'Lucid will only execute features or abilities that match with the name",
                   "provided. The match can be done on partial information. If this option",
                   "is provided multiple times, then the match will be performed against",
-                  "each set of provided names."
+                  "each set of provided names.'
           ) do |v|
             @options[:name_regexps] << /#{v}/
           end
 
-          opts.on("-l", "--lines LINES", "Run given line numbers. Equivalent to FILE:LINE syntax") do |lines|
+          opts.on('-l', '--lines LINES', 'Run given line numbers. Equivalent to FILE:LINE syntax') do |lines|
             @options[:lines] = lines
           end
 
-          opts.on("-e", "--exclude PATTERN",
-                  "Lucid will not use files that match the PATTERN.") do |v|
+          opts.on('-e', '--exclude PATTERN',
+                  'Lucid will not use files that match the PATTERN.') do |v|
             @options[:excludes] << Regexp.new(v)
           end
 
-          opts.on("-t TAG_EXPRESSION", "--tags TAG_EXPRESSION",
-                  "Lucid will only execute features or scenarios with tags that match the",
-                  "tag expression provided. A single tag expressions can have several tags",
-                  "separated by a comma, which represents a logical OR. If this option is",
-                  "provided more than once, this represents a logical AND. A tag expression",
-                  "can be prefaced with a ~ character, which represents a logical NOT.",
-                  "Examples:",
-                  " --tags @smoke.",
-                  " --tags ~@wip",
-                  " --tags @smoke,@wip",
-                  " --tags @smoke,~@wip --tags @regression",
-                  "If you want to use multiple exclusion tags, you must use the logical",
-                  "AND approach, as in: --tags ~@wip --tags ~@failing",
-                  "Positive tags can be given a threshold to limit the number of occurrences.",
-                  "Example: --tags @critical:3",
-                  "That will fail if there are more than three occurrences of the @critical tag."
+          opts.on('-t TAG_EXPRESSION', '--tags TAG_EXPRESSION',
+                  'Lucid will only execute features or scenarios with tags that match the',
+                  'tag expression provided. A single tag expressions can have several tags',
+                  'separated by a comma, which represents a logical OR. If this option is',
+                  'provided more than once, this represents a logical AND. A tag expression',
+                  'can be prefaced with a ~ character, which represents a logical NOT.',
+                  'Examples:',
+                  ' --tags @smoke.',
+                  ' --tags ~@wip',
+                  ' --tags @smoke,@wip',
+                  ' --tags @smoke,~@wip --tags @regression',
+                  'If you want to use multiple exclusion tags, you must use the logical',
+                  'AND approach, as in: --tags ~@wip --tags ~@failing',
+                  'Positive tags can be given a threshold to limit the number of occurrences.',
+                  'Example: --tags @critical:3',
+                  'That will fail if there are more than three occurrences of the @critical tag.'
           ) do |v|
             @options[:tag_expressions] << v
           end
 
-          opts.separator ""
+          opts.separator ''
 
           opts.on(PROFILE_SHORT_FLAG, "#{PROFILE_LONG_FLAG} PROFILE",
-                  "Pull commandline arguments from lucid.yml which can be defined as",
-                  "strings or arrays. When a 'default' profile is defined and no profile",
-                  "is specified it is always used. (Unless disabled, see -P below.)",
-                  "When feature files are defined in a profile and on the command line",
-                  "then only the ones from the command line are used."
+                  'Pull commandline arguments from lucid.yml which can be defined as',
+                  'strings or arrays. When a default profile is defined and no profile',
+                  'is specified it is always used. (Unless disabled, see -P below.)',
+                  'When feature files are defined in a profile and on the command line',
+                  'then only the ones from the command line are used.'
           ) do |v|
             @profiles << v
           end
 
           opts.on(NO_PROFILE_SHORT_FLAG, NO_PROFILE_LONG_FLAG,
-            "Disables all profile loading to avoid using the 'default' profile.") do |v|
+            'Disables all profile loading to avoid using the default profile.') do |v|
             @disable_profile_loading = true
           end
 
-          opts.separator ""
+          opts.separator ''
 
           opts.on("-c", "--[no-]color",
                   "Specifies whether or not to use ANSI color in the output. If this",
@@ -277,28 +277,28 @@ module Lucid
             end
           end
 
-          opts.separator ""
+          opts.separator ''
 
-          opts.on("-b", "--backtrace", "Show full backtrace for all errors during Lucid execution.") do
+          opts.on('-b', '--backtrace', 'Show full backtrace for all errors during Lucid execution.') do
             Lucid.use_full_backtrace = true
           end
 
-          opts.on("-v", "--verbose", "Show detailed information about Lucid execution.") do
+          opts.on('-v', '--verbose', 'Show detailed information about Lucid execution.') do
             @options[:verbose] = true
           end
 
-          opts.on("--debug", "Show behind-the-scenes information about Lucid execution.") do
+          opts.on('--debug', 'Show behind-the-scenes information about Lucid execution.') do
             @options[:debug] = true
           end
 
-          opts.separator ""
+          opts.separator ''
 
-          opts.on_tail("--version", "Show Lucid version information.") do
+          opts.on_tail('--version', 'Show Lucid version information.') do
             @out_stream.puts Lucid::VERSION
             Kernel.exit(0)
           end
 
-          opts.on_tail("-h", "--help", "Show Lucid execution options.") do
+          opts.on_tail('-h', '--help', 'Show Lucid execution options.') do
             @out_stream.puts opts.help
             Kernel.exit(0)
           end
@@ -381,7 +381,7 @@ module Lucid
 
       def establish_profile
         if @disable_profile_loading
-          @out_stream.puts "Disabling profiles..."
+          @out_stream.puts 'Disabling profiles...'
           return
         end
 

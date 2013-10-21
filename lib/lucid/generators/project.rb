@@ -5,13 +5,13 @@ module Lucid
     class Project < Thor::Group
       include Thor::Actions
 
-      argument :name,    type: :string,  desc: "Name of the project."
-      argument :driver,  type: :string,  desc: "Framework driver to use."
+      argument :name,    type: :string,  desc: 'Name of the project.'
+      argument :driver,  type: :string,  desc: 'Framework driver to use.'
 
-      desc "Generates a project structure."
+      desc 'Generates a project structure.'
 
       def self.source_root
-        File.dirname(__FILE__) + "/project"
+        File.dirname(__FILE__) + '/project'
       end
 
       def spit_back_values
@@ -34,34 +34,34 @@ module Lucid
       end
 
       def copy_errors
-        copy_file "errors.rb", "#{name}/common/support/errors.rb"
+        copy_file 'errors.rb', "#{name}/common/support/errors.rb"
       end
 
       def copy_browser
-        if driver.downcase == 'symbiont'
-          copy_file "browser-symbiont.rb", "#{name}/common/support/browser.rb"
+        if driver.downcase == 'fluent'
+          copy_file 'browser-fluent.rb', "#{name}/common/support/browser.rb"
         end
       end
 
       def copy_driver
-        if driver.downcase == 'symbiont'
-          copy_file "driver-symbiont.rb", "#{name}/common/support/driver.rb"
+        if driver.downcase == 'fluent'
+          copy_file 'driver-fluent.rb', "#{name}/common/support/driver.rb"
         end
       end
 
       def copy_events
-        if driver.downcase == 'symbiont'
-          copy_file "events-symbiont.rb", "#{name}/common/support/events.rb"
+        if driver.downcase == 'fluent'
+          copy_file 'events-fluent.rb', "#{name}/common/support/events.rb"
         end
       end
 
       def copy_gemfile
-        template "Gemfile.tt", "#{name}/Gemfile"
+        template 'Gemfile.tt', "#{name}/Gemfile"
       end
 
       def copy_lucid_yml
-        if driver.downcase == 'symbiont'
-          copy_file "lucid-symbiont.yml", "#{name}/lucid.yml"
+        if driver.downcase == 'fluent'
+          copy_file 'lucid-fluent.yml', "#{name}/lucid.yml"
         end
       end
 

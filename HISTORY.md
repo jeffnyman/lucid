@@ -1,6 +1,10 @@
 Change Log and History
 ======================
 
+Version 0.2.1 / 2013-10-21
+--------------------------
+
+This is a small patch release. The patch is in the project generator. The [Symbiont](https://github.com/jnyman/symbiont) test framework is being deprecated in favor of [Fluent](https://github.com/jnyman/fluent). The project generator has been updated accordingly. 
 
 Version 0.2.0 / 2013-09-28
 --------------------------

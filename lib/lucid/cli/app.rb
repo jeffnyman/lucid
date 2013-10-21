@@ -2,7 +2,6 @@ require 'gherkin'
 require 'optparse'
 require 'lucid'
 require 'logger'
-require 'lucid/parser'
 require 'lucid/spec_file'
 require 'lucid/cli/configuration'
 

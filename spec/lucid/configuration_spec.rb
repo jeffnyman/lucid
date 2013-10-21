@@ -1,6 +1,27 @@
 require_relative '../spec_helper'
 
 module Lucid
+  describe Configuration do
+    describe '.default' do
+      subject { Configuration.default }
+
+      it 'has an autoload_code_paths containing default Lucid folders' do
+        subject.autoload_code_paths.should include('common')
+        subject.autoload_code_paths.should include('steps')
+        subject.autoload_code_paths.should include('pages')
+      end
+    end
+
+    describe 'supports custom user options' do
+      let(:user_options) { { :autoload_code_paths => ['library/common'] } }
+      subject { Configuration.new(user_options) }
+
+      it 'should allow the defaults to be overridden' do
+        subject.autoload_code_paths.should == ['library/common']
+      end
+    end
+  end
+  
   module CLI
     describe Configuration do
       
@@ -52,6 +73,25 @@ module Lucid
           /steps/steps.rb
         )
       end
+
+      it 'should default to a specs directory when no information is provided' do
+        File.stub(:directory?).and_return(true)
+        Dir.stub(:[]).with('specs/**/*.spec').and_return(['lucid.spec'])
+        config.parse(%w{})
+        config.spec_files.should == ['lucid.spec']
+      end
+      
+      it 'should search for all specs in the specified directory' do
+        File.stub(:directory?).and_return(true)
+        Dir.stub(:[]).with('specs/**/*.spec').and_return(["lucid.spec"])
+        config.parse(%w{specs/})
+        config.spec_files.should == ['lucid.spec']
+      end
+      
+      it 'should preserve the order of the spec files' do
+        config.parse(%w{test_b.spec test_c.spec test_a.spec})
+        config.spec_files.should == %w[test_b.spec test_c.spec test_a.spec]
+      end
       
       it 'should be able to exclude files based on a specific reference' do
         with_these_files('/common/support/browser.rb', '/common/support/driver.rb')
@@ -69,6 +109,12 @@ module Lucid
         config.spec_requires.should == %w(
           /steps/testing.rb
         )
+      end
+
+      it 'should allow specifying environment variables on the command line' do
+        config.parse(['test=this'])
+        ENV['test'].should == 'this'
+        config.spec_files.should_not include('test=this')
       end
       
       it 'should be able to use a --dry-run option' do
@@ -96,15 +142,30 @@ module Lucid
         config.parse(%w{--verbose})
         config.options[:verbose].should be_true
       end
-
-      it 'should be able to use an --out option' do
-        config.parse(%w{--out report.txt})
-        config.formats.should == [%w(standard report.txt)]
+      
+      describe 'generating output' do
+      
+        it 'should be able to use an --out option' do
+          config.parse(%w{--out report.txt})
+          config.formats.should == [%w(standard report.txt)]
+        end
+        
+        it 'should be able to use multiple --out options' do
+          config.parse(%w{--format standard --out report1.txt --out report2.txt})
+          config.formats.should == [%w(standard report2.txt)]
+        end
+      
       end
 
-      it 'should be able to use multiple --out options' do
-        config.parse(%w{--format standard --out report1.txt --out report2.txt})
-        config.formats.should == [%w(standard report2.txt)]
+      it 'should be able to use a --color option' do
+        Lucid::Term::ANSIColor.should_receive(:coloring=).with(true)
+        config.parse(['--color'])
+      end
+
+      it 'should accept --no-color option' do
+        Lucid::Term::ANSIColor.should_receive(:coloring=).with(false)
+        config = Configuration.new(StringIO.new)
+        config.parse(['--no-color'])
       end
       
     end

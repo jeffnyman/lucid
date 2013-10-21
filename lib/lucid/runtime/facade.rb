@@ -17,7 +17,7 @@ module Lucid
         :embed,
         :ask,
         :puts,
-        :features_paths,
+        :specs_paths,
         :step_match
 
       def_delegators :@orchestrator,

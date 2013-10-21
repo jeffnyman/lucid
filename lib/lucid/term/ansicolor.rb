@@ -75,10 +75,9 @@ module Lucid
       # Regular expression that is used to scan for ANSI-sequences while
       # uncoloring strings.
       COLORED_REGEXP = /\e\[(?:[34][0-7]|[0-9])?m/
-
-
+      
       def self.included(klass)
-        if version_is_greater_than_18? and klass == String
+        if klass == String
           ATTRIBUTES.delete(:clear)
           ATTRIBUTE_NAMES.delete(:clear)
         end
@@ -106,13 +105,6 @@ module Lucid
       end
       extend self
 
-      private
-
-      def version_is_greater_than_18?
-        version = RUBY_VERSION.split('.')
-        version.map! &:to_i
-        version[0] >= 1 && version[1] > 8
-      end
     end
   end
 end
