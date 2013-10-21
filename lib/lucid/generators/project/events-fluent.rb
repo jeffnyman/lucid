@@ -3,7 +3,7 @@ AfterConfiguration do |config|
 end
 
 Before('~@practice','~@sequence') do
-  @browser = Symbiont::Browser.start
+  @browser = Fluent::Browser.start
 end
 
 AfterStep('@pause') do
@@ -28,9 +28,9 @@ After do |scenario|
     # This is an alternative way to embed.
     #embed screenshot, 'image/png'
   end
-  Symbiont::Browser.stop
+  Fluent::Browser.stop
 end
 
 at_exit do
-  Symbiont::Browser.stop
+  Fluent::Browser.stop
 end
