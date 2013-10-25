@@ -147,10 +147,10 @@ module Lucid
           end
 
           opts.on('-n NAME', '--name NAME',
-                  'Lucid will only execute features or abilities that match with the name",
-                  "provided. The match can be done on partial information. If this option",
-                  "is provided multiple times, then the match will be performed against",
-                  "each set of provided names.'
+                  'Lucid will only execute features or abilities that match with the name',
+                  'provided. The match can be done on partial information. If this option',
+                  'is provided multiple times, then the match will be performed against',
+                  'each set of provided names.'
           ) do |v|
             @options[:name_regexps] << /#{v}/
           end
@@ -256,7 +256,7 @@ module Lucid
 
           opts.separator ""
 
-          opts.on("--testdefs DIR", "Lucid will Write test definition metadata to the DIR.") do |dir|
+          opts.on("--testdefs DIR", "Lucid will write test definition metadata to the DIR.") do |dir|
             @options[:testdefs] = dir
           end
 
