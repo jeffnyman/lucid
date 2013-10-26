@@ -9,7 +9,7 @@ module Lucid
       attr_reader :runtime
 
       def initialize(runtime, path_or_io, options)
-        @runtime, @io, @options = runtime, ensure_io(path_or_io, "progress"), options
+        @runtime, @io, @options = runtime, ensure_io(path_or_io, 'progress'), options
       end
 
       def before_features(features)
