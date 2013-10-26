@@ -4,8 +4,6 @@ module Lucid
     class Results
       def initialize(configuration)
         @configuration = configuration
-
-        # Optimization - quicker lookup.
         @inserted_steps = {}
         @inserted_scenarios = {}
       end
