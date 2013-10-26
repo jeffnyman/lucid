@@ -25,7 +25,7 @@ module Lucid
         log.debug("Options: #{@options.inspect}")
 
         prepare_output_formatting
-        raise("You cannot use both --strict and --wip tags.") if strict? && wip?
+        raise('You cannot use both --strict and --wip tags.') if strict? && wip?
 
         @options[:tag_expression] = Gherkin::TagExpression.new(@options[:tag_expressions])
 
@@ -215,7 +215,7 @@ module Lucid
         streams = @options[:formats].map { |(_, stream)| stream }
 
         if streams != streams.uniq
-          raise "All but one formatter must use --out, only one can print to each stream (or STDOUT)"
+          raise 'All but one formatter must use --out, only one can print to each stream (or STDOUT)'
         end
       end
 

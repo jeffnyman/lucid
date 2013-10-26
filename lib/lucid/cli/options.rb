@@ -83,19 +83,19 @@ module Lucid
         @args.extend(::OptionParser::Arguable)
 
         @args.options do |opts|
-          opts.banner = ["Lucid: Test Description Language Execution Engine",
-                         "Usage: lucid [options] [ [FILE|DIR|URL][:LINE[:LINE]*] ]+", "", ""
+          opts.banner = ['Lucid: Test Description Language Execution Engine',
+                         'Usage: lucid [options] [ [FILE|DIR|URL][:LINE[:LINE]*] ]+', '', ''
           ].join("\n")
 
-          opts.on("--library-path PATH", "Location of spec project library files.") do |path|
+          opts.on('--library-path PATH', 'Location of spec project library files.') do |path|
             @options[:library_path] = path
           end
 
-          opts.on("--spec-type TYPE", "The file type (extension) for Lucid specifications.") do |type|
+          opts.on('--spec-type TYPE', 'The file type (extension) for Lucid specifications.') do |type|
             @options[:spec_type] = type
           end
 
-          opts.on("--driver-file FILE", "The file for Lucid to connect to an execution library.") do |file|
+          opts.on('--driver-file FILE', 'The file for Lucid to connect to an execution library.') do |file|
             @options[:driver_file] = file
           end
 
@@ -203,72 +203,72 @@ module Lucid
 
           opts.separator ''
 
-          opts.on("-c", "--[no-]color",
-                  "Specifies whether or not to use ANSI color in the output. If this",
-                  "option is not specified, Lucid makes the decision on colored output",
-                  "based on your platform and the output destination."
+          opts.on('-c', '--[no-]color',
+                  'Specifies whether or not to use ANSI color in the output. If this',
+                  'option is not specified, Lucid makes the decision on colored output',
+                  'based on your platform and the output destination.'
           ) do |v|
             Lucid::Term::ANSIColor.coloring = v
           end
 
-          opts.on("-m", "--no-multiline",
-                  "Lucid will not print multiline strings and tables under steps.") do
+          opts.on('-m', '--no-multiline',
+                  'Lucid will not print multiline strings and tables under steps.') do
             @options[:no_multiline] = true
           end
 
-          opts.on("-s", "--no-source",
-                  "Lucid will not print the file and line of the test definition with the steps.") do
+          opts.on('-s', '--no-source',
+                  'Lucid will not print the file and line of the test definition with the steps.') do
             @options[:source] = false
           end
 
-          opts.on("-i", "--no-matchers",
-                  "Lucid will not print matchers for pending steps.") do
+          opts.on('-i', '--no-matchers',
+                  'Lucid will not print matchers for pending steps.') do
             @options[:matchers] = false
           end
 
-          opts.on("-I", "--matchers-type TYPE",
-                  "Use different matcher type (Default: regexp).",
-                  "Available types:",
+          opts.on('-I', '--matchers-type TYPE',
+                  'Use different matcher type (Default: regexp).',
+                  'Available types:',
                   *Lucid::InterfaceRb::RbLanguage.cli_matcher_type_options
           ) do |v|
             @options[:matcher_type] = v.to_sym
           end
 
-          opts.on("-q", "--quiet", "Alias for --no-matchers --no-source.") do
+          opts.on('-q', '--quiet', 'Alias for --no-matchers --no-source.') do
             @quiet = true
           end
 
-          opts.on("-S", "--strict", "Fail if there are any undefined or pending steps.") do
+          opts.on('-S', '--strict', 'Fail if there are any undefined or pending steps.') do
             @options[:strict] = true
           end
 
-          opts.on("-w", "--wip", "Fail if there are any passing scenarios.") do
+          opts.on('-w', '--wip', 'Fail if there are any passing scenarios.') do
             @options[:wip] = true
           end
 
-          opts.on("-g", "--guess", "Guess best match for ambiguous steps.") do
+          opts.on('-g', '--guess', 'Guess best match for ambiguous steps.') do
             @options[:guess] = true
           end
 
-          opts.on("-x", "--expand", "Expand Scenario Outline tables in output.") do
+          opts.on('-x', '--expand', 'Expand Scenario Outline tables in output.') do
             @options[:expand] = true
           end
 
-          opts.separator ""
+          opts.separator ''
 
-          opts.on("--testdefs DIR", "Lucid will write test definition metadata to the DIR.") do |dir|
+          opts.on('--testdefs DIR', 'Lucid will write test definition metadata to the DIR.') do |dir|
             @options[:testdefs] = dir
           end
 
           if(Lucid::JRUBY)
-            opts.on("-j DIR", "--jars DIR",
-                    "Load all the jars under the specified directory.") do |jars|
+            opts.on('-j DIR', '--jars DIR',
+                    'Load all the jars under the specified directory.') do |jars|
               Dir["#{jars}/**/*.jar"].each {|jar| require jar}
             end
           end
 
-          opts.on("--i18n LANG",
-                  "List keywords for a particular language.",
+          opts.on('--i18n LANG',
+                  'List keywords for a particular language.',
                   %{Run with "--i18n help" to see all languages}) do |lang|
             if lang == 'help'
               list_languages_and_exit
@@ -310,14 +310,14 @@ module Lucid
         rescue OptionParser::InvalidOption
           if $!.to_s =~ /invalid option\:\s+((?:-)?-\S+)/
             puts "You specified an invalid option: #{$1}"
-            puts "Please run lucid --help to see the list of available options."
+            puts 'Please run lucid --help to see the list of available options.'
           end
 
         rescue OptionParser::MissingArgument
           if $!.to_s =~ /missing argument\:\s+((?:-)?-\S+)/
             puts "You specified an valid option (#{$1}), but with an invalid argument."
-            puts "Make sure you are providing the expected argument for the option."
-            puts "Run lucid --help to see the list of available options."
+            puts 'Make sure you are providing the expected argument for the option.'
+            puts 'Run lucid --help to see the list of available options.'
           end
 
           Kernel.exit(1)

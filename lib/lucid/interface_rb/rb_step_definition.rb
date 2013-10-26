@@ -5,13 +5,12 @@ require 'lucid/interface_rb/regexp_argument_matcher'
 
 module Lucid
   module InterfaceRb
-    # A Ruby Step Definition holds a Regexp and a Proc, and is created
-    # by calling <tt>Given</tt>, <tt>When</tt> or <tt>Then</tt>
-    # in the <tt>step_definitions</tt> ruby files. See also RbLucid.
+    # A Ruby test definition holds a Regexp and a Proc, and is created
+    # by calling <tt>Given</tt>, <tt>When</tt> or <tt>Then</tt>.
     #
     # Example:
     #
-    #   Given /I have (\d+) lucid testing on the mind/ do
+    #   Given /there are (\d+) lucid tests to run/ do
     #     # some code here
     #   end
     #
@@ -19,7 +18,7 @@ module Lucid
 
       class MissingProc < StandardError
         def message
-          "Step definitions must always have a proc or symbol"
+          'Test definitions must always have a proc or symbol'
         end
       end
 
@@ -59,7 +58,7 @@ module Lucid
           when Symbol
             lambda { self.send(target) }
           else
-            lambda { raise ArgumentError, "Target must be a symbol or a proc" }
+            lambda { raise ArgumentError, 'Target must be a symbol or a proc' }
           end
         end
       end

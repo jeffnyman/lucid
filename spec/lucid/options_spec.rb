@@ -23,6 +23,13 @@ module Lucid
       def prep_args(args)
         args.is_a?(Array) ? args : args.split(' ')
       end
+
+      def with_this_configuration(info)
+        Dir.stub(:glob).with('{,.config/,config/}lucid{.yml,.yaml}').and_return(['lucid.yml'])
+        File.stub(:exist?).and_return(true)
+        lucid_yml = info.is_a?(Hash) ? info.to_yaml : info
+        IO.stub(:read).with('lucid.yml').and_return(lucid_yml)
+      end
       
       describe 'parsing options' do
         
@@ -37,7 +44,7 @@ module Lucid
         end
 
         context '--version' do
-          it "should display Lucid's version" do
+          it 'should display Lucid version' do
             after_parsing('--version') do
               output_stream.string.should =~ /#{Lucid::VERSION}/
             end
@@ -116,6 +123,186 @@ module Lucid
             after_parsing('-f profile --out file.txt -f standard -o file2.txt') do
               options[:formats].should == [['profile', 'file.txt'], ['standard', 'file2.txt']]
             end
+          end
+        end
+
+        context '-p PROFILE or --profile PROFILE' do
+          it 'respects --quiet when defined in the profile' do
+            with_this_configuration('test' => '-q')
+
+            options.parse(%w[-p test])
+            options[:matchers].should be_false
+            options[:source].should be_false
+          end
+          
+          it 'uses the default profile passed in during initialization if none is specified by the user' do
+            with_this_configuration({'default' => '--require test_helper'})
+
+            options = Options.new(output_stream, error_stream, :default_profile => 'default')
+            options.parse(%w{--format progress})
+            options[:require].should include('test_helper')
+          end
+
+          it 'merges all unique values from both the command line and the profile' do
+            with_this_configuration('test' => %w[--verbose])
+
+            options.parse(%w[--wip --profile test])
+            options[:wip].should be_true
+            options[:verbose].should be_true
+          end
+
+          it 'gives precedence to the original options spec source path' do
+            with_this_configuration('test' => %w[specs])
+
+            options.parse(%w[test.spec -p test])
+            options[:spec_source].should == %w[test.spec]
+          end
+
+          it 'combines the require files of both' do
+            with_this_configuration('bar' => %w[--require specs -r helper.rb])
+
+            options.parse(%w[--require test.rb -p bar])
+            options[:require].should == %w[test.rb specs helper.rb]
+          end
+
+          it 'combines the tag names of both' do
+            with_this_configuration('test' => %w[-t @smoke])
+
+            options.parse(%w[--tags @wip -p test])
+            options[:tag_expressions].should == ['@wip', '@smoke']
+          end
+
+          it 'only takes the paths from the original options, and disregards the profiles' do
+            with_this_configuration('test' => %w[specs])
+
+            options.parse(%w[test.spec -p test])
+            options[:spec_source].should == ['test.spec']
+          end
+
+          it 'uses the paths from the profile when none are specified originally' do
+            with_this_configuration('test' => %w[test.spec])
+
+            options.parse(%w[-p test])
+            options[:spec_source].should == ['test.spec']
+          end
+
+          it 'combines environment variables from the profile but gives precedence to command line args' do
+            with_this_configuration('test' => %w[BROWSER=firefox DRIVER=mechanize])
+            
+            options.parse(%w[-p test DRIVER=watir CI=jenkins])
+            options[:env_vars].should == {'CI' => 'jenkins', 'BROWSER' => 'firefox', 'DRIVER' => 'watir'}
+          end
+
+          it 'disregards STDOUT formatter defined in profile when another is passed in via command line' do
+            with_this_configuration({'test' => %w[--format standard]})
+
+            options.parse(%w{--format progress --profile test})
+            options[:formats].should == [['progress', output_stream]]
+          end
+
+          it 'includes any non-STDOUT formatters from the profile' do
+            with_this_configuration({'report' => %w[--format html -o results.html]})
+
+            options.parse(%w{--format progress --profile report})
+            options[:formats].should == [['progress', output_stream], ['html', 'results.html']]
+          end
+
+          it 'does not include STDOUT formatters from the profile if there is a STDOUT formatter in command line' do
+            with_this_configuration({'report' => %w[--format html -o results.html --format standard]})
+
+            options.parse(%w{--format progress --profile report})
+            options[:formats].should == [['progress', output_stream], ['html', 'results.html']]
+          end
+
+          it 'includes any STDOUT formatters from the profile if no STDOUT formatter was specified in command line' do
+            with_this_configuration({'report' => %w[--format html]})
+
+            options.parse(%w{--format rerun -o rerun.txt --profile report})
+            options[:formats].should == [['html', output_stream], ['rerun', 'rerun.txt']]
+          end
+
+          it 'assumes all of the formatters defined in the profile when none are specified on command line' do
+            with_this_configuration({'report' => %w[--format progress --format html -o results.html]})
+
+            options.parse(%w{--profile report})
+            options[:formats].should == [['progress', output_stream], ['html', 'results.html']]
+          end
+
+          it 'only reads lucid.yml once' do
+            original_parse_count = $lucid_yml_read_count
+            $lucid_yml_read_count = 0
+            
+            begin
+              with_this_configuration(<<-END
+              <% $lucid_yml_read_count += 1 %>
+              default: --format standard
+              END
+              )
+              options = Options.new(output_stream, error_stream, :default_profile => 'default')
+              options.parse(%w(-f progress))
+
+              $lucid_yml_read_count.should == 1
+            ensure
+              $lucid_yml_read_count = original_parse_count
+            end
+          end
+        end
+        
+        context '-P or --no-profile' do
+          it 'disables profiles' do
+            with_this_configuration({'default' => '-v --require file_specified_in_default_profile.rb'})
+
+            after_parsing('-P --require test_helper.rb') do
+              options[:require].should == ['test_helper.rb']
+            end
+          end
+
+          it 'notifies the user that the profiles are being disabled' do
+            with_this_configuration({'default' => '-v'})
+
+            after_parsing('--no-profile --require test_helper.rb') do
+              output_stream.string.should =~ /Disabling profiles.../
+            end
+          end
+        end
+        
+        context '--matcher-type' do
+          it 'parses the matcher type argument' do
+            after_parsing('--matcher-type classic') do
+              options[:matcher_type].should eql :classic
+            end
+          end
+        end
+
+        it 'assigns any extra arguments as paths to specs' do
+          after_parsing('-f pretty test.spec other_specs') do
+            options[:spec_source].should == ['test.spec', 'other_specs']
+          end
+        end
+
+        it 'does not mistake environment variables as spec paths' do
+          after_parsing('test.spec ENV=ci') do
+            options[:spec_source].should == ['test.spec']
+          end
+        end
+        
+        describe 'dry-run' do
+          it 'should have the default value for matchers' do
+            with_this_configuration({'test' => %w[--dry-run]})
+            options.parse(%w{--dry-run})
+            options[:matchers].should == true
+          end
+
+          it 'should set matchers to false when no-matchers is provided after dry-run' do
+            with_this_configuration({'test' => %w[--dry-run --no-snippets]})
+            options.parse(%w{--dry-run --no-matchers})
+            options[:matchers].should == false
+          end
+
+          it 'should set matchers to false when no-matchers is provided before dry-run' do
+            with_this_configuration({'test' => %w[--no-snippet --dry-run]})
+            options.parse(%w{--no-matchers --dry-run})
+            options[:matchers].should == false
           end
         end
         
