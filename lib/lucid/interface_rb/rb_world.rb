@@ -99,14 +99,14 @@ module Lucid
       end
 
       # Mark the matched step as pending.
-      def pending(message = "TODO")
+      def pending(message = 'TODO')
         if block_given?
           begin
             yield
           rescue Exception
             raise Pending.new(message)
           end
-          raise Pending.new("Expected pending '#{message}' to fail. No Error was raised. No longer pending?")
+          raise Pending.new("Expected pending '#{message}' to fail. No error was raised. No longer pending?")
         else
           raise Pending.new(message)
         end
@@ -121,7 +121,6 @@ module Lucid
         sprintf("#<%s:0x%x>", modules.join('+'), self.object_id)
       end
 
-      # see {#inspect}
       def to_s
         inspect
       end
