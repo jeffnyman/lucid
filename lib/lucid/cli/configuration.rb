@@ -92,7 +92,11 @@ module Lucid
         extract_excluded_files(files)
 
         files.reject! {|f| !File.file?(f)}
-        files.reject! {|f| File.extname(f) == ".#{spec_type}" }
+
+        spec_types = spec_type.each do |type|
+          files.reject! {|f| File.extname(f) == ".#{type}" }
+        end
+
         files.reject! {|f| f =~ /^http/}
 
         files.sort
@@ -120,8 +124,15 @@ module Lucid
         files = specs_path(spec_source).map do |path|
           path = path.gsub(/\\/, '/')  # convert \ to /
           path = path.chomp('/')       # removing trailing /
+
+          files_to_sort = []
+
           if File.directory?(path)
-            Dir["#{path}/**/*.#{spec_type}"].sort
+            spec_type.each do |type|
+              files_to_sort << Dir["#{path}/**/*.#{type}"].sort
+            end
+
+            files_to_sort
           elsif path[0..0] == '@' and # @listfile.txt
               File.file?(path[1..-1]) # listfile.txt is a file
             IO.read(path[1..-1]).split
@@ -131,6 +142,7 @@ module Lucid
         end.flatten.uniq
 
         extract_excluded_files(files)
+
         files
       end
 
@@ -142,7 +154,8 @@ module Lucid
       end
 
       def spec_type
-        @options[:spec_type].empty? ? 'spec' : @options[:spec_type]
+        @options[:spec_type]
+
       end
 
       def library_path

@@ -28,16 +28,16 @@ module Lucid
       largest = LUCID_FORMATS.keys.map{|s| s.length}.max
       FORMAT_LIST = (LUCID_FORMATS.keys.sort.map do |key|
         "  #{key}#{' ' * (largest - key.length)} : #{LUCID_FORMATS[key][1]}"
-      end) + ["Use --format rerun --out rerun.txt to write out failing",
-              "specs. You can rerun them with lucid @rerun.txt.",
-              "FORMAT can also be the fully qualified class name of",
+      end) + ['Use --format rerun --out rerun.txt to write out failing',
+              'specs. You can rerun them with lucid @rerun.txt.',
+              'FORMAT can also be the fully qualified class name of',
               "your own custom formatter. If the class isn't loaded,",
-              "Lucid will attempt to require a file with a relative",
-              "file name that is the underscore name of the class name.",
-              "  Example: --format Formatter::WordDoc",
-              "With that, Lucid will look for formatter/word_doc.rb",
-              "You can place the file with this relative path",
-              "underneath your common/support directory or anywhere",
+              'Lucid will attempt to require a file with a relative',
+              'file name that is the underscore name of the class name.',
+              '  Example: --format Formatter::WordDoc',
+              'With that, Lucid will look for formatter/word_doc.rb',
+              'You can place the file with this relative path',
+              'underneath your common/support directory or anywhere',
               "on Ruby's LOAD_PATH."
       ]
       PROFILE_SHORT_FLAG = '-p'
@@ -92,14 +92,15 @@ module Lucid
           end
 
           opts.on('--spec-type TYPE', 'The file type (extension) for Lucid specifications.') do |type|
-            @options[:spec_type] = type
+            #@options[:spec_type] = type
+            @options[:spec_type] << type
           end
 
           opts.on('--driver-file FILE', 'The file for Lucid to connect to an execution library.') do |file|
             @options[:driver_file] = file
           end
 
-          opts.separator ""
+          opts.separator ''
 
           opts.on('-r LIBRARY|DIR', '--require LIBRARY|DIR',
                   'Require files before executing the features. If this option',
@@ -107,8 +108,9 @@ module Lucid
                   'the features will be loaded automatically. Automatic loading',
                   'is disabled when this option is specified. That means all',
                   'loading becomes explicit.',
-                  "Files under directories named \"support\" will always be",
-                  'loaded first.',
+                  'Assuming a default specs repo configuration, files under',
+                  "directories named \"common\\support\" will always be loaded",
+                  'before any others.',
                   'This option can be specified multiple times.') do |v|
             @options[:require] << v
             if(Lucid::JRUBY && File.directory?(v))
@@ -269,7 +271,7 @@ module Lucid
 
           opts.on('--i18n LANG',
                   'List keywords for a particular language.',
-                  %{Run with "--i18n help" to see all languages}) do |lang|
+                  'Run with "--i18n help" to see all languages') do |lang|
             if lang == 'help'
               list_languages_and_exit
             else
@@ -417,6 +419,7 @@ module Lucid
       def reverse_merge(other_options)
         @options = other_options.options.merge(@options)
         @options[:require] += other_options[:require]
+
         @options[:excludes] += other_options[:excludes]
         @options[:name_regexps] += other_options[:name_regexps]
         @options[:tag_expressions] += other_options[:tag_expressions]
@@ -471,9 +474,9 @@ module Lucid
           :name_regexps     => [],
           :env_vars         => {},
           :diff_enabled     => true,
-          :spec_type        => "",
-          :library_path     => "",
-          :driver_file      => ""
+          :spec_type        => %w(feature spec),
+          :library_path     => '',
+          :driver_file      => ''
         }
       end
     end

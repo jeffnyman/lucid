@@ -6,9 +6,9 @@ module Lucid
       subject { Configuration.default }
 
       it 'has an autoload_code_paths containing default Lucid folders' do
-        subject.autoload_code_paths.should include('common')
-        subject.autoload_code_paths.should include('steps')
-        subject.autoload_code_paths.should include('pages')
+        subject.autoload_code_paths.should include 'common'
+        subject.autoload_code_paths.should include 'steps'
+        subject.autoload_code_paths.should include 'pages'
       end
     end
 
@@ -80,6 +80,7 @@ module Lucid
       it 'should default to a specs directory when no information is provided' do
         File.stub(:directory?).and_return(true)
         Dir.stub(:[]).with('specs/**/*.spec').and_return(['lucid.spec'])
+        Dir.stub(:[]).with('specs/**/*.feature').and_return(['lucid.spec'])
         config.parse(%w{})
         config.spec_files.should == ['lucid.spec']
       end
@@ -87,6 +88,7 @@ module Lucid
       it 'should search for all specs in the specified directory' do
         File.stub(:directory?).and_return(true)
         Dir.stub(:[]).with('specs/**/*.spec').and_return(["lucid.spec"])
+        Dir.stub(:[]).with('specs/**/*.feature').and_return(["lucid.spec"])
         config.parse(%w{specs/})
         config.spec_files.should == ['lucid.spec']
       end
