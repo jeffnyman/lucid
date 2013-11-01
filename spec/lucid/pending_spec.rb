@@ -1,4 +1,5 @@
-require_relative '../spec_helper'
+require 'spec_helper'
+require 'lucid/interface_rb/rb_language'
 
 module Lucid
   describe 'Pending' do

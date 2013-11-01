@@ -8,6 +8,10 @@ require 'lucid/cli/configuration'
 module Lucid
   module CLI
     class App
+      def self.start(args)
+        new(args).start!
+      end
+      
       def initialize(args, stdin=STDIN, out=STDOUT, err=STDERR, kernel=Kernel)
         raise "args can't be nil" unless args
         raise "out can't be nil" unless out
@@ -19,8 +23,8 @@ module Lucid
         @kernel = kernel
         @configuration = nil
       end
-
-      def start(existing_runtime = nil)
+      
+      def start!(existing_runtime = nil)
         trap_interrupt
 
         runtime = if existing_runtime
