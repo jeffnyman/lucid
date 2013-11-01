@@ -1,4 +1,6 @@
-require_relative '../spec_helper'
+require 'spec_helper'
+require 'lucid/tdl_builder'
+require 'gherkin/formatter/model'
 
 module Lucid
   module CLI
@@ -10,13 +12,13 @@ module Lucid
       let(:stderr) { StringIO.new }
       let(:kernel) { double(:kernel) }
       subject { App.new(args, stdin, stdout, stderr, kernel) }
-      
+
       describe 'start' do
         context 'passed a runtime' do
           let(:runtime) { double('runtime').as_null_object }
           
           def do_start
-            subject.start(runtime)
+            subject.start!(runtime)
           end
           
           it 'configures the runtime' do
@@ -49,7 +51,7 @@ module Lucid
 
             Lucid.wants_to_quit = true
             kernel.should_receive(:exit).with(1)
-            subject.start
+            subject.start!
           end
         end
       end
@@ -69,9 +71,26 @@ module Lucid
           Lucid::SpecFile.stub(:new).and_return(double('spec file', :parse => @empty_feature))
           kernel.should_receive(:exit).with(0)
 
-          cli.start
+          cli.start!
 
           stdout.string.should include('test.spec')
+        end
+      end
+
+      describe '--format with a formatter' do
+        it 'should fail if it cannot resolve a Formatter class' do
+          cli = App.new(%w{--format ZooModule::MonkeyFormatterClass}, stdin, stdout, stderr, kernel)
+          mock_module = double('module')
+          Object.stub(:const_defined?).and_return(true)
+          mock_module.stub(:const_defined?).and_return(true)
+
+          f = double('formatter').as_null_object
+
+          Object.should_receive(:const_get).with('ZooModule', false).and_return(mock_module)
+          mock_module.should_receive(:const_get).with('MonkeyFormatterClass', false).and_return(double('formatter class', :new => f))
+
+          kernel.should_receive(:exit).with(1)
+          cli.start!
         end
       end
       
@@ -81,7 +100,7 @@ module Lucid
             Configuration.stub(:new).and_return(configuration = double('configuration'))
             configuration.stub(:parse).and_raise(exception_class.new('error message'))
             
-            subject.start
+            subject.start!
             stderr.string.should == "error message\n"
           end
         end

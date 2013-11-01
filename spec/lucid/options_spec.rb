@@ -1,4 +1,5 @@
-require_relative '../spec_helper'
+require 'spec_helper'
+require 'lucid/cli/options'
 
 module Lucid
   module CLI
@@ -62,6 +63,20 @@ module Lucid
             end
           end
         end
+
+        context '--i18n' do
+          context "with LANG specified as 'help'" do
+            it 'lists all known languages' do
+              during_parsing '--i18n help' do
+                Kernel.should_receive(:exit)
+              end
+            end
+
+            it 'exits the program' do
+              during_parsing('--i18n help') { Kernel.should_receive(:exit) }
+            end
+          end
+        end
         
         context '-r or --require' do
           it 'should collect all specified files into an array' do
@@ -92,7 +107,7 @@ module Lucid
 
         context '-b or --backtrace' do
           it 'should use a full backtrace during Lucid execution' do
-            during_parsing("-b") do
+            during_parsing('-b') do
               Lucid.should_receive(:use_full_backtrace=).with(true)
             end
           end
@@ -125,7 +140,25 @@ module Lucid
             end
           end
         end
+        
+        context '-P or --no-profile' do
+          it 'disables profiles' do
+            with_this_configuration({'default' => '-v --require code_file.rb'})
 
+            after_parsing('-P --require other_code_file.rb') do
+              options[:require].should == ['other_code_file.rb']
+            end
+          end
+
+          it 'notifies the user that the profiles are being disabled' do
+            with_this_configuration({'default' => '-v'})
+
+            after_parsing('--no-profile --require other_code_file.rb') do
+              output_stream.string.should =~ /Disabling profiles.../
+            end
+          end
+        end
+        
         context '-p PROFILE or --profile PROFILE' do
           it 'respects --quiet when defined in the profile' do
             with_this_configuration('test' => '-q')
