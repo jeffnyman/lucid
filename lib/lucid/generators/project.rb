@@ -58,13 +58,7 @@ module Lucid
       def copy_gemfile
         template 'Gemfile.tt', "#{name}/Gemfile"
       end
-
-      def copy_lucid_yml
-        if driver.downcase == 'fluent'
-          copy_file 'lucid-fluent.yml', "#{name}/lucid.yml"
-        end
-      end
-
+      
     end
   end
 end
