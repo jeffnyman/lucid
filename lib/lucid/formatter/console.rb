@@ -210,7 +210,7 @@ module Lucid
         profiles_sentence = profiles.size == 1 ? profiles.first :
           "#{profiles[0...-1].join(', ')} and #{profiles.last}"
 
-        @io.puts "Using the #{profiles_sentence} profile#{'s' if profiles.size> 1}..."
+        @io.puts "Using the #{profiles_sentence} profile#{'s' if profiles.size> 1}...\n\n"
       end
 
     private
