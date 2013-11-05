@@ -112,7 +112,7 @@ module Lucid
         config.parse(%w{specs/})
         config.spec_files.should == ['lucid.story']
       end
-      
+
       it 'should preserve the order of the spec files' do
         config.parse(%w{test_b.spec test_c.spec test_a.spec})
         config.spec_files.should == %w[test_b.spec test_c.spec test_a.spec]
