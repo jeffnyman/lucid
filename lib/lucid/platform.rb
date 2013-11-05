@@ -2,11 +2,11 @@ require 'rbconfig'
 
 module Lucid
   unless defined?(Lucid::VERSION)
-    VERSION       = '0.2.1'
+    VERSION       = '0.3.0'
     BINARY        = File.expand_path(File.dirname(__FILE__) + '/../../bin/lucid')
     LIBDIR        = File.expand_path(File.dirname(__FILE__) + '/../../lib')
     JRUBY         = defined?(JRUBY_VERSION)
-    IRONRUBY      = defined?(RUBY_ENGINE) && RUBY_ENGINE == "ironruby"
+    IRONRUBY      = defined?(RUBY_ENGINE) && RUBY_ENGINE == 'ironruby'
     WINDOWS       = RbConfig::CONFIG['host_os'] =~ /mswin|mingw/
     OS_X          = RbConfig::CONFIG['host_os'] =~ /darwin/
     WINDOWS_MRI   = WINDOWS && !JRUBY && !IRONRUBY
@@ -18,7 +18,7 @@ module Lucid
     class << self
       attr_accessor :use_full_backtrace
 
-      def file_mode(m, encoding="UTF-8")
+      def file_mode(m, encoding='UTF-8')
         "#{m}:#{encoding}"
       end
     end
