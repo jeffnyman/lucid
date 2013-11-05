@@ -81,16 +81,36 @@ module Lucid
         File.stub(:directory?).and_return(true)
         Dir.stub(:[]).with('specs/**/*.spec').and_return(['lucid.spec'])
         Dir.stub(:[]).with('specs/**/*.feature').and_return(['lucid.spec'])
+        Dir.stub(:[]).with('specs/**/*.story').and_return(['lucid.spec'])
         config.parse(%w{})
         config.spec_files.should == ['lucid.spec']
       end
       
       it 'should search for all specs in the specified directory' do
         File.stub(:directory?).and_return(true)
-        Dir.stub(:[]).with('specs/**/*.spec').and_return(["lucid.spec"])
-        Dir.stub(:[]).with('specs/**/*.feature').and_return(["lucid.spec"])
+        Dir.stub(:[]).with('specs/**/*.spec').and_return(['lucid.spec'])
+        Dir.stub(:[]).with('specs/**/*.feature').and_return(['lucid.spec'])
+        Dir.stub(:[]).with('specs/**/*.story').and_return(['lucid.spec'])
         config.parse(%w{specs/})
         config.spec_files.should == ['lucid.spec']
+      end
+
+      it 'should return the correct spec file type for feature file' do
+        File.stub(:directory?).and_return(true)
+        Dir.stub(:[]).with('specs/**/*.spec').and_return(['lucid.feature'])
+        Dir.stub(:[]).with('specs/**/*.feature').and_return(['lucid.feature'])
+        Dir.stub(:[]).with('specs/**/*.story').and_return(['lucid.feature'])
+        config.parse(%w{specs/})
+        config.spec_files.should == ['lucid.feature']
+      end
+
+      it 'should return the correct spec file type for story file' do
+        File.stub(:directory?).and_return(true)
+        Dir.stub(:[]).with('specs/**/*.spec').and_return(['lucid.story'])
+        Dir.stub(:[]).with('specs/**/*.feature').and_return(['lucid.story'])
+        Dir.stub(:[]).with('specs/**/*.story').and_return(['lucid.story'])
+        config.parse(%w{specs/})
+        config.spec_files.should == ['lucid.story']
       end
       
       it 'should preserve the order of the spec files' do

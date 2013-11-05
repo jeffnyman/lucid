@@ -474,7 +474,7 @@ module Lucid
           :name_regexps     => [],
           :env_vars         => {},
           :diff_enabled     => true,
-          :spec_type        => %w(feature spec),
+          :spec_type        => %w(feature spec story),
           :library_path     => '',
           :driver_file      => ''
         }
