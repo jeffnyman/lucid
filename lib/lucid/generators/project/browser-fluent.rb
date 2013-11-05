@@ -1,6 +1,5 @@
 begin
   require 'fluent'
-  require 'fluent/factory'
 rescue LoadError
   STDOUT.puts ['The Fluent test execution library is not installed.',
                'The driver file is currently set to use the Fluent library but',

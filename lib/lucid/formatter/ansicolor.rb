@@ -5,28 +5,27 @@ if Lucid::IRONRUBY
   begin
     require 'iron-term-ansicolor'
   rescue LoadError
-    STDERR.puts %{*** WARNING: You must "igem install iron-term-ansicolor" to get coloured ouput in on IronRuby}
+    STDERR.puts %{*** WARNING: You must "gem install iron-term-ansicolor" to get colored ouput in on IronRuby}
   end
 end
 
 if Lucid::WINDOWS_MRI
   unless ENV['ANSICON']
-    STDERR.puts %{*** WARNING: You must use ANSICON 1.31 or higher (https://github.com/adoxa/ansicon/) to get coloured output on Windows}
+    STDERR.puts %{*** WARNING: You must use ANSICON 1.31 or higher (https://github.com/adoxa/ansicon/) to get colored output on Windows}
     Lucid::Term::ANSIColor.coloring = false
   end
 end
 
-Lucid::Term::ANSIColor.coloring = false if !STDOUT.tty? && !ENV.has_key?("AUTOTEST")
+Lucid::Term::ANSIColor.coloring = false if !STDOUT.tty? && !ENV.has_key?('AUTOTEST')
 
 module Lucid
   module Formatter
-    # Defines aliases for coloured output. You don't invoke any methods from this
-    # module directly, but you can change the output colours by defining
-    # a <tt>CUCUMBER_COLORS</tt> variable in your shell, very much like how you can
-    # tweak the familiar POSIX command <tt>ls</tt> with
-    # <a href="http://mipsisrisc.com/rambling/2008/06/27/lscolorsls_colors-now-with-linux-support/">$LSCOLORS/$LS_COLORS</a>
+    # Defines aliases for colored output. You don't invoke any methods from this
+    # module directly, but you can change the output colors by defining
+    # a <tt>LUCID_COLORS</tt> variable in your shell, very much like how you can
+    # tweak the familiar POSIX command <tt>ls</tt> with $LS_COLORS.
     #
-    # The colours that you can change are:
+    # The colors that you can change are:
     #
     # * <tt>undefined</tt>     - defaults to <tt>yellow</tt>
     # * <tt>pending</tt>       - defaults to <tt>yellow</tt>
@@ -50,10 +49,10 @@ module Lucid
     #
     # Examples: (On Windows, use SET instead of export.)
     #
-    #   export CUCUMBER_COLORS="passed=white"
-    #   export CUCUMBER_COLORS="passed=white,bold:passed_param=white,bold,underline"
+    #   export LUCID_COLORS="passed=white"
+    #   export LUCID_COLORS="passed=white,bold:passed_param=white,bold,underline"
     #
-    # To see what colours and effects are available, just run this in your shell:
+    # To see what colors and effects are available, just run this in your shell:
     #
     #   ruby -e "require 'rubygems'; require 'term/ansicolor'; puts Lucid::Term::ANSIColor.attributes"
     #
@@ -75,8 +74,8 @@ module Lucid
         'tag'       => 'cyan'
       })
 
-      if ENV['CUCUMBER_COLORS'] # Example: export CUCUMBER_COLORS="passed=red:failed=yellow"
-        ENV['CUCUMBER_COLORS'].split(':').each do |pair|
+      if ENV['LUCID_COLORS'] # Example: export LUCID_COLORS="passed=red:failed=yellow"
+        ENV['LUCID_COLORS'].split(':').each do |pair|
           a = pair.split('=')
           ALIASES[a[0]] = a[1]
         end
@@ -97,11 +96,11 @@ module Lucid
         unless method_name =~ /.*_param/
           code = <<-EOF
           def #{method_name}(string=nil, &proc)
-            #{ALIASES[method_name].split(",").join("(") + "(string, &proc" + ")" * ALIASES[method_name].split(",").length}
+            #{ALIASES[method_name].split(',').join('(') + '(string, &proc' + ')' * ALIASES[method_name].split(',').length}
           end
           # This resets the colour to the non-param colour
           def #{method_name}_param(string=nil, &proc)
-            #{ALIASES[method_name+'_param'].split(",").join("(") + "(string, &proc" + ")" * ALIASES[method_name+'_param'].split(",").length} + #{ALIASES[method_name].split(",").join(' + ')}
+            #{ALIASES[method_name+'_param'].split(',').join('(') + '(string, &proc' + ')' * ALIASES[method_name+'_param'].split(',').length} + #{ALIASES[method_name].split(',').join(' + ')}
           end
           EOF
           eval(code)
@@ -112,9 +111,9 @@ module Lucid
         begin
           gem 'genki-ruby-terminfo'
           require 'terminfo'
-          case TermInfo.default_object.tigetnum("colors")
+          case TermInfo.default_object.tigetnum('colors')
           when 0
-            raise "Your terminal doesn't support colours."
+            raise "Your terminal doesn't support colors."
           when 1
             ::Lucid::Term::ANSIColor.coloring = false
             alias grey white
@@ -125,9 +124,9 @@ module Lucid
           end
         rescue Exception => e
           if e.class.name == 'TermInfo::TermInfoError'
-            STDERR.puts "*** WARNING ***"
+            STDERR.puts '*** WARNING ***'
             STDERR.puts "You have the genki-ruby-terminfo gem installed, but you haven't set your TERM variable."
-            STDERR.puts "Try setting it to TERM=xterm-256color to get grey colour in output."
+            STDERR.puts 'Try setting it to TERM=xterm-256color to get grey color in output.'
             STDERR.puts "\n"
             alias grey white
           else
@@ -149,7 +148,7 @@ module Lucid
       define_grey
 
       def cukes(n)
-        ("(::) " * n).strip
+        ('(::) ' * n).strip
       end
 
       def green_cukes(n)

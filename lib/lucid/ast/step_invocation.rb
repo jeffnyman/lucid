@@ -91,8 +91,8 @@ module Lucid
         end
       end
 
-      BACKTRACE_FILTER_PATTERNS = [/vendor\/rails|lib\/lucid|bin\/lucid:|lib\/rspec|gems\/|minitest|test\/unit/]
-
+      BACKTRACE_FILTER_PATTERNS = [/vendor\/rails|lib\/lucid|bin\/lucid:|lib\/rspec|gems\/|minitest|test\/unit|\/\.gem\//]
+      
       if(Lucid::JRUBY)
         BACKTRACE_FILTER_PATTERNS << /org\/jruby/
       end

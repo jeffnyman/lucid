@@ -44,8 +44,8 @@ module Lucid
       # Invokes a series of steps +steps_text+. Example:
       #
       #   invoke(%Q{
-      #     Given I have 8 cukes in my belly
-      #     Then I should not be thirsty
+      #     Given lucid exists
+      #     Then test specs can be executed
       #   })
       def invoke_steps(steps_text, i18n, file_colon_line)
         file, line = file_colon_line.split(':')
@@ -55,7 +55,6 @@ module Lucid
 
       def invoke(step_name, multiline_argument=nil)
         multiline_argument = Lucid::AST::MultilineArgument.from(multiline_argument)
-        # It is very important to leave multiline_argument=nil as a vararg. Cuke4Duke needs it that way.
         begin
           step_match(step_name).invoke(multiline_argument)
         rescue Exception => e

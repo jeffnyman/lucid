@@ -50,6 +50,8 @@ module Lucid
         RbLucid.build_rb_world_factory(domain_modules, proc)
       end
 
+      alias_method :World, :Domain
+
       # Registers a proc that will run before each Scenario. You can register as many
       # as you want (typically from ruby scripts under <tt>support/hooks.rb</tt>).
       def Before(*tag_expressions, &proc)

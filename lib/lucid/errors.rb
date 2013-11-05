@@ -1,5 +1,5 @@
 module Lucid
-  # Raised when there is no matching StepDefinition for a step.
+  # Raised when there is no matching test definition for a step.
   class Undefined < StandardError
     attr_reader :step_name
 
@@ -17,11 +17,11 @@ module Lucid
     end
   end
 
-  # Raised when a StepDefinition's block invokes Domain#pending
+  # Raised when a test definition block invokes Domain#pending.
   class Pending < StandardError
   end
 
-  # Raised when a step matches 2 or more StepDefinitions
+  # Raised when a step matches two or more test definitions.
   class Ambiguous < StandardError
     def initialize(step_name, step_definitions, used_guess)
       message = "Ambiguous match of \"#{step_name}\":\n\n"

@@ -41,11 +41,11 @@ module Lucid
         end
 
         def do_block
-          do_block = ""
+          do_block = ''
           do_block << "do#{arguments}\n"
           do_block << multiline_comment if multiline_argument_class?
           do_block << "  pending\n"
-          do_block << "end"
+          do_block << 'end'
           do_block
         end
 
@@ -56,7 +56,7 @@ module Lucid
             block_args << multiline_argument_class.default_arg_name
           end
 
-          block_args.empty? ? "" : " |#{block_args.join(", ")}|"
+          block_args.empty? ? '' : " |#{block_args.join(", ")}|"
         end
 
         def multiline_comment
@@ -68,7 +68,7 @@ module Lucid
         end
 
         def self.example
-          new("Given", "some phrase", nil).step
+          new('Given', 'some phrase', nil).step
         end
 
       end
@@ -79,7 +79,7 @@ module Lucid
         end
 
         def self.description
-          "Matchers with parentheses."
+          'Matchers with parentheses.'
         end
       end
 
@@ -89,7 +89,7 @@ module Lucid
         end
 
         def self.description
-          "Matchers without parentheses."
+          'Matchers without parentheses.'
         end
       end
 
@@ -99,7 +99,7 @@ module Lucid
         end
 
         def self.description
-          "Matchers with delimited regexp."
+          'Matchers with delimited regexp.'
         end
       end
 

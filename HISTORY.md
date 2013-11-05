@@ -1,10 +1,23 @@
 Change Log and History
 ======================
 
+Version 0.3.0 / 2013-11-05
+--------------------------
+
+* Lucid now allows multiple spec file types. ([Allow Multiple Spec Files](https://github.com/jnyman/lucid/issues/6))
+
+Prior to this, Lucid would only recognize one spec file type. It was `.spec` by default or you could specify another one via the --spec-type option. Now Lucid will recognize `.feature`, `.spec`, and `.story` by default. Further, it will execute all such test spec files if it finds them. You can also still specify a custom file type via the --spec-type option. In that case Lucid will recognize your custom file type as well as all the standard ones.
+
+Lucid already uses the concept of a Domain, which is similar to Cucumber's World concept. Lucid now lets you refer to the Domain as World. This allows those familiar with Cucumber to use that wording and it also allows Lucid to better integrate into the Cucumber ecosystem.
+
+The project generator for creating Fluent projects has been updated. The main change of note here is that the `lucid.yml` configuration file is no longer automatically generated. The reason for this is that Lucid operation requires no configuration at all if the conventions in place are what you want to use.
+
+
 Version 0.2.1 / 2013-10-21
 --------------------------
 
 This is a small patch release. The patch is in the project generator. The [Symbiont](https://github.com/jnyman/symbiont) test framework is being deprecated in favor of [Fluent](https://github.com/jnyman/fluent). The project generator has been updated accordingly. 
+
 
 Version 0.2.0 / 2013-09-28
 --------------------------

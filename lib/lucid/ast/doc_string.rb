@@ -4,7 +4,7 @@ module Lucid
       attr_accessor :file
 
       def self.default_arg_name
-        "string"
+        'string'
       end
 
       attr_reader :content_type

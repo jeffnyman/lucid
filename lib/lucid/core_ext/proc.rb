@@ -27,10 +27,10 @@ class Proc #:nodoc:
     end
   else
     # This Ruby implementation doesn't implement Proc#to_s correctly
-    STDERR.puts "*** THIS RUBY IMPLEMENTATION DOESN'T REPORT FILE AND LINE FOR PROCS ***"
+    STDERR.puts '*** THIS RUBY IMPLEMENTATION DOES NOT REPORT FILE AND LINE FOR PROCS ***'
 
     def file_colon_line
-      "UNKNOWN:-1"
+      'UNKNOWN:-1'
     end
   end
 end

@@ -6,7 +6,7 @@ require 'gherkin/parser/parser'
 module Lucid
   class SpecFile
     SPEC_PATTERN     = /^([\w\W]*?):([\d:]+)$/ #:nodoc:
-    DEFAULT_ENCODING = "UTF-8" #:nodoc:
+    DEFAULT_ENCODING = 'UTF-8' #:nodoc:
     NON_EXEC_PATTERN = /^\s*#|^\s*$/ #:nodoc:
     ENCODING_PATTERN = /^\s*#\s*encoding\s*:\s*([^\s]+)/ #:nodoc:
 
@@ -74,8 +74,6 @@ module Lucid
             STDOUT.puts ["\nYou don't have a 'specs' directory. This is the default specification",
                          "directory that Lucid will use if one is not specified. So either create",
                          "that directory or specify where your test repository is located.\n\n"].join("\n")
-            #e.message << "."
-            raise e
           else
             STDOUT.puts ["\nThere is no '#{@path}' directory. Since that is what you specified as",
                          "your spec repository, this directory must be present."].join("\n")
