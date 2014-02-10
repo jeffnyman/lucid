@@ -1,11 +1,11 @@
 require 'lucid/platform'
-require 'lucid/term/ansicolor'
+require 'lucid/ansicolor'
 
 if Lucid::IRONRUBY
   begin
     require 'iron-term-ansicolor'
   rescue LoadError
-    STDERR.puts %{*** WARNING: You must "gem install iron-term-ansicolor" to get colored ouput in on IronRuby}
+    STDERR.puts %{*** WARNING: You must "gem install iron-term-ansicolor" to get colored output on IronRuby}
   end
 end
 
@@ -147,20 +147,20 @@ module Lucid
 
       define_grey
 
-      def cukes(n)
+      def lucid(n)
         ('(::) ' * n).strip
       end
 
-      def green_cukes(n)
-        blink(green(cukes(n)))
+      def green_lucid(n)
+        blink(green(lucid(n)))
       end
 
-      def red_cukes(n)
-        blink(red(cukes(n)))
+      def red_lucid(n)
+        blink(red(lucid(n)))
       end
 
-      def yellow_cukes(n)
-        blink(yellow(cukes(n)))
+      def yellow_lucid(n)
+        blink(yellow(lucid(n)))
       end
     end
   end
