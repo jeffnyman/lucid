@@ -30,7 +30,7 @@ module Lucid
 
         tag_counts = {}
         start = Time.new
-        log.info("Specs:\n")
+        log.verbose("Specs:\n")
 
         @spec_files.each do |f|
           spec_file = SpecFile.new(f)
@@ -44,12 +44,12 @@ module Lucid
 
           if spec
             specs.add_feature(spec)
-            log.info("  * #{f}\n")
+            log.verbose("  * #{f}\n")
           end
         end
 
         duration = Time.now - start
-        log.info("Parsing spec files took #{format_duration(duration)}\n\n")
+        log.verbose("Parsing spec files took #{format_duration(duration)}\n\n")
 
         check_tag_limits(tag_counts)
 

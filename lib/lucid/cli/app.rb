@@ -1,7 +1,7 @@
 require 'gherkin'
 require 'optparse'
 require 'lucid'
-require 'logger'
+require 'lucid/logging'
 require 'lucid/spec_file'
 require 'lucid/cli/configuration'
 
@@ -11,7 +11,7 @@ module Lucid
       def self.start(args)
         new(args).start!
       end
-      
+
       def initialize(args, stdin=STDIN, out=STDOUT, err=STDERR, kernel=Kernel)
         raise "args can't be nil" unless args
         raise "out can't be nil" unless out
@@ -23,7 +23,7 @@ module Lucid
         @kernel = kernel
         @configuration = nil
       end
-      
+
       def start!(existing_runtime = nil)
         trap_interrupt
 
@@ -59,7 +59,7 @@ module Lucid
         @configuration = Configuration.new(@out, @err)
         @configuration.parse(@args)
         Lucid.logger = @configuration.log
-        log.debug("Configuration: #{@configuration.inspect}")
+        log.verbose("Configuration: #{@configuration.inspect}")
         @configuration
       end
 

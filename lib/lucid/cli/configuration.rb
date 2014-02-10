@@ -40,6 +40,10 @@ module Lucid
         @options[:debug]
       end
 
+      def ast?
+        @options[:ast]
+      end
+
       def strict?
         @options[:strict]
       end
@@ -167,11 +171,11 @@ module Lucid
       end
 
       def log
-        logger = Logger.new(@out_stream)
-        logger.formatter = LogFormatter.new
-        logger.level = Logger::WARN
-        logger.level = Logger::INFO  if self.verbose?
-        logger.level = Logger::DEBUG if self.debug?
+        logger = LucidLogger.new(@out_stream)
+        logger.formatter = LucidLogFormatter.new
+        logger.level = LucidLogger::PROBLEM
+        logger.level = LucidLogger::VERBOSE if self.verbose?
+        logger.level = LucidLogger::AST if self.ast?
         logger
       end
 

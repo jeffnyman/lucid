@@ -285,8 +285,12 @@ module Lucid
             Lucid.use_full_backtrace = true
           end
 
-          opts.on('-v', '--verbose', 'Show detailed information about Lucid execution.') do
+          opts.on('--verbose', 'Show detailed information about Lucid execution.') do
             @options[:verbose] = true
+          end
+
+          opts.on('--ast', 'Show information about the AST created from a spec.') do
+            @options[:ast] = true
           end
 
           opts.on('--debug', 'Show behind-the-scenes information about Lucid execution.') do
@@ -295,7 +299,7 @@ module Lucid
 
           opts.separator ''
 
-          opts.on_tail('--version', 'Show Lucid version information.') do
+          opts.on_tail('-v', '--version', 'Show Lucid version information.') do
             @out_stream.puts Lucid::VERSION
             Kernel.exit(0)
           end
