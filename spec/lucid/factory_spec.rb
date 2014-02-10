@@ -1,8 +1,8 @@
 require_relative '../spec_helper'
 
 module Lucid
-  describe ObjectFactory do
-    include ObjectFactory
+  describe Factory do
+    include Factory
 
     it 'should load a valid formatter' do
       generated_class = create_object_of('Lucid::Formatter::Html')

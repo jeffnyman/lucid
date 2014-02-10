@@ -27,7 +27,7 @@ module Lucid
         end
       end
 
-      include ObjectFactory
+      include Factory
 
       def initialize(user_interface, configuration={})
         @configuration = Configuration.parse(configuration)

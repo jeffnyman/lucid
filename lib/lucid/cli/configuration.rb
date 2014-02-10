@@ -9,7 +9,7 @@ module Lucid
     class ProfileNotFound < StandardError; end
 
     class Configuration
-      include ObjectFactory
+      include Factory
 
       attr_reader :out_stream
 
