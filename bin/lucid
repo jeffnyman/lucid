@@ -1,9 +1,7 @@
 #!/usr/bin/env ruby
 
-app_lib = File.expand_path('../lib', File.dirname(__FILE__))
-$LOAD_PATH.unshift(app_lib) unless $LOAD_PATH.include?(app_lib)
+$LOAD_PATH << File.dirname(__FILE__) + '/../lib'
 
-require 'lucid/rspec/disallow_options'
 require 'lucid/cli/app'
 
 Lucid::CLI::App.new(ARGV.dup).start!
