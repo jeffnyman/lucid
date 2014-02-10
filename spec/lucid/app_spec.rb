@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'lucid/tdl_builder'
+require 'lucid/spec_builder'
 require 'gherkin/formatter/model'
 
 module Lucid
@@ -58,7 +58,7 @@ module Lucid
 
       describe 'verbose execution' do
         before(:each) do
-          b = Lucid::Parser::TDLBuilder.new('specs/test.spec')
+          b = Lucid::SpecBuilder.new('specs/test.spec')
           b.feature(Gherkin::Formatter::Model::Feature.new([], [], 'Feature', 'Testing', '', 99, ''))
           b.language = double
           @empty_feature = b.result

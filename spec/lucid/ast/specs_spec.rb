@@ -4,17 +4,17 @@ module Lucid
   module AST
     describe Specs do
       let(:specs) { Specs.new }
-      
+
       def parse_feature(gherkin)
         path    = 'specs/test.spec'
-        builder = Lucid::Parser::TDLBuilder.new(path)
+        builder = Lucid::SpecBuilder.new(path)
         parser  = Gherkin::Parser::Parser.new(builder, true, 'root', false)
         parser.parse(gherkin, path, 0)
         builder.language = parser.i18n_language
         feature = builder.result
         specs.add_feature(feature)
       end
-      
+
       it 'has a step_count' do
         parse_feature(<<-GHERKIN)
 Feature:

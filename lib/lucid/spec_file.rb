@@ -1,4 +1,4 @@
-require 'lucid/tdl_builder'
+require 'lucid/spec_builder'
 require 'gherkin/formatter/filter_formatter'
 require 'gherkin/formatter/tag_count_formatter'
 require 'gherkin/parser/parser'
@@ -12,6 +12,7 @@ module Lucid
 
     # The +uri+ argument is the location of the source. It can be a path
     # or a path:line1:line2 etc.
+    # @param uri [String] spec file, along with path relative to repo root
     def initialize(uri, source=nil)
       @source = source
       _, @path, @lines = *SPEC_PATTERN.match(uri)
@@ -29,14 +30,14 @@ module Lucid
     def parse(specified_filters, tag_counts)
       filters = @lines || specified_filters
 
-      tdl_builder         = Lucid::Parser::TDLBuilder.new(@path)
-      filter_formatter    = filters.empty? ? tdl_builder : Gherkin::Formatter::FilterFormatter.new(tdl_builder, filters)
+      tdl_builder = Lucid::SpecBuilder.new(@path)
+      filter_formatter = filters.empty? ? tdl_builder : Gherkin::Formatter::FilterFormatter.new(tdl_builder, filters)
       tag_count_formatter = Gherkin::Formatter::TagCountFormatter.new(filter_formatter, tag_counts)
 
       # Gherkin Parser parameters:
       # formatter, raise_on_error, machine_name, force_ruby
       # The machine name refers to a state machine table.
-      parser              = Gherkin::Parser::Parser.new(tag_count_formatter, true, "root", false)
+      parser = Gherkin::Parser::Parser.new(tag_count_formatter, true, "root", false)
 
       begin
         # parse parameters:
@@ -72,11 +73,11 @@ module Lucid
         rescue Errno::ENOENT => e
           if @path == "specs"
             STDOUT.puts ["\nYou don't have a 'specs' directory. This is the default specification",
-                         "directory that Lucid will use if one is not specified. So either create",
+                         'directory that Lucid will use if one is not specified. So either create',
                          "that directory or specify where your test repository is located.\n\n"].join("\n")
           else
             STDOUT.puts ["\nThere is no '#{@path}' directory. Since that is what you specified as",
-                         "your spec repository, this directory must be present."].join("\n")
+                         'your spec repository, this directory must be present.'].join("\n")
           end
           Kernel.exit(1)
         end
