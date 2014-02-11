@@ -7,7 +7,7 @@ require 'lucid/load_path'
 require 'lucid/interface_methods'
 require 'lucid/formatter/duration'
 require 'lucid/runtime/interface_io'
-require 'lucid/runtime/specs_loader'
+require 'lucid/spec_loader'
 require 'lucid/runtime/results'
 require 'lucid/runtime/orchestrator'
 
@@ -177,7 +177,7 @@ module Lucid
     # makes sure that a spec file can be turned into a code construct
     # (a SpecFile instance) which in turn can be broken down into an AST.
     def specs
-      @loader ||= Runtime::SpecsLoader.new(
+      @loader ||= Runtime::SpecLoader.new(
         @configuration.spec_files,
         @configuration.filters,
         @configuration.tag_expression)
