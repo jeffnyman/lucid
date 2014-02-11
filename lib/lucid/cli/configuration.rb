@@ -9,7 +9,7 @@ module Lucid
     class ProfileNotFound < StandardError; end
 
     class Configuration
-      include ObjectFactory
+      include Factory
 
       attr_reader :out_stream
 
@@ -40,6 +40,10 @@ module Lucid
         @options[:debug]
       end
 
+      def ast?
+        @options[:ast]
+      end
+
       def strict?
         @options[:strict]
       end
@@ -68,7 +72,7 @@ module Lucid
         @options[:matcher_type] || :regexp
       end
 
-      def establish_tdl_walker(runtime)
+      def establish_walker(runtime)
         AST::TDLWalker.new(runtime, formatters(runtime), self)
       end
 
@@ -120,7 +124,7 @@ module Lucid
       end
 
       # @see Lucid::Runtime.specs
-      def spec_files
+      def spec_context
         files = specs_path(spec_source).map do |path|
           path = path.gsub(/\\/, '/')  # convert \ to /
           path = path.chomp('/')       # removing trailing /
@@ -167,11 +171,11 @@ module Lucid
       end
 
       def log
-        logger = Logger.new(@out_stream)
-        logger.formatter = LogFormatter.new
-        logger.level = Logger::WARN
-        logger.level = Logger::INFO  if self.verbose?
-        logger.level = Logger::DEBUG if self.debug?
+        logger = LucidLogger.new(@out_stream)
+        logger.formatter = LucidLogFormatter.new
+        logger.level = LucidLogger::PROBLEM
+        logger.level = LucidLogger::VERBOSE if self.verbose?
+        logger.level = LucidLogger::AST if self.ast?
         logger
       end
 

@@ -2,7 +2,7 @@ require 'gherkin/tag_expression'
 
 module Lucid
   module AST
-    class Tags #:nodoc:
+    class Tags
       attr_reader :tags
 
       def initialize(line, tags)
@@ -12,6 +12,7 @@ module Lucid
       def accept(visitor)
         visitor.visit_tags(self) do
           @tags.each do |tag|
+            log.ast(tag)
             visitor.visit_tag_name(tag.name)
           end
         end
@@ -23,6 +24,12 @@ module Lucid
 
       def to_sexp
         @tags.map{|tag| [:tag, tag.name]}
+      end
+
+      private
+
+      def log
+        Lucid.logger
       end
     end
   end

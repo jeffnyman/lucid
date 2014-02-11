@@ -1,3 +1,11 @@
+*.gem
+*.rbc
+*.pyc
+*.tgz
+*.swp
+*.swo
+*.log
+*.pid
 .eprj
 .idea
 .rvmrc
@@ -7,6 +15,7 @@
 .tmtags
 .DS_Store
 .sass-cache
+.rubocop.yml
 Gemfile.lock
 pkg
 doc
@@ -22,16 +31,7 @@ InstalledFiles
 lib/bundler/man
 test/version_tmp
 rerun.txt
-*.log
-*.pid
 *~
-*.swp
-*.swo
 *.tmproj
 .#*
-*.pyc
-*.rbc
 ._*
-*.tgz
-*.gem
-*.rbc

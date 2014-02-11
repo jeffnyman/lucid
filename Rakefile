@@ -2,10 +2,15 @@
 require 'bundler/gem_tasks'
 require 'rspec/core/rake_task'
 
-RSpec::Core::RakeTask.new do |c|
-  options  = ['--color']
-  options += ['--format', 'documentation']
-  c.rspec_opts = options
+namespace :spec do
+  RSpec::Core::RakeTask.new(:all) do |config|
+    options  = %w(--color)
+    options += %w(--format documentation)
+    options += %w(--format html --out spec/reports/unit-test-report.html)
+    options += %w(--format nested --out spec/reports/unit-test-report.txt)
+
+    config.rspec_opts = options
+  end
 end
 
-task :default => :spec
+task default: %w(spec:all)

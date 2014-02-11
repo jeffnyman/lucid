@@ -6,7 +6,7 @@ module Lucid
       end
 
       def empty?
-        @value.nil? || @value == ""
+        @value.nil? || @value == ''
       end
 
       def accept(visitor)

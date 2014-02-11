@@ -1,8 +1,6 @@
-source "https://rubygems.org"
+source 'https://rubygems.org'
 
-# All gem dependencies are specified in lucid.gemspec
-gemspec
-
-# gem 'gherkin', :path => '../gherkin'
-
+gem 'simplecov', '>= 0.8.0', '< 1.0'
 gem 'coveralls', require: false
+
+gemspec

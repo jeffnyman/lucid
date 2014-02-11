@@ -5,7 +5,7 @@ require 'lucid/ast/location'
 module Lucid
   module AST
 
-    class Feature #:nodoc:
+    class Feature
       include Names
       include HasLocation
 
@@ -41,10 +41,10 @@ module Lucid
       end
 
       def indented_name
-        indent = ""
+        indent = ''
         name.split("\n").map do |l|
           s = "#{indent}#{l}"
-          indent = "  "
+          indent = '  '
           s
         end.join("\n")
       end
@@ -90,7 +90,7 @@ module Lucid
       attr_reader :background
 
       def units
-        @units ||= @feature_elements.map do |element| 
+        @units ||= @feature_elements.map do |element|
           element.to_units(background)
         end.flatten
       end

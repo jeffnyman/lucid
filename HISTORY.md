@@ -1,6 +1,12 @@
 Change Log and History
 ======================
 
+Version 0.3.1 / 2014-02-11
+--------------------------
+
+This is a tech debt reduction patch that is attempting to clean up some of the Lucid code base. Some of this was done in preparation to get a "Lean Lucid" implementation of Lucid in place, which will rely on RSpec as a runner.
+
+
 Version 0.3.0 / 2013-11-05
 --------------------------
 
@@ -16,7 +22,7 @@ The project generator for creating Fluent projects has been updated. The main ch
 Version 0.2.1 / 2013-10-21
 --------------------------
 
-This is a small patch release. The patch is in the project generator. The [Symbiont](https://github.com/jnyman/symbiont) test framework is being deprecated in favor of [Fluent](https://github.com/jnyman/fluent). The project generator has been updated accordingly. 
+This is a small patch release. The patch is in the project generator. The [Symbiont](https://github.com/jnyman/symbiont) test framework is being deprecated in favor of [Fluent](https://github.com/jnyman/fluent). The project generator has been updated accordingly.
 
 
 Version 0.2.0 / 2013-09-28

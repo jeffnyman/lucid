@@ -1,10 +1,10 @@
 require 'lucid/factory'
 require 'lucid/ast/multiline_argument'
-require 'lucid/runtime/facade'
+require 'lucid/facade'
 
 module Lucid
 
-  class Runtime
+  class ContextLoader
 
     class Orchestrator
 
@@ -20,18 +20,18 @@ module Lucid
         end
 
         def step(step)
-          @orchestrator.invoke(step.name, AST::MultilineArgument.from(step.doc_string || step.rows))
+          @orchestrator.invoke(step.name, Lucid::AST::MultilineArgument.from(step.doc_string || step.rows))
         end
 
         def eof
         end
       end
 
-      include ObjectFactory
+      include Factory
 
       def initialize(user_interface, configuration={})
         @configuration = Configuration.parse(configuration)
-        @runtime_facade = Runtime::Facade.new(self, user_interface)
+        @runtime_facade = ContextLoader::Facade.new(self, user_interface)
         @unsupported_languages = []
         @supported_languages = []
         @language_map = {}

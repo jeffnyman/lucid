@@ -1,7 +1,7 @@
 require 'forwardable'
 
 module Lucid
-  class Runtime
+  class ContextLoader
     # This is what a programming language will consider to be a runtime.
     #
     # It's a thin class that directs the specific methods needed by the

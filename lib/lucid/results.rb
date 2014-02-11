@@ -1,5 +1,5 @@
 module Lucid
-  class Runtime
+  class ContextLoader
 
     class Results
       def initialize(configuration)

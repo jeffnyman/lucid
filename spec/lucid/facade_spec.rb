@@ -1,12 +1,12 @@
 require 'spec_helper'
 
 module Lucid
-  describe Runtime::Facade do
-    
+  describe ContextLoader::Facade do
+
     let(:interface) {double('interface')}
-    subject { Runtime::Orchestrator.new(interface,{}) }
-    let(:facade) { Runtime::Facade.new(subject, interface) }
-    
+    subject { ContextLoader::Orchestrator.new(interface,{}) }
+    let(:facade) { ContextLoader::Facade.new(subject, interface) }
+
     it 'should produce AST::Table by #table' do
       facade.table( %{
       | study   | phase |
@@ -26,6 +26,6 @@ module Lucid
       str.should be_kind_of(AST::DocString)
       str.content_type.should eq('ruby')
     end
-    
+
   end
 end

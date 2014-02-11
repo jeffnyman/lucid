@@ -6,23 +6,19 @@ require 'lucid/configuration'
 require 'lucid/load_path'
 require 'lucid/interface_methods'
 require 'lucid/formatter/duration'
-require 'lucid/runtime/interface_io'
-require 'lucid/runtime/specs_loader'
-require 'lucid/runtime/results'
-require 'lucid/runtime/orchestrator'
+require 'lucid/interface_io'
+require 'lucid/spec_loader'
+require 'lucid/results'
+require 'lucid/orchestrator'
 
 module Lucid
-  class Runtime
+  class ContextLoader
     attr_reader :results, :orchestrator
 
     include Formatter::Duration
-    include Runtime::InterfaceIO
+    include ContextLoader::InterfaceIO
 
     def initialize(configuration = Configuration.default)
-      if defined?(Test::Unit::Runner)
-        Test::Unit::Runner.module_eval("@@stop_auto_run = true")
-      end
-
       @current_scenario = nil
       @configuration = Configuration.parse(configuration)
       @orchestrator = Orchestrator.new(self, @configuration)
@@ -40,14 +36,14 @@ module Lucid
       @orchestrator.load_code_language(language)
     end
 
-    def run
+    def execute
       load_execution_context
       fire_after_configuration_hook
 
-      tdl_walker = @configuration.establish_tdl_walker(self)
-      self.visitor = tdl_walker
+      walker = @configuration.establish_walker(self)
+      self.visitor = walker
 
-      specs.accept(tdl_walker)
+      load_spec_context.accept(walker)
     end
 
     def specs_paths
@@ -162,7 +158,7 @@ module Lucid
 
     # Returns AST::DocString for +string_without_triple_quotes+.
     def doc_string(string_without_triple_quotes, content_type='', line_offset=0)
-      AST::DocString.new(string_without_triple_quotes,content_type)
+      Lucid::AST::DocString.new(string_without_triple_quotes,content_type)
     end
 
   private
@@ -176,12 +172,13 @@ module Lucid
     # already handled. A SpecsLoader instance is created and this is what
     # makes sure that a spec file can be turned into a code construct
     # (a SpecFile instance) which in turn can be broken down into an AST.
-    def specs
-      @loader ||= Runtime::SpecsLoader.new(
-        @configuration.spec_files,
+    # @return [Object] instance of Lucid::AST::Spec
+    def load_spec_context
+      @loader ||= Lucid::ContextLoader::SpecLoader.new(
+        @configuration.spec_context,
         @configuration.filters,
         @configuration.tag_expression)
-      @loader.specs
+      @loader.load_specs
     end
 
     # Loading the execution context means getting all of the loadable files

@@ -4,7 +4,7 @@ require 'lucid/interface_rb/rb_language'
 module Lucid
   describe 'Pending' do
     before(:each) do
-      l = InterfaceRb::RbLanguage.new(Runtime.new)
+      l = InterfaceRb::RbLanguage.new(ContextLoader.new)
       l.begin_rb_scenario(double('scenario').as_null_object)
       @domain= l.current_domain
     end
@@ -40,6 +40,6 @@ module Lucid
         end
       }.should raise_error(Lucid::Pending, /TODO/)
     end
-    
+
   end
 end

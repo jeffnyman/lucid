@@ -6,7 +6,7 @@ require 'lucid/unit'
 
 module Lucid
   module AST
-    class Scenario #:nodoc:
+    class Scenario
       include HasSteps
       include Names
       include HasLocation
@@ -44,7 +44,7 @@ module Lucid
       end
 
       def to_units(background)
-        [Unit.new(step_invocations)]
+        [Lucid::Unit.new(step_invocations)]
       end
 
       # Returns true if one or more steps failed.
@@ -111,7 +111,6 @@ module Lucid
       def skip_hooks?
         @background.failed? || @executed
       end
-
     end
   end
 end

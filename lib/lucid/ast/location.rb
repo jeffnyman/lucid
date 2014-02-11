@@ -5,8 +5,8 @@ module Lucid
       attr_reader :file, :line
 
       def initialize(file, line)
-        @file = file || raise(ArgumentError, "file is mandatory")
-        @line = line || raise(ArgumentError, "line is mandatory")
+        @file = file || raise(ArgumentError, 'file is mandatory')
+        @line = line || raise(ArgumentError, 'line is mandatory')
       end
 
       def to_s

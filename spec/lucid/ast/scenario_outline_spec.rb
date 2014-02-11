@@ -6,11 +6,11 @@ require 'lucid/interface_rb/rb_language'
 
 module Lucid
   module AST
-    
+
     describe ScenarioOutline do
-      
+
       before do
-        @runtime = Lucid::Runtime.new
+        @runtime = Lucid::ContextLoader.new
         @runtime.load_code_language('rb')
         @dsl = Object.new
         @dsl.extend(Lucid::InterfaceRb::RbLucid)
@@ -26,7 +26,7 @@ module Lucid
         @dsl.Then(/^there should be (\d+) tests$/) do |n|
           (@initial - @tested).should == n.to_i
         end
-        
+
         @dsl.Then(/^there should be (\d+) tests completed$/) do |n|
           @tested.should == n.to_i
         end
@@ -74,8 +74,8 @@ module Lucid
         @scenario_outline.feature = double.as_null_object
         @scenario_outline.accept(visitor)
       end
-      
+
     end
-    
+
   end
 end

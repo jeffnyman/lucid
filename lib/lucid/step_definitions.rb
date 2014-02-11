@@ -2,7 +2,7 @@ module Lucid
   class StepDefinitions
     def initialize(configuration = Configuration.default)
       configuration = Configuration.parse(configuration)
-      @orchestrator = Runtime::Orchestrator.new(nil, false)
+      @orchestrator = ContextLoader::Orchestrator.new(nil, false)
       @orchestrator.load_files_from_paths(configuration.autoload_code_paths)
     end
 
