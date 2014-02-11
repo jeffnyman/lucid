@@ -14,7 +14,7 @@ require 'lucid/ast/tags'
 require 'lucid/ast/doc_string'
 require 'lucid/ast/outline_table'
 require 'lucid/ast/examples'
-require 'lucid/ast/tdl_walker'
+require 'lucid/ast/walker'
 
 module Lucid
   module AST
