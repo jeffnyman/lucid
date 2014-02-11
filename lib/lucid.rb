@@ -8,6 +8,9 @@ require 'lucid/cli/app'
 require 'lucid/step_definitions'
 require 'lucid/ansicolor'
 
+require 'rspec'
+require 'lucid/rspec'
+
 module Lucid
   class << self
     attr_accessor :wants_to_quit

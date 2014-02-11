@@ -99,6 +99,8 @@ module Lucid
       def attributes
         ATTRIBUTE_NAMES
       end
+
+      extend self
     end
   end
 end

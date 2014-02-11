@@ -1,6 +1,11 @@
 Change Log and History
 ======================
 
+Version 0.3.2 / 2014-02-11
+--------------------------
+
+This is a hotfix release. A change was introduced into 0.3.1 that impacted the color module in terms of how test specifications are output. This was done in almost all cases -- except for table cell output. A runtime crash was experienced as a result of this and is now fixed.
+
 Version 0.3.1 / 2014-02-11
 --------------------------
 
