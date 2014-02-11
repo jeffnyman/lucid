@@ -45,9 +45,6 @@ module Lucid
         parser.parse(source, @path, 0)
         spec_builder.language = parser.i18n_language
         spec_builder.result
-      #rescue Gherkin::Lexer::LexingError, Gherkin::Parser::ParseError => e
-        #e.message.insert(0, "#{@path}: ")
-        #raise e
       rescue Gherkin::Lexer::LexingError => e
         handle_lexing_error(e)
       rescue Gherkin::Parser::ParseError => e

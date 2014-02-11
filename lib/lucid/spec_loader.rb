@@ -1,7 +1,7 @@
 require 'lucid/errors'
 
 module Lucid
-  class Runtime
+  class ContextLoader
     class SpecLoader
       include Formatter::Duration
 
@@ -9,8 +9,8 @@ module Lucid
         @spec_files, @filters, @tag_expression = spec_files, filters, tag_expression
       end
 
-      # @see Lucid::Runtime.specs
-      def specs
+      # @see Lucid::ContextLoader.load_spec_context
+      def load_specs
         load unless (defined? @specs) and @specs
         @specs
       end

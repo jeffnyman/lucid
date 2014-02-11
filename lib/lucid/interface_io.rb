@@ -1,7 +1,7 @@
 require 'timeout'
 
 module Lucid
-  class Runtime
+  class ContextLoader
 
     module InterfaceIO
       attr_writer :visitor

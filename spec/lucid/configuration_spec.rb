@@ -21,26 +21,26 @@ module Lucid
       end
     end
   end
-  
+
   module CLI
     describe Configuration do
 
       attr_reader :out, :error
-      
+
       module ExposeOptions
         attr_reader :options
       end
-      
+
       def config
         @config ||= Configuration.new(@out = StringIO.new, @error = StringIO.new).extend(ExposeOptions)
       end
-      
+
       def with_these_files(*files)
         File.stub(:directory?).and_return(true)
         File.stub(:file?).and_return(true)
         Dir.stub(:[]).and_return(files)
       end
-      
+
       def with_this_configuration(info)
         Dir.stub(:glob).with('{,.config/,config/}lucid{.yml,.yaml}').and_return(['lucid.yml'])
         File.stub(:exist?).and_return(true)
@@ -51,13 +51,13 @@ module Lucid
       it 'should require driver.rb files first' do
         with_these_files('/common/support/browser.rb', '/common/support/driver.rb')
         config.parse(%w{--require /common})
-        
+
         config.library_context.should == %w(
             /common/support/driver.rb
             /common/support/browser.rb
         )
       end
-      
+
       it 'should not require driver.rb files when a dry run is attempted' do
         with_these_files('/common/support/browser.rb', '/common/support/driver.rb')
         config.parse(%w{--require /common --dry-run})
@@ -66,11 +66,11 @@ module Lucid
           /common/support/browser.rb
         )
       end
-      
+
       it 'should require files in default definition locations' do
         with_these_files('/pages/page.rb', '/steps/steps.rb')
         config.parse(%w{--require /specs})
-        
+
         config.definition_context.should == %w(
           /pages/page.rb
           /steps/steps.rb
@@ -83,16 +83,16 @@ module Lucid
         Dir.stub(:[]).with('specs/**/*.feature').and_return(['lucid.spec'])
         Dir.stub(:[]).with('specs/**/*.story').and_return(['lucid.spec'])
         config.parse(%w{})
-        config.spec_files.should == ['lucid.spec']
+        config.spec_context.should == ['lucid.spec']
       end
-      
+
       it 'should search for all specs in the specified directory' do
         File.stub(:directory?).and_return(true)
         Dir.stub(:[]).with('specs/**/*.spec').and_return(['lucid.spec'])
         Dir.stub(:[]).with('specs/**/*.feature').and_return(['lucid.spec'])
         Dir.stub(:[]).with('specs/**/*.story').and_return(['lucid.spec'])
         config.parse(%w{specs/})
-        config.spec_files.should == ['lucid.spec']
+        config.spec_context.should == ['lucid.spec']
       end
 
       it 'should return the correct spec file type for feature file' do
@@ -101,7 +101,7 @@ module Lucid
         Dir.stub(:[]).with('specs/**/*.feature').and_return(['lucid.feature'])
         Dir.stub(:[]).with('specs/**/*.story').and_return(['lucid.feature'])
         config.parse(%w{specs/})
-        config.spec_files.should == ['lucid.feature']
+        config.spec_context.should == ['lucid.feature']
       end
 
       it 'should return the correct spec file type for story file' do
@@ -110,23 +110,23 @@ module Lucid
         Dir.stub(:[]).with('specs/**/*.feature').and_return(['lucid.story'])
         Dir.stub(:[]).with('specs/**/*.story').and_return(['lucid.story'])
         config.parse(%w{specs/})
-        config.spec_files.should == ['lucid.story']
+        config.spec_context.should == ['lucid.story']
       end
 
       it 'should preserve the order of the spec files' do
         config.parse(%w{test_b.spec test_c.spec test_a.spec})
-        config.spec_files.should == %w[test_b.spec test_c.spec test_a.spec]
+        config.spec_context.should == %w[test_b.spec test_c.spec test_a.spec]
       end
-      
+
       it 'should be able to exclude files based on a specific reference' do
         with_these_files('/common/support/browser.rb', '/common/support/driver.rb')
         config.parse(%w{--require /common --exclude browser.rb})
-        
+
         config.spec_requires.should == %w(
           /common/support/driver.rb
         )
       end
-      
+
       it 'should be able to exclude files based on a general pattern' do
         with_these_files('/steps/tester.rb', '/steps/tested.rb', '/steps/testing.rb', '/steps/quality.rb')
         config.parse(%w{--require /steps --exclude test(er|ed) --exclude quality})
@@ -139,30 +139,30 @@ module Lucid
       it 'should allow specifying environment variables on the command line' do
         config.parse(['test=this'])
         ENV['test'].should == 'this'
-        config.spec_files.should_not include('test=this')
+        config.spec_context.should_not include('test=this')
       end
-      
+
       it 'should be able to use a --dry-run option' do
         config.parse(%w{--dry-run})
         config.options[:dry_run].should be_true
       end
-      
+
       it 'should be able to use a --no-source option' do
         config.parse(%w{--no-source})
         config.options[:source].should be_false
       end
-      
+
       it 'should be able to use a --no-matchers option' do
         config.parse(%w{--no-matchers})
         config.options[:matchers].should be_false
       end
-      
+
       it 'should be able to use a --quiet option' do
         config.parse(%w{--quiet})
         config.options[:source].should be_false
         config.options[:matchers].should be_false
       end
-      
+
       it 'should be able to use a --verbose option' do
         config.parse(%w{--verbose})
         config.options[:verbose].should be_true
@@ -173,19 +173,19 @@ module Lucid
         config.parse(%w{--format progress})
         config.options[:require].should include('test_file')
       end
-      
+
       describe 'generating output' do
-      
+
         it 'should be able to use an --out option' do
           config.parse(%w{--out report.txt})
           config.formats.should == [%w(standard report.txt)]
         end
-        
+
         it 'should be able to use multiple --out options' do
           config.parse(%w{--format standard --out report1.txt --out report2.txt})
           config.formats.should == [%w(standard report2.txt)]
         end
-      
+
       end
 
       it 'should be able to use a --color option' do
@@ -254,7 +254,7 @@ module Lucid
         with_this_configuration({'selenium' => 'DRIVER=selenium'})
         config.parse(['--profile', 'selenium'])
         ENV['DRIVER'].should == 'selenium'
-        config.spec_files.should_not include('DRIVER=selenium')
+        config.spec_context.should_not include('DRIVER=selenium')
       end
 
       describe 'Dry run execution' do
@@ -274,7 +274,7 @@ module Lucid
           config.dry_run?.should be_false
         end
       end
-      
+
       describe 'Specifying matcher type' do
         it 'returns the matcher type when it was set' do
           config.parse(['--matcher-type', 'classic'])
@@ -317,12 +317,12 @@ module Lucid
             e.backtrace[0].should_not == "#{__FILE__}:#{__LINE__ - 2}"
           end
         end
-        
+
         after do
           Lucid.use_full_backtrace = false
         end
       end
-      
+
     end
   end
 end

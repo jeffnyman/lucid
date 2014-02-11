@@ -72,7 +72,7 @@ module Lucid
         @options[:matcher_type] || :regexp
       end
 
-      def establish_tdl_walker(runtime)
+      def establish_walker(runtime)
         AST::TDLWalker.new(runtime, formatters(runtime), self)
       end
 
@@ -124,7 +124,7 @@ module Lucid
       end
 
       # @see Lucid::Runtime.specs
-      def spec_files
+      def spec_context
         files = specs_path(spec_source).map do |path|
           path = path.gsub(/\\/, '/')  # convert \ to /
           path = path.chomp('/')       # removing trailing /

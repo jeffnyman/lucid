@@ -31,12 +31,12 @@ module Lucid
           existing_runtime.configure(configuration)
           existing_runtime
         else
-          Runtime.new(configuration)
+          ContextLoader.new(configuration)
         end
 
         log.debug("Runtime: #{runtime.inspect}")
 
-        runtime.run
+        runtime.execute
         runtime.write_testdefs_json
         failure = runtime.results.failure? || Lucid.wants_to_quit
         @kernel.exit(failure ? 1 : 0)

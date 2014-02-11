@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Lucid
-  describe Runtime::Results do
+  describe ContextLoader::Results do
     let(:configuration) {double 'Configuration', :strict? => false}
     let(:passed_scenario) {double 'Scenario', :status => :passed}
     let(:failed_scenario) {double 'Scenario', :status => :failed}
@@ -76,6 +76,6 @@ module Lucid
         end
       end
     end
-    
+
   end
 end
