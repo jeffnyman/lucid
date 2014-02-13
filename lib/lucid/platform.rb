@@ -2,7 +2,7 @@ require 'rbconfig'
 
 module Lucid
   unless defined?(Lucid::VERSION)
-    VERSION       = '0.3.0'
+    VERSION       = '0.3.3'
     BINARY        = File.expand_path(File.dirname(__FILE__) + '/../../bin/lucid')
     LIBDIR        = File.expand_path(File.dirname(__FILE__) + '/../../lib')
     JRUBY         = defined?(JRUBY_VERSION)
