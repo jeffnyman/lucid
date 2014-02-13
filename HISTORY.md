@@ -1,6 +1,11 @@
 Change Log and History
 ======================
 
+Version 0.3.3 / 2013-02-13
+--------------------------
+
+This patch release reverts patch releases 0.3.1 and 0.3.2. Both of those patches were put in place to start on a different execution mode for Lucid. That execution mode, however, has proven more problematic than I would have preferred. Patch 0.3.3 essentially puts Lucid back to 0.3.0, albeit with a few structural enhancements.
+
 Version 0.3.0 / 2013-11-05
 --------------------------
 
@@ -16,7 +21,7 @@ The project generator for creating Fluent projects has been updated. The main ch
 Version 0.2.1 / 2013-10-21
 --------------------------
 
-This is a small patch release. The patch is in the project generator. The [Symbiont](https://github.com/jnyman/symbiont) test framework is being deprecated in favor of [Fluent](https://github.com/jnyman/fluent). The project generator has been updated accordingly. 
+This is a small patch release. The patch is in the project generator. The [Symbiont](https://github.com/jnyman/symbiont) test framework is being deprecated in favor of [Fluent](https://github.com/jnyman/fluent). The project generator has been updated accordingly.
 
 
 Version 0.2.0 / 2013-09-28
