@@ -1,4 +1,4 @@
-require 'lucid/tdl_builder'
+require 'lucid/spec_builder'
 require 'gherkin/formatter/filter_formatter'
 require 'gherkin/formatter/tag_count_formatter'
 require 'gherkin/parser/parser'
@@ -29,8 +29,8 @@ module Lucid
     def parse(specified_filters, tag_counts)
       filters = @lines || specified_filters
 
-      tdl_builder         = Lucid::Parser::TDLBuilder.new(@path)
-      filter_formatter    = filters.empty? ? tdl_builder : Gherkin::Formatter::FilterFormatter.new(tdl_builder, filters)
+      spec_builder         = Lucid::Parser::SpecBuilder.new(@path)
+      filter_formatter    = filters.empty? ? spec_builder : Gherkin::Formatter::FilterFormatter.new(spec_builder, filters)
       tag_count_formatter = Gherkin::Formatter::TagCountFormatter.new(filter_formatter, tag_counts)
 
       # Gherkin Parser parameters:
@@ -42,8 +42,8 @@ module Lucid
         # parse parameters:
         # gherkin, feature_uri, line_offset
         parser.parse(source, @path, 0)
-        tdl_builder.language = parser.i18n_language
-        tdl_builder.result
+        spec_builder.language = parser.i18n_language
+        spec_builder.result
         rescue Gherkin::Lexer::LexingError => e
         handle_lexing_error(e)
       rescue Gherkin::Parser::ParseError => e

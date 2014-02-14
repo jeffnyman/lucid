@@ -5,8 +5,8 @@ require 'lucid/ast/empty_background'
 
 module Lucid
   module Parser
-    # The TDL Builder conforms to the Gherkin event API.
-    class TDLBuilder
+    # The SpecBuilder conforms to the Gherkin event API.
+    class SpecBuilder
       include Gherkin::Rubify
 
       def initialize(path = 'UNKNOWN-FILE')
@@ -102,7 +102,7 @@ module Lucid
         end
       end
 
-      class Builder
+      class Spec
         def initialize(file, node)
           @file, @node = file, node
         end
@@ -124,7 +124,7 @@ module Lucid
         attr_reader :file, :node
       end
 
-      class FeatureBuilder < Builder
+      class FeatureBuilder < Spec
         def result(language)
           background = background(language)
           feature = AST::Feature.new(
@@ -162,7 +162,7 @@ module Lucid
         end
       end
 
-      class BackgroundBuilder < Builder
+      class BackgroundBuilder < Spec
         def result(language)
           background = AST::Background.new(
             language,
@@ -191,7 +191,7 @@ module Lucid
 
       end
 
-      class ScenarioBuilder < Builder
+      class ScenarioBuilder < Spec
         def result(background, language, feature_tags)
           scenario = AST::Scenario.new(
             language,
@@ -222,7 +222,7 @@ module Lucid
         end
       end
 
-      class ScenarioOutlineBuilder < Builder
+      class ScenarioOutlineBuilder < Spec
         def result(background, language, feature_tags)
           scenario_outline = AST::ScenarioOutline.new(
             language,
@@ -263,7 +263,7 @@ module Lucid
         attr_reader :examples_sections
       end
 
-      class StepBuilder < Builder
+      class StepBuilder < Spec
         def result(language)
           step = AST::Step.new(
             language,
