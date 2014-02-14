@@ -6,9 +6,9 @@ require 'lucid/interface_rb/rb_language'
 
 module Lucid
   module AST
-    
+
     describe ScenarioOutline do
-      
+
       before do
         @runtime = Lucid::Runtime.new
         @runtime.load_code_language('rb')
@@ -26,7 +26,7 @@ module Lucid
         @dsl.Then(/^there should be (\d+) tests$/) do |n|
           (@initial - @tested).should == n.to_i
         end
-        
+
         @dsl.Then(/^there should be (\d+) tests completed$/) do |n|
           @tested.should == n.to_i
         end
@@ -69,13 +69,13 @@ module Lucid
       end
 
       it 'should replace all variables and call outline once for each table row' do
-        visitor = TDLWalker.new(@runtime)
+        visitor = Walker.new(@runtime)
         visitor.should_receive(:visit_table_row).exactly(3).times
         @scenario_outline.feature = double.as_null_object
         @scenario_outline.accept(visitor)
       end
-      
+
     end
-    
+
   end
 end

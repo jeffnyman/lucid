@@ -4,12 +4,12 @@ require 'lucid/formatter/progress'
 module Lucid
   module Formatter
     describe Progress do
-      
+
       before(:each) do
         Lucid::Term::ANSIColor.coloring = false
         @out = StringIO.new
         progress = Lucid::Formatter::Progress.new(double('Runtime'), @out, {})
-        @visitor = Lucid::AST::TDLWalker.new(nil, [progress])
+        @visitor = Lucid::AST::Walker.new(nil, [progress])
       end
 
       describe 'visiting a table cell value without a status' do

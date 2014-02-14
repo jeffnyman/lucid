@@ -69,7 +69,7 @@ module Lucid
       end
 
       def establish_tdl_walker(runtime)
-        AST::TDLWalker.new(runtime, formatters(runtime), self)
+        AST::Walker.new(runtime, formatters(runtime), self)
       end
 
       def formatter_class(name)

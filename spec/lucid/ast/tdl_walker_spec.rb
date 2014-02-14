@@ -1,10 +1,10 @@
 require 'spec_helper'
 
 module Lucid::AST
-  
-  describe TDLWalker do
+
+  describe Walker do
     let(:tdl_walker) do
-      TDLWalker.new(nil, [double('listener', :before_visit_features => nil)])
+      Walker.new(nil, [double('listener', :before_visit_features => nil)])
     end
     let(:features) { double('features', :accept => nil) }
 
@@ -17,5 +17,5 @@ module Lucid::AST
       tdl_walker.visit_features(features).should == tdl_walker
     end
   end
-  
+
 end

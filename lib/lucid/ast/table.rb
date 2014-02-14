@@ -451,7 +451,7 @@ module Lucid
         Lucid::Term::ANSIColor.coloring = options[:color]
         formatter = Formatter::Standard.new(nil, io, options)
         formatter.instance_variable_set('@indent', options[:indent])
-        TDLWalker.new(nil, [formatter]).visit_multiline_arg(self)
+        Walker.new(nil, [formatter]).visit_multiline_arg(self)
 
         Lucid::Term::ANSIColor.coloring = c
         io.rewind
