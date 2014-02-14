@@ -7,7 +7,7 @@ require 'lucid/platform'
 require 'lucid/runtime'
 require 'lucid/cli/app'
 require 'lucid/step_definitions'
-require 'lucid/term/ansicolor'
+require 'lucid/ansicolor'
 
 module Lucid
   class << self

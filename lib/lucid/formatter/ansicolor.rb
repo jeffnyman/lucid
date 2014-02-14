@@ -1,17 +1,17 @@
 require 'lucid/platform'
-require 'lucid/term/ansicolor'
+require 'lucid/ansicolor'
 
 if Lucid::IRONRUBY
   begin
     require 'iron-term-ansicolor'
   rescue LoadError
-    STDERR.puts %{*** WARNING: You must "gem install iron-term-ansicolor" to get colored ouput in on IronRuby}
+    STDERR.puts %{*** WARNING: You must "gem install iron-term-ansicolor" to get colored ouput with IronRuby}
   end
 end
 
 if Lucid::WINDOWS_MRI
   unless ENV['ANSICON']
-    STDERR.puts %{*** WARNING: You must use ANSICON 1.31 or higher (https://github.com/adoxa/ansicon/) to get colored output on Windows}
+    STDERR.puts %{*** WARNING: You must use ANSICON (https://github.com/adoxa/ansicon/) to get colored output on Windows}
     Lucid::Term::ANSIColor.coloring = false
   end
 end
@@ -74,7 +74,8 @@ module Lucid
         'tag'       => 'cyan'
       })
 
-      if ENV['LUCID_COLORS'] # Example: export LUCID_COLORS="passed=red:failed=yellow"
+      # Example: export LUCID_COLORS="passed=red:failed=yellow"
+      if ENV['LUCID_COLORS']
         ENV['LUCID_COLORS'].split(':').each do |pair|
           a = pair.split('=')
           ALIASES[a[0]] = a[1]
@@ -126,7 +127,7 @@ module Lucid
           if e.class.name == 'TermInfo::TermInfoError'
             STDERR.puts '*** WARNING ***'
             STDERR.puts "You have the genki-ruby-terminfo gem installed, but you haven't set your TERM variable."
-            STDERR.puts 'Try setting it to TERM=xterm-256color to get grey color in output.'
+            STDERR.puts 'Try setting it to TERM=xterm-256color to get color in output.'
             STDERR.puts "\n"
             alias grey white
           else
@@ -135,8 +136,8 @@ module Lucid
         end
       end
 
-      def self.define_real_grey #:nodoc:
-        def grey(string) #:nodoc:
+      def self.define_real_grey
+        def grey(string)
           if ::Lucid::Term::ANSIColor.coloring?
             "\e[90m#{string}\e[0m"
           else
@@ -147,20 +148,20 @@ module Lucid
 
       define_grey
 
-      def cukes(n)
+      def lucid(n)
         ('(::) ' * n).strip
       end
 
-      def green_cukes(n)
-        blink(green(cukes(n)))
+      def green_lucid(n)
+        blink(green(lucid(n)))
       end
 
-      def red_cukes(n)
-        blink(red(cukes(n)))
+      def red_lucid(n)
+        blink(red(lucid(n)))
       end
 
-      def yellow_cukes(n)
-        blink(yellow(cukes(n)))
+      def yellow_lucid(n)
+        blink(yellow(lucid(n)))
       end
     end
   end
