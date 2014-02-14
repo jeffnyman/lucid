@@ -36,7 +36,7 @@ module Lucid
       # Gherkin Parser parameters:
       # formatter, raise_on_error, machine_name, force_ruby
       # The machine name refers to a state machine table.
-      parser              = Gherkin::Parser::Parser.new(tag_count_formatter, true, "root", false)
+      parser              = Gherkin::Parser::Parser.new(tag_count_formatter, true, 'root', false)
 
       begin
         # parse parameters:
@@ -44,15 +44,16 @@ module Lucid
         parser.parse(source, @path, 0)
         tdl_builder.language = parser.i18n_language
         tdl_builder.result
-      rescue Gherkin::Lexer::LexingError, Gherkin::Parser::ParseError => e
-        e.message.insert(0, "#{@path}: ")
-        raise e
+        rescue Gherkin::Lexer::LexingError => e
+        handle_lexing_error(e)
+      rescue Gherkin::Parser::ParseError => e
+        handle_parsing_error(e)
       end
     end
 
     # The source method is used to return a properly encoded spec file.
     # If the spec source read in declares a different encoding, then this
-    # method will make sure to use Lucid's default encoding.
+    # method will make sure to use the default encoding of Lucid.
     def source
       @source ||= if @path =~ /^http/
         require 'open-uri'
@@ -70,13 +71,13 @@ module Lucid
           e.message << "\nLucid was unable to access #{File.expand_path(@path)}."
           raise e
         rescue Errno::ENOENT => e
-          if @path == "specs"
+          if @path == 'specs'
             STDOUT.puts ["\nYou don't have a 'specs' directory. This is the default specification",
-                         "directory that Lucid will use if one is not specified. So either create",
+                         'directory that Lucid will use if one is not specified. So either create',
                          "that directory or specify where your test repository is located.\n\n"].join("\n")
           else
             STDOUT.puts ["\nThere is no '#{@path}' directory. Since that is what you specified as",
-                         "your spec repository, this directory must be present."].join("\n")
+                         'your spec repository, this directory must be present.'].join("\n")
           end
           Kernel.exit(1)
         end
@@ -84,6 +85,25 @@ module Lucid
     end
 
     private
+
+    def handle_lexing_error(e)
+      core_exception = e.message[0..e.message.index('See http:') - 1]
+      core_exception.insert(0, "Lucid was looking at: #{@path}\n\n")
+      puts 'Lucid: Lexing Error with Gherkin'
+      puts core_exception
+      Kernel.exit(1)
+    end
+
+    def handle_parsing_error(e)
+      core_exception = "Lucid was looking at: #{@path}\n\n"
+      core_message_start = e.message.index('Found')
+      core_state_start = e.message.index('(Current')
+      core_message = e.message[core_message_start..core_state_start - 1]
+      core_state = e.message[core_state_start..-1]
+      puts 'Lucid: Parsing Error with Gherkin'
+      puts core_exception, core_message, core_state
+      Kernel.exit(1)
+    end
 
     def encoding_for(source)
       encoding = DEFAULT_ENCODING
