@@ -1,5 +1,5 @@
 require 'lucid/step_match'
-require 'lucid/step_definition_light'
+require 'lucid/step_definition_usage'
 
 module Lucid
   # This module defines the API for programming language support in Lucid.
@@ -66,11 +66,11 @@ module Lucid
       end
 
       def available_step_definition(regexp_source, file_colon_line)
-        available_step_definition_hash[StepDefinitionLight.new(regexp_source, file_colon_line)] = nil
+        available_step_definition_hash[StepDefinitionUsage.new(regexp_source, file_colon_line)] = nil
       end
 
       def invoked_step_definition(regexp_source, file_colon_line)
-        invoked_step_definition_hash[StepDefinitionLight.new(regexp_source, file_colon_line)] = nil
+        invoked_step_definition_hash[StepDefinitionUsage.new(regexp_source, file_colon_line)] = nil
       end
 
       private
