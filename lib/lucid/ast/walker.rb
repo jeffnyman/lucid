@@ -1,11 +1,11 @@
 module Lucid
   module AST
     class Walker
-      attr_accessor :configuration
+      attr_accessor :context
       attr_reader   :runtime
 
-      def initialize(runtime, listeners = [], configuration = Lucid::Context.default)
-        @runtime, @listeners, @configuration = runtime, listeners, configuration
+      def initialize(runtime, listeners = [], context = Lucid::Context.default)
+        @runtime, @listeners, @context = runtime, listeners, context
       end
 
       # This is being used to forward on messages from the AST to

@@ -83,7 +83,7 @@ module Lucid
         end
 
         def accept(visitor)
-          if visitor.configuration.expand?
+          if visitor.context.expand?
             accept_expand(visitor)
           else
             visitor.visit_table_row(self) do
@@ -101,7 +101,7 @@ module Lucid
           else
             visitor.runtime.with_hooks(self) do
               @step_invocations.each do |step_invocation|
-                step_invocation.invoke(visitor.runtime, visitor.configuration)
+                step_invocation.invoke(visitor.runtime, visitor.context)
                 @exception ||= step_invocation.reported_exception
               end
 

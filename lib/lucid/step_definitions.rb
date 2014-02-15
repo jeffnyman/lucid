@@ -1,9 +1,9 @@
 module Lucid
   class StepDefinitions
-    def initialize(configuration = Context.default)
-      configuration = Context.parse(configuration)
+    def initialize(context = Context.default)
+      context = Context.parse(context)
       @orchestrator = ContextLoader::Orchestrator.new(nil, false)
-      @orchestrator.load_files_from_paths(configuration.autoload_code_paths)
+      @orchestrator.load_files_from_paths(context.autoload_code_paths)
     end
 
     def to_json

@@ -18,18 +18,19 @@ module Lucid
     include Formatter::Duration
     include ContextLoader::InterfaceIO
 
-    def initialize(configuration = Context.default)
+    def initialize(context = Context.default)
       @current_scenario = nil
-      @configuration = Context.parse(configuration)
-      @orchestrator = Orchestrator.new(self, @configuration)
-      @results = Results.new(@configuration)
+      @context = Context.parse(context)
+      @orchestrator = Orchestrator.new(self, @context)
+      @results = Results.new(@context)
     end
 
-    # Used to take an existing runtime and change its configuration.
-    def configure(new_configuration)
-      @configuration = Context.parse(new_configuration)
-      @orchestrator.configure(@configuration)
-      @results.configure(@configuration)
+    # Used to take an existing Lucid operation context and change the
+    # configuration of that context.
+    def configure(new_context)
+      @context = Context.parse(new_context)
+      @orchestrator.configure(@context)
+      @results.configure(@context)
     end
 
     def load_code_language(language)
@@ -40,14 +41,14 @@ module Lucid
       load_execution_context
       fire_after_configuration_hook
 
-      ast_walker = @configuration.establish_ast_walker(self)
+      ast_walker = @context.establish_ast_walker(self)
       self.visitor = ast_walker
 
       load_spec_context.accept(ast_walker)
     end
 
     def specs_paths
-      @configuration.spec_source
+      @context.spec_source
     end
 
     def step_visited(step)
@@ -99,19 +100,19 @@ module Lucid
     end
 
     def before(scenario)
-      return if @configuration.dry_run? || @current_scenario
+      return if @context.dry_run? || @current_scenario
       @current_scenario = scenario
       @orchestrator.fire_hook(:before, scenario)
     end
 
     def after(scenario)
       @current_scenario = nil
-      return if @configuration.dry_run?
+      return if @context.dry_run?
       @orchestrator.fire_hook(:after, scenario)
     end
 
     def after_step #:nodoc:
-      return if @configuration.dry_run?
+      return if @context.dry_run?
       @orchestrator.fire_hook(:execute_after_step, @current_scenario)
     end
 
@@ -120,7 +121,7 @@ module Lucid
     end
 
     def write_testdefs_json
-      if(@configuration.testdefs)
+      if(@context.testdefs)
         stepdefs = []
         @orchestrator.step_definitions.sort{|a,b| a.to_hash['source'] <=> a.to_hash['source']}.each do |stepdef|
           stepdef_hash = stepdef.to_hash
@@ -147,10 +148,10 @@ module Lucid
           stepdef_hash['steps'] = steps.uniq.sort {|a,b| a['name'] <=> b['name']}
           stepdefs << stepdef_hash
         end
-        if !File.directory?(@configuration.testdefs)
-          FileUtils.mkdir_p(@configuration.testdefs)
+        if !File.directory?(@context.testdefs)
+          FileUtils.mkdir_p(@context.testdefs)
         end
-        File.open(File.join(@configuration.testdefs, 'testdefs.json'), 'w') do |io|
+        File.open(File.join(@context.testdefs, 'testdefs.json'), 'w') do |io|
           io.write(MultiJson.dump(stepdefs, :pretty => true))
         end
       end
@@ -163,7 +164,7 @@ module Lucid
     private
 
     def fire_after_configuration_hook
-      @orchestrator.fire_hook(:after_configuration, @configuration)
+      @orchestrator.fire_hook(:after_configuration, @context)
     end
 
     # The specs is used to begin loading the executable specs. This is as
@@ -175,9 +176,9 @@ module Lucid
     # @return [Object] Instance of Lucid::AST::Spec
     def load_spec_context
       @loader ||= Lucid::ContextLoader::SpecLoader.new(
-        @configuration.spec_context,
-        @configuration.filters,
-        @configuration.tag_expression)
+        @context.spec_context,
+        @context.filters,
+        @context.tag_expression)
       @loader.load_specs
     end
 
@@ -187,7 +188,7 @@ module Lucid
     # to page/activity definitions as well as test definitions, which are
     # usually referred to as steps.
     def load_execution_context
-      files = @configuration.library_context + @configuration.definition_context
+      files = @context.library_context + @context.definition_context
       log.info("Load Execution Context: #{files}")
       @orchestrator.load_files(files)
     end

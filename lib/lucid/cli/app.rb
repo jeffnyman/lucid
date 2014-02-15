@@ -21,17 +21,17 @@ module Lucid
         @out    = out
         @err    = err
         @kernel = kernel
-        @configuration = nil
+        @context = nil
       end
 
       def start!(existing_context = nil)
         trap_interrupt
 
         context_loader = if existing_context
-          existing_context.configure(configuration)
+          existing_context.configure(load_context)
           existing_context
         else
-          ContextLoader.new(configuration)
+          ContextLoader.new(load_context)
         end
 
         log.debug("Context Loader: #{context_loader.inspect}")
@@ -53,14 +53,14 @@ module Lucid
         @kernel.exit(1)
       end
 
-      def configuration
-        return @configuration if @configuration
+      def load_context
+        return @context if @context
 
-        @configuration = Context.new(@out, @err)
-        @configuration.parse_options(@args)
-        Lucid.logger = @configuration.log
-        log.debug("Configuration: #{@configuration.inspect}")
-        @configuration
+        @context = Context.new(@out, @err)
+        @context.parse_options(@args)
+        Lucid.logger = @context.log
+        log.debug("Context: #{@context.inspect}")
+        @context
       end
 
       private

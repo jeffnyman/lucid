@@ -2,14 +2,14 @@ module Lucid
   class ContextLoader
 
     class Results
-      def initialize(configuration)
-        @configuration = configuration
+      def initialize(context)
+        @context = context
         @inserted_steps = {}
         @inserted_scenarios = {}
       end
 
-      def configure(new_configuration)
-        @configuration = Context.parse(new_configuration)
+      def configure(new_context)
+        @context = Context.parse(new_context)
       end
 
       def step_visited(step)
@@ -49,11 +49,11 @@ module Lucid
       end
 
       def failure?
-        if @configuration.wip?
+        if @context.wip?
           scenarios(:passed).any?
         else
           scenarios(:failed).any? || steps(:failed).any? ||
-          (@configuration.strict? && (steps(:undefined).any? || steps(:pending).any?))
+          (@context.strict? && (steps(:undefined).any? || steps(:pending).any?))
         end
       end
     end

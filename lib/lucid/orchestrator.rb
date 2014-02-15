@@ -27,16 +27,16 @@ module Lucid
 
       include Factory
 
-      def initialize(user_interface, configuration={})
-        @configuration = Context.parse(configuration)
+      def initialize(user_interface, context={})
+        @context = Context.parse(context)
         @runtime_facade = ContextLoader::Facade.new(self, user_interface)
         @unsupported_languages = []
         @supported_languages = []
         @language_map = {}
       end
 
-      def configure(new_configuration)
-        @configuration = Context.parse(new_configuration)
+      def configure(new_context)
+        @context = Context.parse(new_context)
       end
 
       # Invokes a series of steps +steps_text+. Example:
@@ -104,7 +104,7 @@ module Lucid
       def matcher_text(step_keyword, step_name, multiline_arg_class)
         load_code_language('rb') if unknown_programming_language?
         @supported_languages.map do |programming_language|
-          programming_language.matcher_text(step_keyword, step_name, multiline_arg_class, @configuration.matcher_type)
+          programming_language.matcher_text(step_keyword, step_name, multiline_arg_class, @context.matcher_type)
         end.join("\n")
       end
 
@@ -154,7 +154,7 @@ module Lucid
       end
 
       def guess_step_matches?
-        @configuration.guess?
+        @context.guess?
       end
 
       def matches(step_name, name_to_report)
