@@ -10,7 +10,7 @@ module Lucid
     describe ScenarioOutline do
 
       before do
-        @runtime = Lucid::Runtime.new
+        @runtime = Lucid::ContextLoader.new
         @runtime.load_code_language('rb')
         @dsl = Object.new
         @dsl.extend(Lucid::InterfaceRb::RbLucid)

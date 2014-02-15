@@ -11,7 +11,7 @@ module Lucid
       def self.start(args)
         new(args).start!
       end
-      
+
       def initialize(args, stdin=STDIN, out=STDOUT, err=STDERR, kernel=Kernel)
         raise "args can't be nil" unless args
         raise "out can't be nil" unless out
@@ -23,22 +23,22 @@ module Lucid
         @kernel = kernel
         @configuration = nil
       end
-      
-      def start!(existing_runtime = nil)
+
+      def start!(existing_context = nil)
         trap_interrupt
 
-        runtime = if existing_runtime
-          existing_runtime.configure(configuration)
-          existing_runtime
+        context_loader = if existing_context
+          existing_context.configure(configuration)
+          existing_context
         else
-          Runtime.new(configuration)
+          ContextLoader.new(configuration)
         end
 
-        log.debug("Runtime: #{runtime.inspect}")
+        log.debug("Context Loader: #{context_loader.inspect}")
 
-        runtime.run
-        runtime.write_testdefs_json
-        failure = runtime.results.failure? || Lucid.wants_to_quit
+        context_loader.run
+        context_loader.write_testdefs_json
+        failure = context_loader.results.failure? || Lucid.wants_to_quit
         @kernel.exit(failure ? 1 : 0)
       rescue ProfilesNotDefinedError, YmlLoadError, ProfileNotFound => e
         @err.puts(e.message)
@@ -73,7 +73,7 @@ module Lucid
         trap('INT') do
           exit!(1) if Lucid.wants_to_quit
           Lucid.wants_to_quit = true
-          STDERR.puts "\nExiting. Interrupt again to exit immediately."
+          STDERR.puts "\nExiting Lucid execution.\nInterrupt again to exit immediately."
         end
       end
     end

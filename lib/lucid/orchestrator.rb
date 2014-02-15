@@ -3,9 +3,7 @@ require 'lucid/ast/multiline_argument'
 require 'lucid/facade'
 
 module Lucid
-
-  class Runtime
-
+  class ContextLoader
     class Orchestrator
 
       require 'forwardable'
@@ -31,7 +29,7 @@ module Lucid
 
       def initialize(user_interface, configuration={})
         @configuration = Configuration.parse(configuration)
-        @runtime_facade = Runtime::Facade.new(self, user_interface)
+        @runtime_facade = ContextLoader::Facade.new(self, user_interface)
         @unsupported_languages = []
         @supported_languages = []
         @language_map = {}

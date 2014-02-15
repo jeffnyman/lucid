@@ -1,7 +1,7 @@
 require 'timeout'
 
 module Lucid
-  class Runtime
+  class ContextLoader
 
     module InterfaceIO
       attr_writer :visitor
@@ -33,7 +33,7 @@ module Lucid
         @visitor.embed(src, mime_type, label)
       end
 
-    private
+      private
 
       def mri_gets(timeout_seconds)
         begin

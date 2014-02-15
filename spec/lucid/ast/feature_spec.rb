@@ -5,20 +5,20 @@ module Lucid
   module AST
     describe Feature do
       include TDLFactory
-      
+
       it 'should convert to a symbolic expression' do
-        runtime = Lucid::Runtime.new
+        runtime = Lucid::ContextLoader.new
         runtime.load_code_language('rb')
         dsl = Object.new
         dsl.extend Lucid::InterfaceRb::RbLucid
-        
+
         feature = create_feature(dsl)
         if Lucid::WINDOWS
           feature_file_path = 'specs\\test.spec'
         else
           feature_file_path = 'specs/test.spec'
         end
-        
+
         feature.to_sexp.should ==
             [
                 :feature,
@@ -48,7 +48,7 @@ module Lucid
       end
 
       it 'should store operating system specific file paths' do
-        runtime = Lucid::Runtime.new
+        runtime = Lucid::ContextLoader.new
         runtime.load_code_language('rb')
         dsl = Object.new
         dsl.extend Lucid::InterfaceRb::RbLucid
@@ -60,7 +60,7 @@ module Lucid
           feature.file.should == 'specs/test.spec'
         end
       end
-      
+
     end
   end
 end

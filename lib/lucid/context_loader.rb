@@ -12,11 +12,11 @@ require 'lucid/results'
 require 'lucid/orchestrator'
 
 module Lucid
-  class Runtime
+  class ContextLoader
     attr_reader :results, :orchestrator
 
     include Formatter::Duration
-    include Runtime::InterfaceIO
+    include ContextLoader::InterfaceIO
 
     def initialize(configuration = Configuration.default)
       @current_scenario = nil
@@ -70,7 +70,7 @@ module Lucid
       @orchestrator.unmatched_step_definitions
     end
 
-    def matcher_text(step_keyword, step_name, multiline_arg_class) #:nodoc:
+    def matcher_text(step_keyword, step_name, multiline_arg_class)
       @orchestrator.matcher_text(Gherkin::I18n.code_keyword_for(step_keyword), step_name, multiline_arg_class)
     end
 
@@ -156,14 +156,13 @@ module Lucid
       end
     end
 
-    # Returns AST::DocString for +string_without_triple_quotes+.
-    def doc_string(string_without_triple_quotes, content_type='', line_offset=0)
-      Lucid::AST::DocString.new(string_without_triple_quotes,content_type)
+    def doc_string(non_docstring, content_type='', line_offset=0)
+      Lucid::AST::DocString.new(non_docstring, content_type)
     end
 
     private
 
-    def fire_after_configuration_hook #:nodoc
+    def fire_after_configuration_hook
       @orchestrator.fire_hook(:after_configuration, @configuration)
     end
 
@@ -173,7 +172,7 @@ module Lucid
     # makes sure that a spec file can be turned into a code construct
     # (a SpecFile instance) which in turn can be broken down into an AST.
     def specs
-      @loader ||= Runtime::SpecLoader.new(
+      @loader ||= ContextLoader::SpecLoader.new(
         @configuration.spec_files,
         @configuration.filters,
         @configuration.tag_expression)
@@ -187,7 +186,7 @@ module Lucid
     # execution context for Lucid as it runs executable specs.
     def load_execution_context
       files = @configuration.library_context + @configuration.definition_context
-      log.info("Runtime Load Execution Context: #{files}")
+      log.info("Load Execution Context: #{files}")
       @orchestrator.load_files(files)
     end
 

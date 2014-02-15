@@ -11,7 +11,7 @@ module Lucid
 
       before do
         extend(Lucid::InterfaceRb::RbLucid)
-        @runtime = Lucid::Runtime.new
+        @runtime = Lucid::ContextLoader.new
         @rb = @runtime.load_code_language('rb')
 
         $x = $y = nil

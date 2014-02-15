@@ -45,7 +45,7 @@ module Lucid
 
           it 'should register as a failure' do
             results = double('results', :failure? => false)
-            runtime = Runtime.any_instance
+            runtime = ContextLoader.any_instance
             runtime.stub(:run)
             runtime.stub(:results).and_return(results)
 

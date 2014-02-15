@@ -1,7 +1,7 @@
 require 'lucid/errors'
 
 module Lucid
-  class Runtime
+  class ContextLoader
     class SpecLoader
       include Formatter::Duration
 

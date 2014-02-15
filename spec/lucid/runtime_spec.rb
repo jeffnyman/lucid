@@ -1,10 +1,10 @@
 require 'spec_helper'
 
 module Lucid
-  describe Runtime do
+  describe ContextLoader do
 
     let(:options) { {} }
-    subject { Runtime.new(options) }
+    subject { ContextLoader.new(options) }
 
     describe '#specs_paths' do
       let(:options) { {:paths => ['specs/area1/test.spec', 'specs/area1/area2/test.spec', 'others_specs'] } }
@@ -15,13 +15,13 @@ module Lucid
     end
 
     describe '#configure' do
-      let(:orchestrator) { double(Runtime::Orchestrator).as_null_object }
-      let(:results) { double(Runtime::Results).as_null_object }
+      let(:orchestrator) { double(ContextLoader::Orchestrator).as_null_object }
+      let(:results) { double(ContextLoader::Results).as_null_object }
       let(:new_config) { double('New Configuration') }
 
       before(:each) do
-        Runtime::Orchestrator.stub(:new => orchestrator)
-        Runtime::Results.stub(:new => results)
+        ContextLoader::Orchestrator.stub(:new => orchestrator)
+        ContextLoader::Results.stub(:new => results)
       end
 
       it 'tells the orchestrator and results about the new configuration' do
