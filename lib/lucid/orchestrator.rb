@@ -18,7 +18,7 @@ module Lucid
         end
 
         def step(step)
-          @orchestrator.invoke(step.name, AST::MultilineArgument.from(step.doc_string || step.rows))
+          @orchestrator.invoke(step.name, Lucid::AST::MultilineArgument.from(step.doc_string || step.rows))
         end
 
         def eof

@@ -9,24 +9,20 @@ module Lucid
         @spec_files, @filters, @tag_expression = spec_files, filters, tag_expression
       end
 
-      # @see Lucid::Runtime.specs
+      # @see Lucid::ContextLoader.load_spec_context
       def specs
-        load unless (defined? @specs) and @specs
-        @specs
+        load unless (defined? @spec) and @spec
+        @spec
       end
 
       private
 
       # The specs loader will call upon load to load up all specs that were
-      # found in the spec repository. During this process, a Specs instance
+      # found in the spec repository. During this process, a Spec instance
       # is created that will hold instances of the high level construct,
       # which is basically the feature.
       def load
-        specs = Lucid::AST::Spec.new
-
-        # Note that "specs" is going to be an instance of Lucid::AST::Specs.
-        # It will contain a @specs instance variable that is going to contain
-        # an specs found.
+        spec = Lucid::AST::Spec.new
 
         tag_counts = {}
         start = Time.new
@@ -35,15 +31,10 @@ module Lucid
         @spec_files.each do |f|
           spec_file = SpecFile.new(f)
 
-          # The "spec_file" will contain a Lucid::SpecFile instance, a
-          # primary attribute of which will be a @location instance variable.
+          feature = spec_file.parse(@filters, tag_counts)
 
-          spec = spec_file.parse(@filters, tag_counts)
-
-          # The "spec" will contain an instance of Lucid::AST::Feature.
-
-          if spec
-            specs.add_feature(spec)
+          if feature
+            spec.add_feature(feature)
             log.info("  * #{f}\n")
           end
         end
@@ -53,7 +44,7 @@ module Lucid
 
         check_tag_limits(tag_counts)
 
-        @specs = specs
+        @spec = spec
       end
 
       def check_tag_limits(tag_counts)
