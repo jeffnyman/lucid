@@ -105,19 +105,17 @@ module Lucid
           opts.separator ''
 
           opts.on('-r LIBRARY|DIR', '--require LIBRARY|DIR',
-                  'Require files before executing the features. If this option',
-                  'is not specified, all *.rb files that are siblings or below',
-                  'the features will be loaded automatically. Automatic loading',
-                  'is disabled when this option is specified. That means all',
-                  'loading becomes explicit.',
-                  'Assuming a default specs repo configuration, files under',
-                  "directories named \"common\\support\" will always be loaded",
-                  'before any others.',
-                  'This option can be specified multiple times.') do |v|
-            @options[:require] << v
-            if(Lucid::JRUBY && File.directory?(v))
+                  'Require resources (paths or individual files) prior to executing',
+                  'the test specs. If no require options are passed, then Lucid will',
+                  'use its default path and file settings via automatic loading. If',
+                  'require options are passed, however, then automatic loading will',
+                  'be disabled, which means loading any resources must be done via',
+                  'explicit uses of this option. The require option can be specified',
+                  'multiple times.') do |resource|
+            @options[:require] << resource
+            if(Lucid::JRUBY && File.directory?(resource))
               require 'java'
-              $CLASSPATH << v
+              $CLASSPATH << resource
             end
           end
 
@@ -145,8 +143,9 @@ module Lucid
 
           opts.separator ''
 
-          opts.on('-d', '--dry-run', 'Invokes formatters without executing the steps.',
-                  'This also omits the loading of your common/support/driver.rb file if it exists.') do
+          opts.on('-d', '--dry-run', 'Performs spec parsing without test execution.',
+                  'Performing a dry run omits loading of the driver file as well as',
+                  'any page or activity definitions.') do
             @options[:dry_run] = true
           end
 
