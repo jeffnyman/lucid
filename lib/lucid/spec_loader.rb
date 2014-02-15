@@ -10,7 +10,7 @@ module Lucid
       end
 
       # @see Lucid::ContextLoader.load_spec_context
-      def specs
+      def load_specs
         load unless (defined? @spec) and @spec
         @spec
       end

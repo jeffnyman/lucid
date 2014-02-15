@@ -68,8 +68,8 @@ module Lucid
         @options[:matcher_type] || :regexp
       end
 
-      def establish_tdl_walker(runtime)
-        AST::Walker.new(runtime, formatters(runtime), self)
+      def establish_ast_walker(runtime)
+        Lucid::AST::Walker.new(runtime, formatters(runtime), self)
       end
 
       def formatter_class(name)

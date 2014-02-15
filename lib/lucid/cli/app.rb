@@ -36,7 +36,7 @@ module Lucid
 
         log.debug("Context Loader: #{context_loader.inspect}")
 
-        context_loader.run
+        context_loader.execute
         context_loader.write_testdefs_json
         failure = context_loader.results.failure? || Lucid.wants_to_quit
         @kernel.exit(failure ? 1 : 0)

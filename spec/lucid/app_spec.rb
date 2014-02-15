@@ -31,7 +31,7 @@ module Lucid
 
           it 'uses that runtime for running and reporting results' do
             results = double('results', :failure? => true)
-            runtime.should_receive(:run)
+            runtime.should_receive(:execute)
             runtime.stub(:results).and_return(results)
             kernel.should_receive(:exit).with(1)
             do_start
@@ -46,7 +46,7 @@ module Lucid
           it 'should register as a failure' do
             results = double('results', :failure? => false)
             runtime = ContextLoader.any_instance
-            runtime.stub(:run)
+            runtime.stub(:excute)
             runtime.stub(:results).and_return(results)
 
             Lucid.wants_to_quit = true

@@ -36,14 +36,14 @@ module Lucid
       @orchestrator.load_code_language(language)
     end
 
-    def run
+    def execute
       load_execution_context
       fire_after_configuration_hook
 
-      tdl_walker = @configuration.establish_tdl_walker(self)
-      self.visitor = tdl_walker
+      ast_walker = @configuration.establish_ast_walker(self)
+      self.visitor = ast_walker
 
-      specs.accept(tdl_walker)
+      load_spec_context.accept(ast_walker)
     end
 
     def specs_paths
@@ -171,19 +171,21 @@ module Lucid
     # already handled. A SpecsLoader instance is created and this is what
     # makes sure that a spec file can be turned into a code construct
     # (a SpecFile instance) which in turn can be broken down into an AST.
-    def specs
-      @loader ||= ContextLoader::SpecLoader.new(
+    #
+    # @return [Object] Instance of Lucid::AST::Spec
+    def load_spec_context
+      @loader ||= Lucid::ContextLoader::SpecLoader.new(
         @configuration.spec_files,
         @configuration.filters,
         @configuration.tag_expression)
-      @loader.specs
+      @loader.load_specs
     end
 
-    # Loading the execution context means getting all of the loadable files
-    # in the spec repository. Loadable files means any code language type
-    # files. These files are sent to an orchestrator instance that will be
-    # responsible for loading them. The loading of these files provides the
-    # execution context for Lucid as it runs executable specs.
+    # Determines what files should be included as part of the execution
+    # context for Lucid as it runs executable specs. The "library" refers
+    # to code that will be common to all specs while "definition" refers
+    # to page/activity definitions as well as test definitions, which are
+    # usually referred to as steps.
     def load_execution_context
       files = @configuration.library_context + @configuration.definition_context
       log.info("Load Execution Context: #{files}")
