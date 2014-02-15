@@ -31,7 +31,8 @@ module Lucid
           start = Time.now
 
           self.each do |feature|
-            log.debug(feature.inspect)
+            log.debug('Feature AST:')
+            log.debug(feature)
             feature.accept(visitor)
           end
 

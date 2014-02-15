@@ -34,7 +34,8 @@ module Lucid
           ContextLoader.new(load_context)
         end
 
-        log.debug("Context Loader: #{context_loader.inspect}")
+        log.debug('Context Loader')
+        log.debug(context_loader)
 
         context_loader.execute
         context_loader.write_testdefs_json
@@ -59,7 +60,8 @@ module Lucid
         @context = Context.new(@out, @err)
         @context.parse_options(@args)
         Lucid.logger = @context.log
-        log.debug("Context: #{@context.inspect}")
+        log.debug('Context:')
+        log.debug(@context)
         @context
       end
 

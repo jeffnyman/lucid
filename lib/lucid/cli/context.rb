@@ -22,7 +22,8 @@ module Lucid
       def parse_options(args)
         @args = args
         @options.parse(args)
-        log.debug("Options: #{@options.inspect}")
+        log.debug('Options:')
+        log.debug(@options)
 
         set_formatter
         raise('You cannot use both --strict and --wip tags.') if strict? && wip?
