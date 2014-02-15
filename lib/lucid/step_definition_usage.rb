@@ -1,6 +1,6 @@
 module Lucid
   # Only used for keeping track of available and invoked step definitions.
-  class StepDefinitionLight
+  class StepDefinitionUsage
     attr_reader :regexp_source, :file_colon_line
 
     def initialize(regexp_source, file_colon_line)
