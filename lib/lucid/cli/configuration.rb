@@ -81,6 +81,7 @@ module Lucid
         end
       end
 
+      # @return [Array] list of non-spec, executable files from all required locations
       def spec_requires
         requires = @options[:require].empty? ? require_dirs : @options[:require]
 
@@ -94,7 +95,7 @@ module Lucid
 
         files.reject! {|f| !File.file?(f)}
 
-        spec_types = spec_type.each do |type|
+        spec_type.each do |type|
           files.reject! {|f| File.extname(f) == ".#{type}" }
         end
 
@@ -103,25 +104,45 @@ module Lucid
         files.sort
       end
 
+      # Returns all definition files that exist in the default or provided
+      # execution path.
+      #
+      # @return [Array] executable files outside of the library path
       # @see Lucid::ContextLoader.load_execution_context
       def definition_context
-        spec_requires.reject { |f| f=~ %r{#{library_path}} }
+        definition_files = spec_requires.reject { |f| f =~ %r{#{library_path}} }
+        log.info("Definition Files:\n#{definition_files}")
+
+        non_test_definitions = spec_requires.reject { |f| f =~ %r{#{steps_path}|#{library_path}} }
+        log.info("Non-Test Definition Files:\n#{non_test_definitions}")
+
+        @options[:dry_run] ? definition_files - non_test_definitions : definition_files
       end
 
+      # Returns all library files that exist in the default or provided
+      # library path. During a dry run, the driver file will not be
+      # returned as part of the executing context.
+      #
+      # @return [Array] valid executable files in the library path
       # @see Lucid::ContextLoader.load_execution_context
       def library_context
         library_files = spec_requires.select { |f| f =~ %r{#{library_path}} }
-        driver = library_files.select {|f| f =~ %r{#{driver_file}} }
+        log.info("Library Files:\n#{library_files}")
 
-        log.info("Driver File Found: #{driver}")
+        driver = library_files.select {|f| f =~ %r{#{driver_file}} }
+        log.info("Driver File:\n#{driver}")
 
         non_driver_files = library_files - driver
 
         @options[:dry_run] ? non_driver_files : driver + non_driver_files
       end
 
-      # @see Lucid::Runtime.specs
-      def spec_files
+      # Returns all spec files that exist in the default or provided spec
+      # repository.
+      #
+      # @return [Array] spec files from the repo
+      # @see Lucid::RepoRunner.load_spec_context
+      def spec_context
         files = specs_path(spec_source).map do |path|
           path = path.gsub(/\\/, '/')
           path = path.chomp('/')
@@ -135,7 +156,7 @@ module Lucid
 
             files_to_sort
           elsif path[0..0] == '@' and # @listfile.txt
-              File.file?(path[1..-1]) # listfile.txt is a file
+            File.file?(path[1..-1]) # listfile.txt is a file
             IO.read(path[1..-1]).split
           else
             path
@@ -159,11 +180,19 @@ module Lucid
       end
 
       def library_path
-        @options[:library_path].empty? ? 'common' : @options[:library_path]
+        @options[:library_path]
       end
 
       def driver_file
-        @options[:driver_file].empty? ? 'driver' : @options[:driver_file]
+        @options[:driver_file]
+      end
+
+      def steps_path
+        @options[:steps_path]
+      end
+
+      def definitions_path
+        @options[:definitions_path]
       end
 
       def log
@@ -234,7 +263,7 @@ module Lucid
       end
 
       def require_dirs
-        spec_location + Dir["#{library_path}", 'pages', 'steps']
+        spec_location + Dir["#{library_path}", "#{definitions_path}", "#{steps_path}"]
       end
 
     end

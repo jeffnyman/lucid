@@ -175,7 +175,7 @@ module Lucid
     # @return [Object] Instance of Lucid::AST::Spec
     def load_spec_context
       @loader ||= Lucid::ContextLoader::SpecLoader.new(
-        @configuration.spec_files,
+        @configuration.spec_context,
         @configuration.filters,
         @configuration.tag_expression)
       @loader.load_specs

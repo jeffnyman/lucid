@@ -94,6 +94,14 @@ module Lucid
             @options[:library_path] = path
           end
 
+          opts.on('--definition-path PATH', 'Location of spec project definition files.') do |path|
+            @options[:definitions_path] = path
+          end
+
+          opts.on('--steps-path PATH', 'Location of spec project test step files.') do |path|
+            @options[:steps_path] = path
+          end
+
           opts.on('--spec-type TYPE', 'The file type (extension) for Lucid specifications.') do |type|
             @options[:spec_types] << type
           end
@@ -484,8 +492,10 @@ module Lucid
           :env_vars         => {},
           :diff_enabled     => true,
           :spec_types       => %w(feature spec story),
-          :library_path     => '',
-          :driver_file      => ''
+          :library_path     => 'common',
+          :definitions_path => 'pages',
+          :steps_path       => 'steps',
+          :driver_file      => 'driver'
         }
       end
     end
