@@ -128,12 +128,13 @@ module Lucid
       # @see Lucid::ContextLoader.load_execution_context
       def library_context
         library_files = spec_requires.select { |f| f =~ %r{#{library_path}} }
-        log.info("Library Files:\n#{library_files}")
+        log.info("(Library Context) Library Files:\n#{library_files}")
 
         driver = library_files.select {|f| f =~ %r{#{driver_file}} }
-        log.info("Driver File:\n#{driver}")
+        log.info("(Library Context) Driver File:\n#{driver}")
 
         non_driver_files = library_files - driver
+        log.info("(Library Context) Non-Driver Files:\n#{non_driver_files}")
 
         @options[:dry_run] ? non_driver_files : driver + non_driver_files
       end

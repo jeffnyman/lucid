@@ -189,7 +189,6 @@ module Lucid
     # usually referred to as steps.
     def load_execution_context
       files = @context.library_context + @context.definition_context
-      log.info("Load Execution Context: #{files}")
       @orchestrator.load_files(files)
     end
 
