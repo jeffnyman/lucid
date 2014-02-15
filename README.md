@@ -35,15 +35,11 @@ Or install it yourself as:
 Using Lucid
 -----------
 
-Much more detail on how to use Lucid will be coming soon. One way to get started however is to use the Lucid project generator. If you wanted to create a project directory called 'tutorial' for example, you could do this:
-
-    $ lucid-gen project tutorial
+Right now the best way to learn about Lucid is to check out some of my [blog posts related to Lucid](http://testerstories.com/category/lucid/). They will take you through various aspects of using the framework.
 
 In order to to check what options are available to you from the command line, do this:
 
     $ lucid --help
-
-You should also check out some of my [blog posts related to Lucid](http://testerstories.com/category/lucid/). They will take you through various aspects of using the framework.
 
 
 Contributing
