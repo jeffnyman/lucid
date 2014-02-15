@@ -1,6 +1,6 @@
 require 'lucid/factory'
 require 'lucid/ast/multiline_argument'
-require 'lucid/runtime/facade'
+require 'lucid/facade'
 
 module Lucid
 

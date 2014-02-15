@@ -6,10 +6,10 @@ require 'lucid/configuration'
 require 'lucid/load_path'
 require 'lucid/interface_methods'
 require 'lucid/formatter/duration'
-require 'lucid/runtime/interface_io'
+require 'lucid/interface_io'
 require 'lucid/spec_loader'
-require 'lucid/runtime/results'
-require 'lucid/runtime/orchestrator'
+require 'lucid/results'
+require 'lucid/orchestrator'
 
 module Lucid
   class Runtime
