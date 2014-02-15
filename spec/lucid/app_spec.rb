@@ -23,7 +23,7 @@ module Lucid
 
           it 'configures the runtime' do
             configuration = double('Configuration').as_null_object
-            Configuration.stub(:new => configuration)
+            Context.stub(:new => configuration)
             runtime.should_receive(:configure).with(configuration)
             kernel.should_receive(:exit).with(1)
             do_start

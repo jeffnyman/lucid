@@ -4,7 +4,7 @@ module Lucid
       attr_accessor :configuration
       attr_reader   :runtime
 
-      def initialize(runtime, listeners = [], configuration = Lucid::Configuration.default)
+      def initialize(runtime, listeners = [], configuration = Lucid::Context.default)
         @runtime, @listeners, @configuration = runtime, listeners, configuration
       end
 

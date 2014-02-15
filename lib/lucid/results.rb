@@ -9,7 +9,7 @@ module Lucid
       end
 
       def configure(new_configuration)
-        @configuration = Configuration.parse(new_configuration)
+        @configuration = Context.parse(new_configuration)
       end
 
       def step_visited(step)

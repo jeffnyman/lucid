@@ -2,7 +2,7 @@ require 'fileutils'
 require 'multi_json'
 require 'gherkin/rubify'
 require 'gherkin/i18n'
-require 'lucid/configuration'
+require 'lucid/context'
 require 'lucid/load_path'
 require 'lucid/interface'
 require 'lucid/formatter/duration'
@@ -18,16 +18,16 @@ module Lucid
     include Formatter::Duration
     include ContextLoader::InterfaceIO
 
-    def initialize(configuration = Configuration.default)
+    def initialize(configuration = Context.default)
       @current_scenario = nil
-      @configuration = Configuration.parse(configuration)
+      @configuration = Context.parse(configuration)
       @orchestrator = Orchestrator.new(self, @configuration)
       @results = Results.new(@configuration)
     end
 
     # Used to take an existing runtime and change its configuration.
     def configure(new_configuration)
-      @configuration = Configuration.parse(new_configuration)
+      @configuration = Context.parse(new_configuration)
       @orchestrator.configure(@configuration)
       @results.configure(@configuration)
     end

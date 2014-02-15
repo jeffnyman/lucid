@@ -1,6 +1,5 @@
 module Lucid
-  # The base class for configuring settings for a Lucid run.
-  class Configuration
+  class Context
     def self.default
       new
     end
@@ -46,7 +45,7 @@ module Lucid
 
     def default_options
       {
-        :autoload_code_paths => ['common', 'steps', 'pages']
+        :autoload_code_paths => %w(common steps pages)
       }
     end
   end

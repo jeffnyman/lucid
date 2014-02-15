@@ -28,7 +28,7 @@ module Lucid
       include Factory
 
       def initialize(user_interface, configuration={})
-        @configuration = Configuration.parse(configuration)
+        @configuration = Context.parse(configuration)
         @runtime_facade = ContextLoader::Facade.new(self, user_interface)
         @unsupported_languages = []
         @supported_languages = []
@@ -36,7 +36,7 @@ module Lucid
       end
 
       def configure(new_configuration)
-        @configuration = Configuration.parse(new_configuration)
+        @configuration = Context.parse(new_configuration)
       end
 
       # Invokes a series of steps +steps_text+. Example:

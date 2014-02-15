@@ -3,7 +3,7 @@ require 'optparse'
 require 'lucid'
 require 'logger'
 require 'lucid/spec_file'
-require 'lucid/cli/configuration'
+require 'lucid/cli/context'
 
 module Lucid
   module CLI
@@ -56,7 +56,7 @@ module Lucid
       def configuration
         return @configuration if @configuration
 
-        @configuration = Configuration.new(@out, @err)
+        @configuration = Context.new(@out, @err)
         @configuration.parse_options(@args)
         Lucid.logger = @configuration.log
         log.debug("Configuration: #{@configuration.inspect}")

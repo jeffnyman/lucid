@@ -8,7 +8,7 @@ module Lucid
     class ProfilesNotDefinedError < YmlLoadError; end
     class ProfileNotFound < StandardError; end
 
-    class Configuration
+    class Context
       include Factory
 
       attr_reader :out_stream

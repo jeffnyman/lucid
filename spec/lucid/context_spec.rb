@@ -1,9 +1,9 @@
 require 'spec_helper'
 
 module Lucid
-  describe Configuration do
+  describe Context do
     describe '.default' do
-      subject { Configuration.default }
+      subject { Context.default }
 
       it 'has an autoload_code_paths containing default Lucid folders' do
         subject.autoload_code_paths.should include 'common'
@@ -14,7 +14,7 @@ module Lucid
 
     describe 'supports custom user options' do
       let(:user_options) { { :autoload_code_paths => ['library/common'] } }
-      subject { Configuration.new(user_options) }
+      subject { Context.new(user_options) }
 
       it 'should allow the defaults to be overridden' do
         subject.autoload_code_paths.should == ['library/common']
@@ -23,7 +23,7 @@ module Lucid
   end
 
   module CLI
-    describe Configuration do
+    describe Context do
 
       attr_reader :out, :error
 
@@ -32,7 +32,7 @@ module Lucid
       end
 
       def config
-        @config ||= Configuration.new(@out = StringIO.new, @error = StringIO.new).extend(ExposeOptions)
+        @config ||= Context.new(@out = StringIO.new, @error = StringIO.new).extend(ExposeOptions)
       end
 
       def with_these_files(*files)
@@ -195,7 +195,7 @@ module Lucid
 
       it 'should accept --no-color option' do
         Lucid::Term::ANSIColor.should_receive(:coloring=).with(false)
-        config = Configuration.new(StringIO.new)
+        config = Context.new(StringIO.new)
         config.parse_options(['--no-color'])
       end
 
