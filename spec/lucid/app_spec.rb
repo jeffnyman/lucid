@@ -77,18 +77,6 @@ module Lucid
         end
       end
 
-      describe 'handling exceptions' do
-        [ProfilesNotDefinedError, YmlLoadError, ProfileNotFound].each do |exception_class|
-          it "rescues #{exception_class}, prints the message to the error stream" do
-            Configuration.stub(:new).and_return(configuration = double('configuration'))
-            configuration.stub(:parse).and_raise(exception_class.new('error message'))
-
-            subject.start!
-            stderr.string.should == "error message\n"
-          end
-        end
-      end
-
     end
   end
 end
