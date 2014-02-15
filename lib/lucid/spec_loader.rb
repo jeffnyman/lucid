@@ -2,7 +2,7 @@ require 'lucid/errors'
 
 module Lucid
   class Runtime
-    class SpecsLoader
+    class SpecLoader
       include Formatter::Duration
 
       def initialize(spec_files, filters, tag_expression)
@@ -15,7 +15,7 @@ module Lucid
         @specs
       end
 
-    private
+      private
 
       # The specs loader will call upon load to load up all specs that were
       # found in the spec repository. During this process, a Specs instance

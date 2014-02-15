@@ -7,7 +7,7 @@ require 'lucid/load_path'
 require 'lucid/interface_methods'
 require 'lucid/formatter/duration'
 require 'lucid/runtime/interface_io'
-require 'lucid/runtime/specs_loader'
+require 'lucid/spec_loader'
 require 'lucid/runtime/results'
 require 'lucid/runtime/orchestrator'
 
@@ -19,10 +19,6 @@ module Lucid
     include Runtime::InterfaceIO
 
     def initialize(configuration = Configuration.default)
-      if defined?(Test::Unit::Runner)
-        Test::Unit::Runner.module_eval("@@stop_auto_run = true")
-      end
-
       @current_scenario = nil
       @configuration = Configuration.parse(configuration)
       @orchestrator = Orchestrator.new(self, @configuration)
@@ -54,7 +50,7 @@ module Lucid
       @configuration.spec_source
     end
 
-    def step_visited(step) #:nodoc:
+    def step_visited(step)
       @results.step_visited(step)
     end
 
@@ -66,7 +62,7 @@ module Lucid
       @results.steps(status)
     end
 
-    def step_match(step_name, name_to_report=nil) #:nodoc:
+    def step_match(step_name, name_to_report=nil)
       @orchestrator.step_match(step_name, name_to_report)
     end
 
@@ -86,7 +82,7 @@ module Lucid
       end
     end
 
-    def around(scenario, skip_hooks=false, &block) #:nodoc:
+    def around(scenario, skip_hooks=false, &block)
       if skip_hooks
         yield
         return
@@ -95,20 +91,20 @@ module Lucid
       @orchestrator.around(scenario, block)
     end
 
-    def before_and_after(scenario, skip_hooks=false) #:nodoc:
+    def before_and_after(scenario, skip_hooks=false)
       before(scenario) unless skip_hooks
       yield scenario
       after(scenario) unless skip_hooks
       @results.scenario_visited(scenario)
     end
 
-    def before(scenario) #:nodoc:
+    def before(scenario)
       return if @configuration.dry_run? || @current_scenario
       @current_scenario = scenario
       @orchestrator.fire_hook(:before, scenario)
     end
 
-    def after(scenario) #:nodoc:
+    def after(scenario)
       @current_scenario = nil
       return if @configuration.dry_run?
       @orchestrator.fire_hook(:after, scenario)
@@ -162,10 +158,10 @@ module Lucid
 
     # Returns AST::DocString for +string_without_triple_quotes+.
     def doc_string(string_without_triple_quotes, content_type='', line_offset=0)
-      AST::DocString.new(string_without_triple_quotes,content_type)
+      Lucid::AST::DocString.new(string_without_triple_quotes,content_type)
     end
 
-  private
+    private
 
     def fire_after_configuration_hook #:nodoc
       @orchestrator.fire_hook(:after_configuration, @configuration)
@@ -177,7 +173,7 @@ module Lucid
     # makes sure that a spec file can be turned into a code construct
     # (a SpecFile instance) which in turn can be broken down into an AST.
     def specs
-      @loader ||= Runtime::SpecsLoader.new(
+      @loader ||= Runtime::SpecLoader.new(
         @configuration.spec_files,
         @configuration.filters,
         @configuration.tag_expression)
