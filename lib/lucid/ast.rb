@@ -1,5 +1,5 @@
 require 'lucid/ast/comment'
-require 'lucid/ast/specs'
+require 'lucid/ast/spec'
 require 'lucid/ast/feature'
 require 'lucid/ast/background'
 require 'lucid/ast/scenario'

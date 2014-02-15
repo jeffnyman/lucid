@@ -2,8 +2,8 @@ require 'spec_helper'
 
 module Lucid
   module AST
-    describe Specs do
-      let(:specs) { Specs.new }
+    describe Spec do
+      let(:specs) { Spec.new }
 
       def parse_feature(gherkin)
         path    = 'specs/test.spec'
