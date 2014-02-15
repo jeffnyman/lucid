@@ -123,8 +123,8 @@ module Lucid
       # @see Lucid::Runtime.specs
       def spec_files
         files = specs_path(spec_source).map do |path|
-          path = path.gsub(/\\/, '/')  # convert \ to /
-          path = path.chomp('/')       # removing trailing /
+          path = path.gsub(/\\/, '/')
+          path = path.chomp('/')
 
           files_to_sort = []
 
@@ -155,8 +155,7 @@ module Lucid
       end
 
       def spec_type
-        @options[:spec_type]
-
+        @options[:spec_types]
       end
 
       def library_path

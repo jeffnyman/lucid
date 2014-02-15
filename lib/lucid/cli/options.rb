@@ -1,3 +1,4 @@
+require 'English'
 require 'lucid/cli/profile'
 require 'lucid/formatter/ansicolor'
 require 'lucid/interface_rb/rb_language'
@@ -83,7 +84,9 @@ module Lucid
         @args.extend(::OptionParser::Arguable)
 
         @args.options do |opts|
-          opts.banner = ['Lucid: Test Description Language Execution Engine',
+          opts.banner = ['Lucid Framework',
+                         'Test Description Language Specification and Execution Engine',
+                         '',
                          'Usage: lucid [options] [ [FILE|DIR|URL][:LINE[:LINE]*] ]+', '', ''
           ].join("\n")
 
@@ -92,8 +95,7 @@ module Lucid
           end
 
           opts.on('--spec-type TYPE', 'The file type (extension) for Lucid specifications.') do |type|
-            #@options[:spec_type] = type
-            @options[:spec_type] << type
+            @options[:spec_types] << type
           end
 
           opts.on('--driver-file FILE', 'The file for Lucid to connect to an execution library.') do |file|
@@ -305,24 +307,13 @@ module Lucid
             Kernel.exit(0)
           end
         end
-        #end.parse!
 
         begin
           @args.parse!
         rescue OptionParser::InvalidOption
-          if $!.to_s =~ /invalid option\:\s+((?:-)?-\S+)/
-            puts "You specified an invalid option: #{$1}"
-            puts 'Please run lucid --help to see the list of available options.'
-          end
-
+          invalid_option($ERROR_INFO)
         rescue OptionParser::MissingArgument
-          if $!.to_s =~ /missing argument\:\s+((?:-)?-\S+)/
-            puts "You specified an valid option (#{$1}), but with an invalid argument."
-            puts 'Make sure you are providing the expected argument for the option.'
-            puts 'Run lucid --help to see the list of available options.'
-          end
-
-          Kernel.exit(1)
+          missing_argument($ERROR_INFO)
         end
 
         if @quiet
@@ -335,9 +326,12 @@ module Lucid
 
         extract_environment_variables
 
-        # This line grabs whatever is left over on the command line. That
-        # would have to be the spec repo.
-        @options[:spec_source] = @args.dup
+        # The next statement is critical because it takes whatever is left
+        # from the command line when all the valid options are parsed. This
+        # would have to be the spec repository. The empty check is because
+        # even if no args are passed, an empty array will be passed to the
+        # spec_repos key, which overwrites the default option.
+        @options[:spec_source] = @args.dup #unless args.empty?
 
         establish_profile
 
@@ -353,12 +347,28 @@ module Lucid
         @options.values_at(:name_regexps, :tag_expressions).select{|v| !v.empty?}.first || []
       end
 
-    protected
+      protected
 
       attr_reader :options, :profiles, :expanded_args
       protected :options, :profiles, :expanded_args
 
-    private
+      private
+
+      def invalid_option(error)
+        if error.to_s =~ /invalid option:\s+((?:-)?-\S+)/
+          puts "You specified an #{$MATCH}\n\n"
+          puts 'Run lucid --help to see the list of available options.'
+        end
+        Kernel.exit(1)
+      end
+
+      def missing_argument(error)
+        if error.to_s =~ /(?:missing argument:\s+)((?:-)?-\S+)/
+          puts "Valid option with #{$MATCH}\n\n"
+          puts 'Run lucid --help to see the list of available options.'
+        end
+        Kernel.exit(1)
+      end
 
       def non_stdout_formats
         @options[:formats].select {|format, output| output != @out_stream }
@@ -435,7 +445,7 @@ module Lucid
         @options[:dry_run] |= other_options[:dry_run]
 
         @options[:library_path] += other_options[:library_path]
-        @options[:spec_type] += other_options[:spec_type]
+        @options[:spec_types] += other_options[:spec_types]
         @options[:driver_file] += other_options[:driver_file]
 
         @profiles += other_options.profiles
@@ -474,7 +484,7 @@ module Lucid
           :name_regexps     => [],
           :env_vars         => {},
           :diff_enabled     => true,
-          :spec_type        => %w(feature spec story),
+          :spec_types       => %w(feature spec story),
           :library_path     => '',
           :driver_file      => ''
         }
