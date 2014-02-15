@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 require 'lucid/ast'
-require 'lucid/core_ext/string'
+require 'lucid/lang_extend'
 require 'lucid/interface_rb/rb_language'
 
 module Lucid

@@ -1,10 +1,10 @@
-require 'lucid/core_ext/string'
+require 'lucid/lang_extend'
 require 'lucid/step_match'
 require 'lucid/ast/location'
 
 module Lucid
   module AST
-    class Step #:nodoc:
+    class Step
       include HasLocation
 
       attr_reader :keyword, :name, :language
@@ -15,7 +15,7 @@ module Lucid
 
       def initialize(language, location, keyword, name, multiline_arg=nil)
         @language, @location, @keyword, @name, @multiline_arg = language, location, keyword, name, multiline_arg
-        @language || raise("Language is required!")
+        @language || raise('Language is required.')
       end
 
       attr_reader :gherkin_statement

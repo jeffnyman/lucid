@@ -1,4 +1,4 @@
-require 'lucid/core_ext/instance_exec'
+require 'lucid/lang_extend'
 require 'lucid/interface_rb/rb_lucid'
 require 'lucid/interface_rb/rb_world'
 require 'lucid/interface_rb/rb_step_definition'
@@ -20,7 +20,6 @@ module Lucid
       end
     end
 
-    # Raised if there are 2 or more Domain blocks.
     class MultipleDomain < StandardError
       def initialize(first_proc, second_proc)
         message = "You can only pass a proc to #Domain once, but it's happening\n"
@@ -32,13 +31,10 @@ module Lucid
       end
     end
 
-    # This module is the Ruby implementation of the TDL API.
     class RbLanguage
       include Interface::InterfaceMethods
       attr_reader :current_domain, :step_definitions
 
-      # Get the expressions of various I18n translations of TDL keywords.
-      # In this case the TDL is based on Gherkin.
       Gherkin::I18n.code_keywords.each do |adverb|
         RbLucid.alias_adverb(adverb)
       end
