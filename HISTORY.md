@@ -1,6 +1,19 @@
 Change Log and History
 ======================
 
+Version 0.4.0 / 2013-02-15
+--------------------------
+
+A large purpose for this release of Lucid is to clean up the internals of the code base, in particular naming code structures in such a way that they are more reflective of what they actually do. This release is very much in the category of tech-debt reduction.
+
+* This version of Lucid removes the project generator (lucid-gen) that was originally part of it. That project has been separated off into its own project [LucidGen](https://github.com/jnyman/lucid-gen). This, at least partially, responds to the issue [External Project Generator Mechanism](https://github.com/jnyman/lucid/issues/14).
+
+* A slightly better logging mechanism is in place such that executing Lucid with `--debug` specified will now provide a much better output of objects, making it easier to determine the internal state of Lucid's operations. Included with this is debug output of the AST when a spec file is read.
+
+* A change has been put in place regarding how the `--dry-run` functionality works. Prior to this release, the driver file (by default, common/support/driver.rb) would not be included when you performed a dry-run against your repository. That's still in place but now Lucid will also exclude any page or activity definition files. This was found to be necessary because those files will often utilize elements that are required in the driver file.
+
+* It is now possible to specifically indicate, via the command line, the steps path (by default, steps) and the definitions page (by default, pages). The latter is meant to build in support for the concept of page objects.
+
 Version 0.3.3 / 2013-02-13
 --------------------------
 
@@ -17,12 +30,10 @@ Lucid already uses the concept of a Domain, which is similar to Cucumber's World
 
 The project generator for creating Fluent projects has been updated. The main change of note here is that the `lucid.yml` configuration file is no longer automatically generated. The reason for this is that Lucid operation requires no configuration at all if the conventions in place are what you want to use.
 
-
 Version 0.2.1 / 2013-10-21
 --------------------------
 
 This is a small patch release. The patch is in the project generator. The [Symbiont](https://github.com/jnyman/symbiont) test framework is being deprecated in favor of [Fluent](https://github.com/jnyman/fluent). The project generator has been updated accordingly.
-
 
 Version 0.2.0 / 2013-09-28
 --------------------------
@@ -30,7 +41,6 @@ Version 0.2.0 / 2013-09-28
 This release introduces a fairly major change, which is that of sequences. The idea is that you can define sequence phrases that are used to stand in for a set of steps. That set of steps is the sequence. This is essentially a macro-like functionality for Lucid. It's uncertain how long this functionality will exist since it potentially harbors some questionable design choices when it comes to an expressive TDL.
 
 This release also introduces a new formatter called "condensed." This formatter is used simply to display a much more limited set of information about the scenarios that are being executed. Specifically, all that gets returned are the scenario titles, essentially hiding all of the steps. Pass/fail information is still reported.
-
 
 Version 0.1.1 / 2013-06-04
 --------------------------
@@ -40,7 +50,6 @@ This patch release was needed to fix one issue and update a gem dependency.
 * The Symbiont project generator now no longer has any logic in the driver.rb file, which is necessary in order to allow the --dry-run option to work without error.
 
 * I am trusting multi_json again by including just it and not forcing Ruby's built-in json gem. This is based on the issue [Incorrectly Reporting Old or Stdlib Json?](https://github.com/intridea/multi_json/issues/114) that I originally raised and finally had a response with the [Remove stdlib warning since it's doing more harm than good](https://github.com/intridea/multi_json/pull/122) update to multi_json.
-
 
 Version 0.1.0 / 2013-06-02
 --------------------------
@@ -59,7 +68,6 @@ This version is being released to introduce a few more behind-the-scenes logic r
 
 As a note, this is the final "patch" version of Lucid prior to going to a semantic versioning approach. Lucid will next enter the initial development phase.
 
-
 Version 0.0.8 / 2013-05-20
 --------------------------
 
@@ -67,7 +75,6 @@ This version is being released to bring in two specific bug fixes.
 
 * Certain profile options were not being recognized. ([Spec Type Specified in Profile Not Recognized](https://github.com/jnyman/lucid/issues/10).)
 * The strict mode now works more as intended. ([Using "strict" Does Not Return Errors](https://github.com/jnyman/lucid/issues/8).)
-
 
 Version 0.0.7 / 2013-05-17
 --------------------------
@@ -81,7 +88,6 @@ Two specific changes worth calling out:
 
 The driver file in Cucumber is env.rb. In Lucid this defaults to driver.rb. Now, however, you can override that default. Regarding the library path, this is equivalent to what Cucumber refers to as the "support" directory. The main reason for these changes is that Lucid is trying to be a little more configurable than Cucumber.
 
-
 Version 0.0.6 / 2013-05-09
 --------------------------
 
@@ -91,7 +97,6 @@ This version attempts to fix a few issues to improve general operation.
 * Invalid command line options are now handled better. ([Invalid Command Line Options Needs Better Handling](https://github.com/jnyman/lucid/issues/1).)
 * Lucid now handles missing directories without raising exceptions. ([Extraneous "No File or Directory" Messages](https://github.com/jnyman/lucid/issues/3).)
 * The default generator project recognizes a missing Symbiont gem. ([Stack Trace When Symbiont Not Installed](https://github.com/jnyman/lucid/issues/5).)
-
 
 Version 0.0.5 / 2013-05-04
 --------------------------
@@ -106,7 +111,6 @@ This is the first version of Lucid that attempts to be a clone of BDD tools like
 Lucid is aiming to be more flexible than other tools, so certain elements -- like the extension for files and the repository directory -- are configurable. As time goes on, Lucid will diverge in some ways from other BDD tools. In other ways, however, it will remain consistent with them. For example, Lucid does adhere to the Gherkin API just as Cucumber and SpecFlow do. Lucid does not, however, currently fully support the wire protocol as Cucumber does.
 
 This is very much an alpha release to determine how feasible Lucid is as a tool.
-
 
 Versions 0.0.1 to 0.0.4
 -----------------------
