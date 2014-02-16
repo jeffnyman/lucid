@@ -4,7 +4,7 @@ module Lucid
   module InterfaceRb
     describe RbStepDefinition do
       let(:interface) { double('interface') }
-      let(:orchestrator) { Lucid::Runtime::Orchestrator.new(interface) }
+      let(:orchestrator) { Lucid::ContextLoader::Orchestrator.new(interface) }
       let(:rb) { orchestrator.load_code_language('rb') }
       let(:dsl) do
         rb
@@ -19,7 +19,7 @@ module Lucid
       def run_step(text)
         orchestrator.step_match(text).invoke(nil)
       end
-      
+
       it 'should allow calling of other steps' do
         dsl.Given /Outside/ do
           step 'Inside'
@@ -121,7 +121,7 @@ module Lucid
 
         lambda { run_step 'Lucid tests are good' }.should raise_error(RuntimeError, /can't modify frozen String/i)
       end
-      
+
     end
   end
 end

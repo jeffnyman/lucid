@@ -1,4 +1,4 @@
-require 'lucid/core_ext/instance_exec'
+require 'lucid/lang_extend'
 require 'lucid/interface_rb/rb_lucid'
 require 'lucid/interface_rb/rb_world'
 require 'lucid/interface_rb/rb_step_definition'
@@ -9,42 +9,32 @@ require 'lucid/interface_rb/matcher'
 begin
   require 'rspec/expectations'
 rescue LoadError
-  begin
-    require 'spec/expectations'
-    require 'spec/runner/differs/default'
-    require 'ostruct'
-  rescue LoadError
-    require 'test/unit/assertions'
-  end
+  require 'test/unit/assertions'
 end
 
 module Lucid
   module InterfaceRb
     class NilDomain < StandardError
       def initialize
-        super("Domain procs should never return nil")
+        super('Domain procs should never return nil.')
       end
     end
 
-    # Raised if there are 2 or more Domain blocks.
     class MultipleDomain < StandardError
       def initialize(first_proc, second_proc)
         message = "You can only pass a proc to #Domain once, but it's happening\n"
         message << "in two places:\n\n"
         message << first_proc.backtrace_line('Domain') << "\n"
         message << second_proc.backtrace_line('Domain') << "\n\n"
-        message << "Use Ruby modules instead to extend your worlds. See the Lucid::InterfaceRb::RbLucid#Domain RDoc\n"
+        message << "Use Ruby modules instead to extend your worlds.\n"
         super(message)
       end
     end
 
-    # This module is the Ruby implementation of the TDL API.
     class RbLanguage
       include Interface::InterfaceMethods
       attr_reader :current_domain, :step_definitions
 
-      # Get the expressions of various I18n translations of TDL keywords.
-      # In this case the TDL is based on Gherkin.
       Gherkin::I18n.code_keywords.each do |adverb|
         RbLucid.alias_adverb(adverb)
       end
@@ -61,14 +51,7 @@ module Lucid
         begin
           ::RSpec::Matchers
         rescue NameError
-          # RSpec >=1.2.4
-          begin
-            options = OpenStruct.new(:diff_format => :unified, :context_lines => 3)
-            Spec::Expectations.differ = Spec::Expectations::Differs::Default.new(options)
-            ::Spec::Matchers
-          rescue NameError
-            ::Test::Unit::Assertions
-          end
+          ::Test::Unit::Assertions
         end
       end
 
@@ -162,7 +145,7 @@ module Lucid
             raise NilDomain.new
           rescue NilDomain => e
             e.backtrace.clear
-            e.backtrace.push(proc.backtrace_line("Domain"))
+            e.backtrace.push(proc.backtrace_line('Domain'))
             raise e
           end
         else

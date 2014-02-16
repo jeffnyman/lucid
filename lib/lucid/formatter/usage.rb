@@ -1,12 +1,12 @@
 require 'lucid/formatter/progress'
-require 'lucid/step_definition_light'
+require 'lucid/step_definition_usage'
 
 module Lucid
   module Formatter
     class Usage < Progress
       include Console
 
-      class StepDefKey < StepDefinitionLight
+      class StepDefKey < StepDefinitionUsage
         attr_accessor :mean_duration, :status
       end
 

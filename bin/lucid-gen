@@ -1,4 +1,0 @@
-#!/usr/bin/env ruby
-
-require 'lucid/generator'
-Lucid::Generator.start

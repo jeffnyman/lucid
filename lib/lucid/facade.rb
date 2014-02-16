@@ -1,7 +1,7 @@
 require 'forwardable'
 
 module Lucid
-  class Runtime
+  class ContextLoader
     # This is what a programming language will consider to be a runtime.
     #
     # It's a thin class that directs the specific methods needed by the
@@ -43,15 +43,14 @@ module Lucid
       #
       def table(text_or_table, file=nil, line_offset=0)
         if Array === text_or_table
-          AST::Table.new(text_or_table)
+          Lucid::AST::Table.new(text_or_table)
         else
-          AST::Table.parse(text_or_table, file, line_offset)
+          Lucid::AST::Table.parse(text_or_table, file, line_offset)
         end
       end
 
-      # Returns AST::DocString
-      def doc_string(string_without_triple_quotes, content_type='', line_offset=0)
-        AST::DocString.new(string_without_triple_quotes,content_type)
+      def doc_string(non_docstring, content_type='', line_offset=0)
+        Lucid::AST::DocString.new(non_docstring, content_type)
       end
     end
   end

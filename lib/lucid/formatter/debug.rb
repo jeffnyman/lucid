@@ -1,5 +1,5 @@
 require 'lucid/formatter/progress'
-require 'lucid/step_definition_light'
+require 'lucid/step_definition_usage'
 
 module Lucid
   module Formatter

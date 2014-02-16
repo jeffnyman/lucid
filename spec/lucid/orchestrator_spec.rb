@@ -1,10 +1,10 @@
 require 'spec_helper'
 
 module Lucid
-  describe Runtime::Orchestrator do
+  describe ContextLoader::Orchestrator do
     let(:options) { {} }
     let(:interface) { double('interface') }
-    subject { Runtime::Orchestrator.new(interface, options) }
+    subject { ContextLoader::Orchestrator.new(interface, options) }
 
     let(:dsl) do
       @rb = subject.load_code_language('rb')
@@ -27,7 +27,7 @@ module Lucid
       step_match.should equal(second_step_match)
     end
 
-    
+
     describe 'resolving test definition matches' do
       it 'should raise Undefined error when no test definitions match' do
         lambda do
@@ -63,7 +63,7 @@ spec/lucid/orchestrator_spec.rb:\\d+:in `/Simple (.*)/'
 }
           dsl.Given(/Simple (.*)/) {|phrase|}
           dsl.Given(/Simple (.*)/) {|phrase|}
-          
+
           lambda do
             subject.step_match('Simple lucid test')
           end.should raise_error(Ambiguous, /#{expected_error}/)
@@ -108,9 +108,9 @@ spec/lucid/orchestrator_spec.rb:\\d+:in `/Simple (.*)/'
             subject.step_match('Simple lucid test')
           end.should_not raise_error
         end
-        
+
       end
-      
+
     end
 
   end

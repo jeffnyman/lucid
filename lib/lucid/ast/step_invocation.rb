@@ -5,7 +5,7 @@ require 'gherkin/rubify'
 
 module Lucid
   module AST
-    class StepInvocation #:nodoc:
+    class StepInvocation
       attr_writer :step_collection, :background
       attr_reader :name, :matched_cells, :status, :reported_exception
       attr_accessor :exception
@@ -33,58 +33,58 @@ module Lucid
 
       def accept(visitor)
         visitor.visit_step(self) do
-          invoke(visitor.runtime, visitor.configuration)
+          invoke(visitor.runtime, visitor.context)
           step_result.accept(visitor)
         end
       end
 
-      def invoke(runtime, configuration)
-        find_step_match!(runtime, configuration)
-        unless @skip_invoke || configuration.dry_run? || @exception || @step_collection.exception
+      def invoke(runtime, context)
+        find_step_match!(runtime, context)
+        unless @skip_invoke || context.dry_run? || @exception || @step_collection.exception
           @skip_invoke = true
           begin
             @step_match.invoke(@multiline_arg)
             runtime.after_step
             status!(:passed)
           rescue Pending => e
-            failed(configuration, e, false)
+            failed(context, e, false)
             status!(:pending)
           rescue Undefined => e
-            failed(configuration, e, false)
+            failed(context, e, false)
             status!(:undefined)
           rescue Lucid::AST::Table::Different => e
             @different_table = e.table
-            failed(configuration, e, false)
+            failed(context, e, false)
             status!(:failed)
           rescue Exception => e
-            failed(configuration, e, false)
+            failed(context, e, false)
             status!(:failed)
           end
         end
       end
 
-      def find_step_match!(runtime, configuration)
+      def find_step_match!(runtime, context)
         return if @step_match
         begin
           @step_match = runtime.step_match(@name)
         rescue Undefined => e
-          failed(configuration, e, true)
+          failed(context, e, true)
           status!(:undefined)
           @step_match = NoStepMatch.new(@step, @name)
         rescue Ambiguous => e
-          failed(configuration, e, false)
+          failed(context, e, false)
           status!(:failed)
           @step_match = NoStepMatch.new(@step, @name)
         end
         runtime.step_visited(self)
       end
 
-      def failed(configuration, e, clear_backtrace)
+      def failed(context, e, clear_backtrace)
         e.set_backtrace([]) if e.backtrace.nil? || clear_backtrace
         e.backtrace << @step.backtrace_line unless @step.backtrace_line.nil?
         e = filter_backtrace(e)
         @exception = e
-        if(configuration.strict? || !(Undefined === e) || e.nested?)
+        if(context.strict? || !(Undefined === e) || e.nested?)
           @reported_exception = e
         else
           @reported_exception = nil
@@ -92,7 +92,7 @@ module Lucid
       end
 
       BACKTRACE_FILTER_PATTERNS = [/vendor\/rails|lib\/lucid|bin\/lucid:|lib\/rspec|gems\/|minitest|test\/unit|\/\.gem\//]
-      
+
       if(Lucid::JRUBY)
         BACKTRACE_FILTER_PATTERNS << /org\/jruby/
       end
@@ -101,7 +101,7 @@ module Lucid
 
       def filter_backtrace(e)
         return e if Lucid.use_full_backtrace
-        e.backtrace.each{|line| line.gsub!(PWD_PATTERN, "./")}
+        e.backtrace.each{|line| line.gsub!(PWD_PATTERN, './')}
 
         filtered = (e.backtrace || []).reject do |line|
           BACKTRACE_FILTER_PATTERNS.detect { |p| line =~ p }

@@ -1,11 +1,11 @@
 require 'spec_helper'
 
 require 'lucid/ast'
-require 'lucid/core_ext/string'
+require 'lucid/lang_extend'
 
 module Lucid
   module AST
-    
+
     describe Step do
       let(:language) { double }
 
@@ -25,7 +25,7 @@ module Lucid
 
       it 'should use empty string for the replacement of arguments in name when replace value is nil' do
         step = Step.new(language, 1, 'Given', 'a <status> test')
-        
+
         invocation_table = Table.new([
             %w(status),
             [nil]
@@ -66,7 +66,7 @@ module Lucid
 
         step_invocation.instance_variable_get('@multiline_arg').to_step_definition_arg.should == 'status_passing type_regression'
       end
-      
+
     end
   end
 end

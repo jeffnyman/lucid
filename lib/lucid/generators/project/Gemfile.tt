@@ -1,6 +1,0 @@
-source 'https://rubygems.org'
-
-gem 'lucid'
-<% if driver.downcase == 'fluent' -%>gem 'fluent'<% end -%>
-gem 'syntax'
-gem 'rspec'

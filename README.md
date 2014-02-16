@@ -13,7 +13,7 @@ Description
 
 Lucid is a Test Description Language (TDL) specification and execution engine. It is a clone of the popular tool [Cucumber](http://cukes.info/). Lucid is diverging in many ways from Cucumber but it does owe much of its initial structure to it. Lucid will also be incorporating some of the good ideas that have come to light in tools like [Spinach](https://github.com/codegram/spinach) and [Turnip](https://github.com/jnicklas/turnip).
 
-This is an alpha release of Lucid as it strives to become its own entity in the world of BDD tools.
+Lucid is currently in an extended beta period, essentially becoming its own entity in the world of BDD tools.
 
 
 Installation
@@ -35,15 +35,11 @@ Or install it yourself as:
 Using Lucid
 -----------
 
-Much more detail on how to use Lucid will be coming soon. One way to get started however is to use the Lucid project generator. If you wanted to create a project directory called 'tutorial' for example, you could do this:
-
-    $ lucid-gen project tutorial
+Right now the best way to learn about Lucid is to check out some of my [blog posts related to Lucid](http://testerstories.com/category/lucid/). They will take you through various aspects of using the framework.
 
 In order to to check what options are available to you from the command line, do this:
 
     $ lucid --help
-
-You should also check out some of my [blog posts related to Lucid](http://testerstories.com/category/lucid/). They will take you through various aspects of using the framework.
 
 
 Contributing

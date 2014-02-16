@@ -2,59 +2,56 @@ require 'fileutils'
 require 'multi_json'
 require 'gherkin/rubify'
 require 'gherkin/i18n'
-require 'lucid/configuration'
+require 'lucid/context'
 require 'lucid/load_path'
-require 'lucid/interface_methods'
+require 'lucid/interface'
 require 'lucid/formatter/duration'
-require 'lucid/runtime/interface_io'
-require 'lucid/runtime/specs_loader'
-require 'lucid/runtime/results'
-require 'lucid/runtime/orchestrator'
+require 'lucid/interface_io'
+require 'lucid/spec_loader'
+require 'lucid/results'
+require 'lucid/orchestrator'
 
 module Lucid
-  class Runtime
+  class ContextLoader
     attr_reader :results, :orchestrator
 
     include Formatter::Duration
-    include Runtime::InterfaceIO
+    include ContextLoader::InterfaceIO
 
-    def initialize(configuration = Configuration.default)
-      if defined?(Test::Unit::Runner)
-        Test::Unit::Runner.module_eval("@@stop_auto_run = true")
-      end
-
+    def initialize(context = Context.default)
       @current_scenario = nil
-      @configuration = Configuration.parse(configuration)
-      @orchestrator = Orchestrator.new(self, @configuration)
-      @results = Results.new(@configuration)
+      @context = Context.parse(context)
+      @orchestrator = Orchestrator.new(self, @context)
+      @results = Results.new(@context)
     end
 
-    # Used to take an existing runtime and change its configuration.
-    def configure(new_configuration)
-      @configuration = Configuration.parse(new_configuration)
-      @orchestrator.configure(@configuration)
-      @results.configure(@configuration)
+    # Used to take an existing Lucid operation context and change the
+    # configuration of that context.
+    def configure(new_context)
+      @context = Context.parse(new_context)
+      @orchestrator.configure(@context)
+      @results.configure(@context)
     end
 
     def load_code_language(language)
       @orchestrator.load_code_language(language)
     end
 
-    def run
+    def execute
       load_execution_context
       fire_after_configuration_hook
 
-      tdl_walker = @configuration.establish_tdl_walker(self)
-      self.visitor = tdl_walker
+      ast_walker = @context.establish_ast_walker(self)
+      self.visitor = ast_walker
 
-      specs.accept(tdl_walker)
+      load_spec_context.accept(ast_walker)
     end
 
     def specs_paths
-      @configuration.spec_source
+      @context.spec_source
     end
 
-    def step_visited(step) #:nodoc:
+    def step_visited(step)
       @results.step_visited(step)
     end
 
@@ -66,7 +63,7 @@ module Lucid
       @results.steps(status)
     end
 
-    def step_match(step_name, name_to_report=nil) #:nodoc:
+    def step_match(step_name, name_to_report=nil)
       @orchestrator.step_match(step_name, name_to_report)
     end
 
@@ -74,7 +71,7 @@ module Lucid
       @orchestrator.unmatched_step_definitions
     end
 
-    def matcher_text(step_keyword, step_name, multiline_arg_class) #:nodoc:
+    def matcher_text(step_keyword, step_name, multiline_arg_class)
       @orchestrator.matcher_text(Gherkin::I18n.code_keyword_for(step_keyword), step_name, multiline_arg_class)
     end
 
@@ -86,7 +83,7 @@ module Lucid
       end
     end
 
-    def around(scenario, skip_hooks=false, &block) #:nodoc:
+    def around(scenario, skip_hooks=false, &block)
       if skip_hooks
         yield
         return
@@ -95,27 +92,27 @@ module Lucid
       @orchestrator.around(scenario, block)
     end
 
-    def before_and_after(scenario, skip_hooks=false) #:nodoc:
+    def before_and_after(scenario, skip_hooks=false)
       before(scenario) unless skip_hooks
       yield scenario
       after(scenario) unless skip_hooks
       @results.scenario_visited(scenario)
     end
 
-    def before(scenario) #:nodoc:
-      return if @configuration.dry_run? || @current_scenario
+    def before(scenario)
+      return if @context.dry_run? || @current_scenario
       @current_scenario = scenario
       @orchestrator.fire_hook(:before, scenario)
     end
 
-    def after(scenario) #:nodoc:
+    def after(scenario)
       @current_scenario = nil
-      return if @configuration.dry_run?
+      return if @context.dry_run?
       @orchestrator.fire_hook(:after, scenario)
     end
 
     def after_step #:nodoc:
-      return if @configuration.dry_run?
+      return if @context.dry_run?
       @orchestrator.fire_hook(:execute_after_step, @current_scenario)
     end
 
@@ -124,7 +121,7 @@ module Lucid
     end
 
     def write_testdefs_json
-      if(@configuration.testdefs)
+      if(@context.testdefs)
         stepdefs = []
         @orchestrator.step_definitions.sort{|a,b| a.to_hash['source'] <=> a.to_hash['source']}.each do |stepdef|
           stepdef_hash = stepdef.to_hash
@@ -151,24 +148,23 @@ module Lucid
           stepdef_hash['steps'] = steps.uniq.sort {|a,b| a['name'] <=> b['name']}
           stepdefs << stepdef_hash
         end
-        if !File.directory?(@configuration.testdefs)
-          FileUtils.mkdir_p(@configuration.testdefs)
+        if !File.directory?(@context.testdefs)
+          FileUtils.mkdir_p(@context.testdefs)
         end
-        File.open(File.join(@configuration.testdefs, 'testdefs.json'), 'w') do |io|
+        File.open(File.join(@context.testdefs, 'testdefs.json'), 'w') do |io|
           io.write(MultiJson.dump(stepdefs, :pretty => true))
         end
       end
     end
 
-    # Returns AST::DocString for +string_without_triple_quotes+.
-    def doc_string(string_without_triple_quotes, content_type='', line_offset=0)
-      AST::DocString.new(string_without_triple_quotes,content_type)
+    def doc_string(non_docstring, content_type='', line_offset=0)
+      Lucid::AST::DocString.new(non_docstring, content_type)
     end
 
-  private
+    private
 
-    def fire_after_configuration_hook #:nodoc
-      @orchestrator.fire_hook(:after_configuration, @configuration)
+    def fire_after_configuration_hook
+      @orchestrator.fire_hook(:after_configuration, @context)
     end
 
     # The specs is used to begin loading the executable specs. This is as
@@ -176,22 +172,23 @@ module Lucid
     # already handled. A SpecsLoader instance is created and this is what
     # makes sure that a spec file can be turned into a code construct
     # (a SpecFile instance) which in turn can be broken down into an AST.
-    def specs
-      @loader ||= Runtime::SpecsLoader.new(
-        @configuration.spec_files,
-        @configuration.filters,
-        @configuration.tag_expression)
-      @loader.specs
+    #
+    # @return [Object] Instance of Lucid::AST::Spec
+    def load_spec_context
+      @loader ||= Lucid::ContextLoader::SpecLoader.new(
+        @context.spec_context,
+        @context.filters,
+        @context.tag_expression)
+      @loader.load_specs
     end
 
-    # Loading the execution context means getting all of the loadable files
-    # in the spec repository. Loadable files means any code language type
-    # files. These files are sent to an orchestrator instance that will be
-    # responsible for loading them. The loading of these files provides the
-    # execution context for Lucid as it runs executable specs.
+    # Determines what files should be included as part of the execution
+    # context for Lucid as it runs executable specs. The "library" refers
+    # to code that will be common to all specs while "definition" refers
+    # to page/activity definitions as well as test definitions, which are
+    # usually referred to as steps.
     def load_execution_context
-      files = @configuration.library_context + @configuration.definition_context
-      log.info("Runtime Load Execution Context: #{files}")
+      files = @context.library_context + @context.definition_context
       @orchestrator.load_files(files)
     end
 

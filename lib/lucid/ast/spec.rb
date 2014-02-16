@@ -1,6 +1,6 @@
 module Lucid
   module AST
-    class Specs #:nodoc:
+    class Spec
       include Enumerable
 
       attr_reader :duration
@@ -17,6 +17,7 @@ module Lucid
         @features.each(&proc)
       end
 
+      # @see Lucid::SpecLoader.load
       def add_feature(feature)
         @features << feature
       end
@@ -30,6 +31,8 @@ module Lucid
           start = Time.now
 
           self.each do |feature|
+            log.debug('Feature AST:')
+            log.debug(feature)
             feature.accept(visitor)
           end
 
@@ -39,6 +42,12 @@ module Lucid
 
       def step_count
         @features.inject(0) { |total, feature| total += feature.step_count }
+      end
+
+      private
+
+      def log
+        Lucid.logger
       end
     end
   end

@@ -2,19 +2,19 @@ require 'spec_helper'
 
 module Lucid
   module AST
-    describe Specs do
-      let(:specs) { Specs.new }
-      
+    describe Spec do
+      let(:spec) { Spec.new }
+
       def parse_feature(gherkin)
         path    = 'specs/test.spec'
-        builder = Lucid::Parser::TDLBuilder.new(path)
+        builder = Lucid::Parser::SpecBuilder.new(path)
         parser  = Gherkin::Parser::Parser.new(builder, true, 'root', false)
         parser.parse(gherkin, path, 0)
         builder.language = parser.i18n_language
         feature = builder.result
-        specs.add_feature(feature)
+        spec.add_feature(feature)
       end
-      
+
       it 'has a step_count' do
         parse_feature(<<-GHERKIN)
 Feature:
@@ -41,7 +41,7 @@ Feature:
       | 8 |
         GHERKIN
 
-        specs.step_count.should == (2 + 3) + (3 * (2 + 2))
+        spec.step_count.should == (2 + 3) + (3 * (2 + 2))
       end
     end
   end

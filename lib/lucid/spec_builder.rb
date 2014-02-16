@@ -5,8 +5,8 @@ require 'lucid/ast/empty_background'
 
 module Lucid
   module Parser
-    # The TDL Builder conforms to the Gherkin event API.
-    class TDLBuilder
+    # The SpecBuilder conforms to the Gherkin event API.
+    class SpecBuilder
       include Gherkin::Rubify
 
       def initialize(path = 'UNKNOWN-FILE')
@@ -26,16 +26,19 @@ module Lucid
         @path = uri
       end
 
+      # @param node [Object] instance of Gherkin::Formatter::Model::Feature
       def feature(node)
         @feature_builder = FeatureBuilder.new(file, node)
       end
 
+      # @param node [Object] instance of Gherkin::Formatter::Model::Background
       def background(node)
         builder = BackgroundBuilder.new(file, node)
         @feature_builder.background_builder = builder
         @current = builder
       end
 
+      # @param node [Object] instance of Gherkin::Formatter::Model::Scenario
       def scenario(node)
         builder = ScenarioBuilder.new(file, node)
         @feature_builder.add_child builder
@@ -50,8 +53,8 @@ module Lucid
 
       def examples(examples)
         examples_fields = [
-          AST::Location.new(file, examples.line),
-          AST::Comment.new(examples.comments.map{|comment| comment.value}.join("\n")),
+          Lucid::AST::Location.new(file, examples.line),
+          Lucid::AST::Comment.new(examples.comments.map{|comment| comment.value}.join("\n")),
           examples.keyword,
           examples.name,
           examples.description,
@@ -60,6 +63,7 @@ module Lucid
         @current.add_examples examples_fields, examples
       end
 
+      # @param node [Object] instance of Gherkin::Formatter::Model::Step
       def step(node)
         builder = StepBuilder.new(file, node)
         @current.add_child builder
@@ -69,7 +73,7 @@ module Lucid
       end
 
       def syntax_error(state, event, legal_events, line)
-        # raise "SYNTAX ERROR"
+        # Unsure if I should raise something here.
       end
 
       private
@@ -91,7 +95,7 @@ module Lucid
       end
 
       def language
-        @language || raise("Language has not been set")
+        @language || raise('Language has not been set.')
       end
 
       def file
@@ -102,7 +106,7 @@ module Lucid
         end
       end
 
-      class Builder
+      class Spec
         def initialize(file, node)
           @file, @node = file, node
         end
@@ -110,24 +114,24 @@ module Lucid
         private
 
         def tags
-          AST::Tags.new(nil, node.tags)
+          Lucid::AST::Tags.new(nil, node.tags)
         end
 
         def location
-          AST::Location.new(file, node.line)
+          Lucid::AST::Location.new(file, node.line)
         end
 
         def comment
-          AST::Comment.new(node.comments.map{ |comment| comment.value }.join("\n"))
+          Lucid::AST::Comment.new(node.comments.map{ |comment| comment.value }.join("\n"))
         end
 
         attr_reader :file, :node
       end
 
-      class FeatureBuilder < Builder
+      class FeatureBuilder < Spec
         def result(language)
           background = background(language)
-          feature = AST::Feature.new(
+          feature = Lucid::AST::Feature.new(
             location,
             background,
             comment,
@@ -157,14 +161,14 @@ module Lucid
         private
 
         def background(language)
-          return AST::EmptyBackground.new unless @background_builder
+          return Lucid::AST::EmptyBackground.new unless @background_builder
           @background ||= @background_builder.result(language)
         end
       end
 
-      class BackgroundBuilder < Builder
+      class BackgroundBuilder < Spec
         def result(language)
-          background = AST::Background.new(
+          background = Lucid::AST::Background.new(
             language,
             location,
             comment,
@@ -191,9 +195,9 @@ module Lucid
 
       end
 
-      class ScenarioBuilder < Builder
+      class ScenarioBuilder < Spec
         def result(background, language, feature_tags)
-          scenario = AST::Scenario.new(
+          scenario = Lucid::AST::Scenario.new(
             language,
             location,
             background,
@@ -222,9 +226,9 @@ module Lucid
         end
       end
 
-      class ScenarioOutlineBuilder < Builder
+      class ScenarioOutlineBuilder < Spec
         def result(background, language, feature_tags)
-          scenario_outline = AST::ScenarioOutline.new(
+          scenario_outline = Lucid::AST::ScenarioOutline.new(
             language,
             location,
             background,
@@ -263,14 +267,14 @@ module Lucid
         attr_reader :examples_sections
       end
 
-      class StepBuilder < Builder
+      class StepBuilder < Spec
         def result(language)
-          step = AST::Step.new(
+          step = Lucid::AST::Step.new(
             language,
             location,
             node.keyword,
             node.name,
-            AST::MultilineArgument.from(node.doc_string || node.rows)
+            Lucid::AST::MultilineArgument.from(node.doc_string || node.rows)
           )
           step.gherkin_statement(node)
           step

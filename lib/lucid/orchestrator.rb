@@ -1,11 +1,9 @@
 require 'lucid/factory'
 require 'lucid/ast/multiline_argument'
-require 'lucid/runtime/facade'
+require 'lucid/facade'
 
 module Lucid
-
-  class Runtime
-
+  class ContextLoader
     class Orchestrator
 
       require 'forwardable'
@@ -20,7 +18,7 @@ module Lucid
         end
 
         def step(step)
-          @orchestrator.invoke(step.name, AST::MultilineArgument.from(step.doc_string || step.rows))
+          @orchestrator.invoke(step.name, Lucid::AST::MultilineArgument.from(step.doc_string || step.rows))
         end
 
         def eof
@@ -29,16 +27,16 @@ module Lucid
 
       include Factory
 
-      def initialize(user_interface, configuration={})
-        @configuration = Configuration.parse(configuration)
-        @runtime_facade = Runtime::Facade.new(self, user_interface)
+      def initialize(user_interface, context={})
+        @context = Context.parse(context)
+        @runtime_facade = ContextLoader::Facade.new(self, user_interface)
         @unsupported_languages = []
         @supported_languages = []
         @language_map = {}
       end
 
-      def configure(new_configuration)
-        @configuration = Configuration.parse(new_configuration)
+      def configure(new_context)
+        @context = Context.parse(new_context)
       end
 
       # Invokes a series of steps +steps_text+. Example:
@@ -66,19 +64,24 @@ module Lucid
       # The orchestrator will register the the code language and load up an
       # implementation of that language. There is a provision to make sure
       # that the language is not already registered.
-      def load_code_language(code)
-        return @language_map[code] if @language_map[code]
-        lucid_language = create_object_of("Lucid::Interface#{code.capitalize}::#{code.capitalize}Language")
+      #
+      # @param type [String] the type of file, passed in as an extension value
+      # @return [Object] language class
+      def load_code_language(type)
+        return @language_map[type] if @language_map[type]
+        lucid_language = create_object_of("Lucid::Interface#{type.capitalize}::#{type.capitalize}Language")
         language = lucid_language.new(@runtime_facade)
         @supported_languages << language
-        @language_map[code] = language
+        @language_map[type] = language
         language
       end
 
       # The orchestrator will load only the loadable execution context files.
       # This is how the orchestrator will, quite literally, orchestrate the
       # execution of specs with the code logic that supports those specs.
-      # @see Lucid::Runtime.load_execution_context
+      #
+      # @param files [Array] all files gathering for the execution context
+      # @see Lucid::ContextLoader.load_execution_context
       def load_files(files)
         log.info("Orchestrator Load Files:\n")
         files.each do |file|
@@ -98,10 +101,10 @@ module Lucid
         end.flatten
       end
 
-      def matcher_text(step_keyword, step_name, multiline_arg_class) #:nodoc:
+      def matcher_text(step_keyword, step_name, multiline_arg_class)
         load_code_language('rb') if unknown_programming_language?
         @supported_languages.map do |programming_language|
-          programming_language.matcher_text(step_keyword, step_name, multiline_arg_class, @configuration.matcher_type)
+          programming_language.matcher_text(step_keyword, step_name, multiline_arg_class, @context.matcher_type)
         end.join("\n")
       end
 
@@ -131,7 +134,7 @@ module Lucid
         end.flatten
       end
 
-      def step_match(step_name, name_to_report=nil) #:nodoc:
+      def step_match(step_name, name_to_report=nil)
         @match_cache ||= {}
 
         match = @match_cache[[step_name, name_to_report]]
@@ -151,7 +154,7 @@ module Lucid
       end
 
       def guess_step_matches?
-        @configuration.guess?
+        @context.guess?
       end
 
       def matches(step_name, name_to_report)
@@ -160,7 +163,7 @@ module Lucid
         end.flatten
       end
 
-      def best_matches(step_name, step_matches) #:nodoc:
+      def best_matches(step_name, step_matches)
         no_groups      = step_matches.select {|step_match| step_match.args.length == 0}
         max_arg_length = step_matches.map {|step_match| step_match.args.length }.max
         top_groups     = step_matches.select {|step_match| step_match.args.length == max_arg_length }
@@ -178,12 +181,16 @@ module Lucid
 
       # For each execution context file, the orchestrator will determine the
       # code language associated with the file.
+      #
+      # @param file [String] relative path/file reference from the spec repo
       def load_file(file)
-        if language = get_language_for(file)
+        language = get_language_for(file)
+
+        if language.nil?
+          log.info("  * #{file} [NOT SUPPORTED]\n")
+        else
           log.info("  * #{file}\n")
           language.load_code_file(file)
-        else
-          log.info("  * #{file} [NOT SUPPORTED]\n")
         end
       end
 
@@ -197,8 +204,13 @@ module Lucid
       # of a supported language. If an object is returned it will be an
       # object of this sort:
       #     Lucid::InterfaceRb::RbLanguage
+      #
+      # @param file [String] relative path/file reference from the spec repo
+      # @return [nil or class] full class reference if found, nil otherwise
       def get_language_for(file)
-        if extension = File.extname(file)[1..-1]
+        extension = File.extname(file)[1..-1]
+
+        if extension
           return nil if @unsupported_languages.index(extension)
           begin
             load_code_language(extension)

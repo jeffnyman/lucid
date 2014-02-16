@@ -1,18 +1,18 @@
 module Lucid
-  class Runtime
+  class ContextLoader
 
     class Results
-      def initialize(configuration)
-        @configuration = configuration
+      def initialize(context)
+        @context = context
         @inserted_steps = {}
         @inserted_scenarios = {}
       end
 
-      def configure(new_configuration)
-        @configuration = Configuration.parse(new_configuration)
+      def configure(new_context)
+        @context = Context.parse(new_context)
       end
 
-      def step_visited(step) #:nodoc:
+      def step_visited(step)
         step_id = step.object_id
 
         unless @inserted_steps.has_key?(step_id)
@@ -21,7 +21,7 @@ module Lucid
         end
       end
 
-      def scenario_visited(scenario) #:nodoc:
+      def scenario_visited(scenario)
         scenario_id = scenario.object_id
 
         unless @inserted_scenarios.has_key?(scenario_id)
@@ -39,7 +39,7 @@ module Lucid
         end
       end
 
-      def scenarios(status = nil) #:nodoc:
+      def scenarios(status = nil)
         @scenarios ||= []
         if(status)
           @scenarios.select{|scenario| scenario.status == status}
@@ -49,11 +49,11 @@ module Lucid
       end
 
       def failure?
-        if @configuration.wip?
+        if @context.wip?
           scenarios(:passed).any?
         else
           scenarios(:failed).any? || steps(:failed).any? ||
-          (@configuration.strict? && (steps(:undefined).any? || steps(:pending).any?))
+          (@context.strict? && (steps(:undefined).any? || steps(:pending).any?))
         end
       end
     end

@@ -1,3 +1,4 @@
+require 'English'
 require 'lucid/cli/profile'
 require 'lucid/formatter/ansicolor'
 require 'lucid/interface_rb/rb_language'
@@ -83,7 +84,9 @@ module Lucid
         @args.extend(::OptionParser::Arguable)
 
         @args.options do |opts|
-          opts.banner = ['Lucid: Test Description Language Execution Engine',
+          opts.banner = ['Lucid Framework',
+                         'Test Description Language Specification and Execution Engine',
+                         '',
                          'Usage: lucid [options] [ [FILE|DIR|URL][:LINE[:LINE]*] ]+', '', ''
           ].join("\n")
 
@@ -91,9 +94,16 @@ module Lucid
             @options[:library_path] = path
           end
 
+          opts.on('--definition-path PATH', 'Location of spec project definition files.') do |path|
+            @options[:definitions_path] = path
+          end
+
+          opts.on('--steps-path PATH', 'Location of spec project test step files.') do |path|
+            @options[:steps_path] = path
+          end
+
           opts.on('--spec-type TYPE', 'The file type (extension) for Lucid specifications.') do |type|
-            #@options[:spec_type] = type
-            @options[:spec_type] << type
+            @options[:spec_types] << type
           end
 
           opts.on('--driver-file FILE', 'The file for Lucid to connect to an execution library.') do |file|
@@ -103,19 +113,17 @@ module Lucid
           opts.separator ''
 
           opts.on('-r LIBRARY|DIR', '--require LIBRARY|DIR',
-                  'Require files before executing the features. If this option',
-                  'is not specified, all *.rb files that are siblings or below',
-                  'the features will be loaded automatically. Automatic loading',
-                  'is disabled when this option is specified. That means all',
-                  'loading becomes explicit.',
-                  'Assuming a default specs repo configuration, files under',
-                  "directories named \"common\\support\" will always be loaded",
-                  'before any others.',
-                  'This option can be specified multiple times.') do |v|
-            @options[:require] << v
-            if(Lucid::JRUBY && File.directory?(v))
+                  'Require resources (paths or individual files) prior to executing',
+                  'the test specs. If no require options are passed, then Lucid will',
+                  'use its default path and file settings via automatic loading. If',
+                  'require options are passed, however, then automatic loading will',
+                  'be disabled, which means loading any resources must be done via',
+                  'explicit uses of this option. The require option can be specified',
+                  'multiple times.') do |resource|
+            @options[:require] << resource
+            if(Lucid::JRUBY && File.directory?(resource))
               require 'java'
-              $CLASSPATH << v
+              $CLASSPATH << resource
             end
           end
 
@@ -143,8 +151,9 @@ module Lucid
 
           opts.separator ''
 
-          opts.on('-d', '--dry-run', 'Invokes formatters without executing the steps.',
-                  'This also omits the loading of your common/support/driver.rb file if it exists.') do
+          opts.on('-d', '--dry-run', 'Performs spec parsing without test execution.',
+                  'Performing a dry run omits loading of the driver file as well as',
+                  'any page or activity definitions.') do
             @options[:dry_run] = true
           end
 
@@ -305,24 +314,13 @@ module Lucid
             Kernel.exit(0)
           end
         end
-        #end.parse!
 
         begin
           @args.parse!
         rescue OptionParser::InvalidOption
-          if $!.to_s =~ /invalid option\:\s+((?:-)?-\S+)/
-            puts "You specified an invalid option: #{$1}"
-            puts 'Please run lucid --help to see the list of available options.'
-          end
-
+          invalid_option($ERROR_INFO)
         rescue OptionParser::MissingArgument
-          if $!.to_s =~ /missing argument\:\s+((?:-)?-\S+)/
-            puts "You specified an valid option (#{$1}), but with an invalid argument."
-            puts 'Make sure you are providing the expected argument for the option.'
-            puts 'Run lucid --help to see the list of available options.'
-          end
-
-          Kernel.exit(1)
+          missing_argument($ERROR_INFO)
         end
 
         if @quiet
@@ -335,9 +333,12 @@ module Lucid
 
         extract_environment_variables
 
-        # This line grabs whatever is left over on the command line. That
-        # would have to be the spec repo.
-        @options[:spec_source] = @args.dup
+        # The next statement is critical because it takes whatever is left
+        # from the command line when all the valid options are parsed. This
+        # would have to be the spec repository. The empty check is because
+        # even if no args are passed, an empty array will be passed to the
+        # spec_repos key, which overwrites the default option.
+        @options[:spec_source] = @args.dup #unless args.empty?
 
         establish_profile
 
@@ -348,17 +349,33 @@ module Lucid
         @profiles - [@default_profile]
       end
 
-      # @see Lucid::CLI::Configuration.filters
+      # @see Lucid::CLI::Context.filters
       def filters
         @options.values_at(:name_regexps, :tag_expressions).select{|v| !v.empty?}.first || []
       end
 
-    protected
+      protected
 
       attr_reader :options, :profiles, :expanded_args
       protected :options, :profiles, :expanded_args
 
-    private
+      private
+
+      def invalid_option(error)
+        if error.to_s =~ /invalid option:\s+((?:-)?-\S+)/
+          puts "You specified an #{$MATCH}\n\n"
+          puts 'Run lucid --help to see the list of available options.'
+        end
+        Kernel.exit(1)
+      end
+
+      def missing_argument(error)
+        if error.to_s =~ /(?:missing argument:\s+)((?:-)?-\S+)/
+          puts "Valid option with #{$MATCH}\n\n"
+          puts 'Run lucid --help to see the list of available options.'
+        end
+        Kernel.exit(1)
+      end
 
       def non_stdout_formats
         @options[:formats].select {|format, output| output != @out_stream }
@@ -435,7 +452,7 @@ module Lucid
         @options[:dry_run] |= other_options[:dry_run]
 
         @options[:library_path] += other_options[:library_path]
-        @options[:spec_type] += other_options[:spec_type]
+        @options[:spec_types] += other_options[:spec_types]
         @options[:driver_file] += other_options[:driver_file]
 
         @profiles += other_options.profiles
@@ -474,9 +491,11 @@ module Lucid
           :name_regexps     => [],
           :env_vars         => {},
           :diff_enabled     => true,
-          :spec_type        => %w(feature spec story),
-          :library_path     => '',
-          :driver_file      => ''
+          :spec_types       => %w(feature spec story),
+          :library_path     => 'common',
+          :definitions_path => 'pages',
+          :steps_path       => 'steps',
+          :driver_file      => 'driver'
         }
       end
     end

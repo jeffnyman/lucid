@@ -1,6 +1,5 @@
 require 'lucid/step_match'
-require 'lucid/core_ext/string'
-require 'lucid/core_ext/proc'
+require 'lucid/lang_extend'
 require 'lucid/interface_rb/regexp_argument_matcher'
 
 module Lucid

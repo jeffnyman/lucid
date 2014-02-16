@@ -11,7 +11,7 @@ module Lucid
 
       before do
         extend(Lucid::InterfaceRb::RbLucid)
-        @runtime = Lucid::Runtime.new
+        @runtime = Lucid::ContextLoader.new
         @rb = @runtime.load_code_language('rb')
 
         $x = $y = nil
@@ -22,7 +22,7 @@ module Lucid
           $y = $x * n.to_i
         end
 
-        @visitor = TDLWalker.new(@runtime)
+        @visitor = Walker.new(@runtime)
 
         @feature = double('feature', :visit? => true, :feature_elements => []).as_null_object
       end
@@ -122,7 +122,7 @@ module Lucid
           background.should be_failed
         end
       end
-      
+
     end
   end
 end
