@@ -1,6 +1,11 @@
 Change Log and History
 ======================
 
+Version 0.4.1 / 2013-02-18
+--------------------------
+
+This is a hotfix release that corrects an issue where executing with a profile specified could lead to the entirety of your test repo files not being red. The issue was the reverse merge mechanism that is used to reconcile how Lucid deals with command execution based on where it got information from, which can currently be the defaults that Lucid provides, the information specified in lucid.yml (and run as a profile), or information specified via the command line.
+
 Version 0.4.0 / 2013-02-15
 --------------------------
 
