@@ -1,7 +1,0 @@
-#!/usr/bin/env ruby
-
-$LOAD_PATH << File.dirname(__FILE__) + '/../lib'
-
-require 'lucid/cli/app'
-
-Lucid::CLI::App.new(ARGV.dup).start!

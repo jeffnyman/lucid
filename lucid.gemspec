@@ -1,8 +1,7 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-
-require 'lucid/platform'
+require 'lucid/version'
 
 Gem::Specification.new do |spec|
   spec.name        = 'lucid'
@@ -18,7 +17,7 @@ Gem::Specification.new do |spec|
   EOF
   spec.homepage       = 'https://github.com/jnyman/lucid'
   spec.licenses       = %w(MIT)
-  spec.platform       = Gem::Platform::RUBY
+  spec.requirements  << 'Gherkin, RSpec'
 
   spec.files          = `git ls-files -z`.split("\x0")
   spec.test_files     = spec.files.grep(%r{^(test|spec|features)/})
@@ -26,27 +25,18 @@ Gem::Specification.new do |spec|
   spec.require_paths  = %w(lib)
 
   spec.required_ruby_version     = '>= 1.9.3'
-  spec.required_rubygems_version = '>= 1.6.1'
+  spec.required_rubygems_version = '>= 1.8.29'
 
-  spec.add_development_dependency 'bundler', '~> 1.5'
-  spec.add_development_dependency 'rake'
+  spec.add_development_dependency 'bundler', '~> 1.7'
+  spec.add_development_dependency 'rake', '~> 10.0'
 
-  spec.add_runtime_dependency 'builder', '>= 3.2.2'
-  spec.add_runtime_dependency 'multi_json', '>= 1.8.0', '< 2.0'
-  spec.add_runtime_dependency 'gherkin', '>= 2.12.0'
-  spec.add_runtime_dependency 'rspec', '>= 2.14'
+  spec.add_runtime_dependency 'gherkin', '~> 2.12'
+  spec.add_runtime_dependency 'rspec', '~> 3.0'
 
   spec.post_install_message = %{
 (::) (::) (::) (::) (::) (::) (::) (::) (::) (::) (::) (::)
 
   Lucid #{Lucid::VERSION} has been installed.
-
-  Run the following command to get help:
-    lucid --help
-
-  Information on Lucid can be found under the 'lucid'
-  category at:
-    http://testerstories.com/category/lucid/
 
 (::) (::) (::) (::) (::) (::) (::) (::) (::) (::) (::) (::)
   }
