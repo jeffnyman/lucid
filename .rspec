@@ -1,2 +1,3 @@
+#-r lucid/rspec
 --color
 --format documentation
