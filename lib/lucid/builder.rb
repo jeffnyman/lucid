@@ -4,7 +4,6 @@ module Lucid
   class Builder
     class << self
       def build(test_spec)
-        puts "Attempting to build: #{test_spec}" if ENV['LUCID_TRACE']
         Lucid::Builder.new.tap do |builder|
           # Builder instance is yielded to the block.
           # The builder is used as the "formatter" to the Gherkin parser.
@@ -34,9 +33,27 @@ module Lucid
       @specs << @current_feature
     end
 
+    def scenario(scenario)
+      @current_context = Scenario.new(scenario)
+      @current_feature.scenarios << @current_context
+    end
+
     # Test Spec Gherkin Objects
 
     class Feature
+      attr_reader :scenarios
+
+      def initialize(repr)
+        @repr = repr
+        @scenarios = []
+      end
+
+      def name
+        @repr.name
+      end
+    end
+
+    class Scenario
       def initialize(repr)
         @repr = repr
       end

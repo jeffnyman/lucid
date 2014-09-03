@@ -14,6 +14,13 @@ module Lucid
           (puts 'SPEC:'; pp feature) if ENV['LUCID_TRACE']
           ::RSpec.describe feature.name do
 
+            feature.scenarios.each do |scenario|
+              (puts 'SCENARIO:'; pp scenario) if ENV['LUCID_TRACE']
+              describe scenario.name do
+
+              end
+            end
+
           end
         end
       end
