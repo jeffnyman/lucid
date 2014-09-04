@@ -43,8 +43,21 @@ module Lucid
       @current_feature.backgrounds << @current_context
     end
 
+    def scenario_outline(template)
+      @current_context = ScenarioOutline.new(template)
+    end
+
     def step(step)
-      @current_context.steps << Step.new(step.keyword, step.name, step.line)
+      step_args = []
+      if step.rows
+        table = Lucid::Table.new(step.rows.map(&:cells).map(&:to_a))
+        step_args.push(table)
+      end
+      @current_context.steps << Step.new(step.keyword, step.name, step.line, step_args)
+    end
+
+    def examples(examples)
+      @current_feature.scenarios.push(*@current_context.rows_to_scenarios(examples))
     end
 
     # Test Spec Gherkin Objects
@@ -87,7 +100,7 @@ module Lucid
       include Line
       include Tags
 
-      attr_reader :steps
+      attr_accessor :steps
 
       def initialize(repr)
         @repr = repr
@@ -107,7 +120,41 @@ module Lucid
       end
     end
 
-    class Step < Struct.new(:keyword, :name, :line)
+    class ScenarioOutline
+      attr_reader :steps
+
+      def initialize(repr)
+        @repr = repr
+        @steps = []
+      end
+
+      def rows_to_scenarios(examples)
+        rows = examples.rows.map(&:cells)
+        headers = rows.shift
+
+        rows.map do |row|
+          Scenario.new(@repr).tap do |scenario|
+            scenario.steps = steps.map do |step|
+              name = transpose(step.name, headers, row)
+              Step.new(step.keyword, name, step.line)
+            end
+          end
+        end
+      end
+
+      private
+
+      # The parameterized item that is captured from the outline step is
+      # stored in $1. When the scenario is created, the specific entry
+      # for a row with the name of the captured item will be stored.
+      def transpose(name, headers, row)
+        name.gsub(/<([^>]*)>/) do
+          Hash[headers.zip(row)][$1]
+        end
+      end
+    end
+
+    class Step < Struct.new(:keyword, :name, :line, :step_args)
       def to_s
         "#{keyword}#{name}"
       end

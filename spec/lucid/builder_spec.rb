@@ -98,4 +98,41 @@ describe Lucid::Builder do
       expect(backgrounds.first.steps.map(&:line)).to eq([4])
     end
   end
+
+  context 'test spec file with table step argument' do
+    let(:test_spec) { File.expand_path('../../specs/scenario_with_table.feature', File.dirname(__FILE__)) }
+    let(:scenarios) { feature.scenarios }
+    let(:steps) { feature.scenarios.first.steps }
+
+    it 'has a step with a table' do
+      table = steps[0].step_args.find { |a| a.instance_of?(Lucid::Table) }
+      expect(table.hashes[0]['Planet']).to eq 'Mercury'
+      expect(table.hashes[0]['Weight']).to eq '75.6'
+    end
+  end
+
+  context 'test spec file with scenario outline' do
+    let(:test_spec) { File.expand_path('../../specs/scenario_outline.story', File.dirname(__FILE__)) }
+
+    it 'will apply the scenario outline name to each example' do
+      expect(feature.scenarios.map(&:name)).to eq([
+        'Convert Valid TNG Stardates',
+        'Convert Valid TNG Stardates',
+        'Convert Valid TNG Stardates'
+      ])
+    end
+
+    it 'will replace placeholders in steps' do
+      expect(feature.scenarios[0].steps.map(&:name)).to eq([
+        'the stardate page',
+        'the tng 46379.1 is converted',
+        'the calendar year should be 2369'
+      ])
+      expect(feature.scenarios[1].steps.map(&:name)).to eq([
+        'the stardate page',
+        'the tng 48315.6 is converted',
+        'the calendar year should be 2371'
+      ])
+    end
+  end
 end

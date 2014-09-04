@@ -45,5 +45,5 @@ end
 RSpec::Core::Configuration.send(:include, Lucid::RSpec::SpecLoader)
 
 RSpec.configure do |config|
-  config.pattern << ',**/*.feature,**/*.spec'
+  config.pattern << ',**/*.feature,**/*.spec,**/*.story'
 end
