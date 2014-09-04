@@ -39,7 +39,7 @@ module Lucid
     end
 
     def step(step)
-      @current_context.steps << Step.new(step.keyword, step.name)
+      @current_context.steps << Step.new(step.keyword, step.name, step.line)
     end
 
     # Test Spec Gherkin Objects
@@ -50,8 +50,15 @@ module Lucid
       end
     end
 
+    module Line
+      def line
+        @repr.line
+      end
+    end
+
     class Feature
       include Name
+      include Line
 
       attr_reader :scenarios
 
@@ -63,6 +70,7 @@ module Lucid
 
     class Scenario
       include Name
+      include Line
 
       attr_reader :steps
 
@@ -72,7 +80,7 @@ module Lucid
       end
     end
 
-    class Step < Struct.new(:keyword, :name)
+    class Step < Struct.new(:keyword, :name, :line)
     end
   end
 end

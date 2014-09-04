@@ -13,8 +13,16 @@ describe Lucid::Builder do
       expect(feature.name).to eq 'Provide Basic Parts of a Test Spec'
     end
 
+    it 'has a line for the feature' do
+      expect(feature.line).to eq 5
+    end
+
     it 'has a scenario name' do
       expect(scenarios.first.name).to eq 'Truth is Truth'
+    end
+
+    it 'has a line for the scenario' do
+      expect(scenarios.first.line).to eq 17
     end
 
     it 'has a step name' do
@@ -23,6 +31,10 @@ describe Lucid::Builder do
 
     it 'has a step keyword' do
       expect(steps.first.keyword).to eq '* '
+    end
+
+    it 'has a line for the step' do
+      expect(steps.first.line).to eq 27
     end
   end
 
@@ -40,6 +52,10 @@ describe Lucid::Builder do
 
     it 'has a collection of keywords' do
       expect(steps.map(&:keyword)).to eq(['When ', 'Then '])
+    end
+
+    it 'has a collection of lines' do
+      expect(steps.map(&:line)).to eq([3, 4])
     end
   end
 end
