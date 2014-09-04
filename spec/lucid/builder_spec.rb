@@ -7,6 +7,7 @@ describe Lucid::Builder do
   context 'basic test spec file' do
     let(:test_spec) { File.expand_path('../../specs/structure.feature', File.dirname(__FILE__)) }
     let(:scenarios) { feature.scenarios }
+    let(:steps) { feature.scenarios.first.steps }
 
     it 'has a feature name' do
       expect(feature.name).to eq 'Provide Basic Parts of a Test Spec'
@@ -14,6 +15,31 @@ describe Lucid::Builder do
 
     it 'has a scenario name' do
       expect(scenarios.first.name).to eq 'Truth is Truth'
+    end
+
+    it 'has a step name' do
+      expect(steps.first.name).to eq 'true is almost certainly not false'
+    end
+
+    it 'has a step keyword' do
+      expect(steps.first.keyword).to eq '* '
+    end
+  end
+
+  context 'representative test spec file' do
+    let(:test_spec) { File.expand_path('../../specs/scenarios.spec', File.dirname(__FILE__)) }
+    let(:scenarios) { feature.scenarios }
+    let(:steps) { feature.scenarios.first.steps }
+
+    it 'has a collection of steps' do
+      expect(steps.map(&:name)).to eq([
+        'looking up the definition of "CHUD"',
+        'the result is "Contaminated Hazardous Urban Disposal"'
+      ])
+    end
+
+    it 'has a collection of keywords' do
+      expect(steps.map(&:keyword)).to eq(['When ', 'Then '])
     end
   end
 end

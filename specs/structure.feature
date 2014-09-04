@@ -23,3 +23,5 @@ Ability: Provide Basic Parts of a Test Spec
     # A scenario can have internal comments. These comments are meant
     # to be notes for how to implement the steps and will thus not
     # show up in output.
+
+    * true is almost certainly not false

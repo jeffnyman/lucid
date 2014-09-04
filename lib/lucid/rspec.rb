@@ -17,7 +17,9 @@ module Lucid
             feature.scenarios.each do |scenario|
               (puts 'SCENARIO:'; pp scenario) if ENV['LUCID_TRACE']
               describe scenario.name do
-
+                scenario.steps.each do |step|
+                  (puts 'STEP:'; pp step) if ENV['LUCID_TRACE']
+                end
               end
             end
 
@@ -43,5 +45,5 @@ end
 RSpec::Core::Configuration.send(:include, Lucid::RSpec::SpecLoader)
 
 RSpec.configure do |config|
-  config.pattern << ',**/*.feature'
+  config.pattern << ',**/*.feature,**/*.spec'
 end

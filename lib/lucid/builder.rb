@@ -38,6 +38,10 @@ module Lucid
       @current_feature.scenarios << @current_context
     end
 
+    def step(step)
+      @current_context.steps << Step.new(step.keyword, step.name)
+    end
+
     # Test Spec Gherkin Objects
 
     class Feature
@@ -54,13 +58,19 @@ module Lucid
     end
 
     class Scenario
+      attr_reader :steps
+
       def initialize(repr)
         @repr = repr
+        @steps = []
       end
 
       def name
         @repr.name
       end
+    end
+
+    class Step < Struct.new(:keyword, :name)
     end
   end
 end
