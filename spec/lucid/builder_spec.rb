@@ -69,5 +69,12 @@ describe Lucid::Builder do
     it 'has a collection of tags' do
       expect(scenarios.map(&:tags)).to eq([['manual', 'example']])
     end
+
+    it 'has a full representation of all test steps' do
+      expect(steps.map(&:to_s)).to eq([
+        'When looking up the definition of "CHUD"',
+        'Then the result is "Contaminated Hazardous Urban Disposal"'
+      ])
+    end
   end
 end

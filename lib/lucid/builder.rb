@@ -89,6 +89,9 @@ module Lucid
     end
 
     class Step < Struct.new(:keyword, :name, :line)
+      def to_s
+        "#{keyword}#{name}"
+      end
     end
   end
 end
