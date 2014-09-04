@@ -44,29 +44,31 @@ module Lucid
 
     # Test Spec Gherkin Objects
 
+    module Name
+      def name
+        @repr.name
+      end
+    end
+
     class Feature
+      include Name
+
       attr_reader :scenarios
 
       def initialize(repr)
         @repr = repr
         @scenarios = []
       end
-
-      def name
-        @repr.name
-      end
     end
 
     class Scenario
+      include Name
+
       attr_reader :steps
 
       def initialize(repr)
         @repr = repr
         @steps = []
-      end
-
-      def name
-        @repr.name
       end
     end
 
