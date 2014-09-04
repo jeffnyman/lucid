@@ -77,4 +77,25 @@ describe Lucid::Builder do
       ])
     end
   end
+
+  context 'test spec file with background' do
+    let(:test_spec) { File.expand_path('../../specs/background.feature', File.dirname(__FILE__)) }
+    let(:backgrounds) { feature.backgrounds }
+
+    it 'has a background name' do
+      expect(backgrounds.first.name).to eq ''
+    end
+
+    it 'has a background line' do
+      expect(backgrounds.first.line).to eq 3
+    end
+
+    it 'has a background step' do
+      expect(backgrounds.first.steps.map(&:name)).to eq(['the stardate page'])
+    end
+
+    it 'has a background step line' do
+      expect(backgrounds.first.steps.map(&:line)).to eq([4])
+    end
+  end
 end

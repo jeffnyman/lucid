@@ -38,6 +38,11 @@ module Lucid
       @current_feature.scenarios << @current_context
     end
 
+    def background(background)
+      @current_context = Background.new(background)
+      @current_feature.backgrounds << @current_context
+    end
+
     def step(step)
       @current_context.steps << Step.new(step.keyword, step.name, step.line)
     end
@@ -68,10 +73,12 @@ module Lucid
       include Tags
 
       attr_reader :scenarios
+      attr_reader :backgrounds
 
       def initialize(repr)
         @repr = repr
         @scenarios = []
+        @backgrounds = []
       end
     end
 
@@ -79,6 +86,18 @@ module Lucid
       include Name
       include Line
       include Tags
+
+      attr_reader :steps
+
+      def initialize(repr)
+        @repr = repr
+        @steps = []
+      end
+    end
+
+    class Background
+      include Name
+      include Line
 
       attr_reader :steps
 
