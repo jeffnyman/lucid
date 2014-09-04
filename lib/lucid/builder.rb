@@ -56,9 +56,16 @@ module Lucid
       end
     end
 
+    module Tags
+      def tags
+        @repr.tags.map { |tag| tag.name.sub(/^@/, '')}
+      end
+    end
+
     class Feature
       include Name
       include Line
+      include Tags
 
       attr_reader :scenarios
 
@@ -71,6 +78,7 @@ module Lucid
     class Scenario
       include Name
       include Line
+      include Tags
 
       attr_reader :steps
 

@@ -17,12 +17,20 @@ describe Lucid::Builder do
       expect(feature.line).to eq 5
     end
 
+    it 'has a tag for the feature' do
+      expect(feature.tags).to eq ['manual']
+    end
+
     it 'has a scenario name' do
       expect(scenarios.first.name).to eq 'Truth is Truth'
     end
 
     it 'has a line for the scenario' do
       expect(scenarios.first.line).to eq 17
+    end
+
+    it 'has a tag for the scenario' do
+      expect(scenarios.first.tags).to eq ['example']
     end
 
     it 'has a step name' do
@@ -55,7 +63,11 @@ describe Lucid::Builder do
     end
 
     it 'has a collection of lines' do
-      expect(steps.map(&:line)).to eq([3, 4])
+      expect(steps.map(&:line)).to eq([4, 5])
+    end
+
+    it 'has a collection of tags' do
+      expect(scenarios.map(&:tags)).to eq([['manual', 'example']])
     end
   end
 end
