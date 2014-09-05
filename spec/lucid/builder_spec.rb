@@ -155,4 +155,29 @@ describe Lucid::Builder do
       expect(table.hashes[0]['agility']).to eq '0'
     end
   end
+
+  context 'test spec with a doc string' do
+    let(:test_spec) { File.expand_path('../../specs/scenario_with_docstring.spec', File.dirname(__FILE__)) }
+
+    it 'will process a docstring' do
+      expect(feature.scenarios[0].steps[0].step_args).to eq([
+        "'The time has come,' the Walrus said,\n'To talk of many things:\nOf shoes--and ships--and sealing-wax--\nOf cabbages--and kings--\nAnd why the sea is boiling hot--\nAnd whether pigs have wings.'"
+      ])
+    end
+  end
+
+  context 'test spec with a scenario outline and doc string' do
+    let(:test_spec) { File.expand_path('../../specs/scenario_outline_with_docstring.feature', File.dirname(__FILE__)) }
+    let(:steps) { feature.scenarios[1].steps }
+
+    it 'replaces placeholders in step docstrings' do
+      expect(steps.map(&:name)).to eq([
+        'the 56844.9',
+        'the following is reported:'
+      ])
+
+      doc_string = steps[1].step_args.first
+      expect(doc_string).to eq %q(Stardate: ["46379.1"])
+    end
+  end
 end

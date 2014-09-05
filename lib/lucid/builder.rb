@@ -49,6 +49,10 @@ module Lucid
 
     def step(step)
       step_args = []
+      if step.doc_string
+        step_args.push(step.doc_string.value)
+      end
+
       if step.rows
         table = Lucid::Table.new(step.rows.map(&:cells).map(&:to_a))
         step_args.push(table)
@@ -138,6 +142,8 @@ module Lucid
               name = swap(step.name, headers, row)
               step_args = step.step_args.map do |arg|
                 case arg
+                  when String
+                    swap(arg, headers, rows)
                   when Lucid::Table
                     Lucid::Table.new(arg.map { |arg_row| arg_row.map {|arg_col| swap(arg_col, headers, row)} })
                 end
