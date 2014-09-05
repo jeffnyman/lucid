@@ -135,4 +135,24 @@ describe Lucid::Builder do
       ])
     end
   end
+
+  context 'test spec file with scenario outline and data table' do
+    let(:test_spec) { File.expand_path('../../specs/scenario_outline_with_table.feature', File.dirname(__FILE__)) }
+
+    it 'will replace placeholders in steps' do
+      expect(feature.scenarios[0].steps.map(&:name)).to eq([
+        'a hostile NPC with hitpoints and agility:',
+        'the NPC suffers 120 points',
+        'there is a 0 modifier applied',
+        'the NPC should be wounded'
+      ])
+      table = feature.scenarios[0].steps[0].step_args.find { |arg| arg.instance_of? (Lucid::Table) }
+      expect(table.hashes[0]['hit points']).to eq '100'
+      expect(table.hashes[0]['agility']).to eq '10'
+
+      table = feature.scenarios[1].steps[0].step_args.find { |arg| arg.instance_of? (Lucid::Table) }
+      expect(table.hashes[0]['hit points']).to eq '100'
+      expect(table.hashes[0]['agility']).to eq '0'
+    end
+  end
 end

@@ -1,5 +1,7 @@
 module Lucid
   class Table
+    include Enumerable
+
     def initialize(repr)
       @repr = repr
     end
@@ -14,6 +16,10 @@ module Lucid
 
     def hashes
       rows.map { |row| Hash[headers.zip(row)] }
+    end
+
+    def each
+      @repr.each { |row| yield(row) }
     end
   end
 end

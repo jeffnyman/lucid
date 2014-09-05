@@ -135,8 +135,14 @@ module Lucid
         rows.map do |row|
           Scenario.new(@repr).tap do |scenario|
             scenario.steps = steps.map do |step|
-              name = transpose(step.name, headers, row)
-              Step.new(step.keyword, name, step.line)
+              name = swap(step.name, headers, row)
+              step_args = step.step_args.map do |arg|
+                case arg
+                  when Lucid::Table
+                    Lucid::Table.new(arg.map { |arg_row| arg_row.map {|arg_col| swap(arg_col, headers, row)} })
+                end
+              end
+              Step.new(step.keyword, name, step.line, step_args)
             end
           end
         end
@@ -147,7 +153,7 @@ module Lucid
       # The parameterized item that is captured from the outline step is
       # stored in $1. When the scenario is created, the specific entry
       # for a row with the name of the captured item will be stored.
-      def transpose(name, headers, row)
+      def swap(name, headers, row)
         name.gsub(/<([^>]*)>/) do
           Hash[headers.zip(row)][$1]
         end
