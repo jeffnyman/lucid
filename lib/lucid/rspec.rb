@@ -19,6 +19,9 @@ module Lucid
               describe scenario.name do
                 scenario.steps.each do |step|
                   (puts 'STEP:'; pp step) if ENV['LUCID_TRACE']
+                  it step do
+                    run(test_spec, step)
+                  end
                 end
               end
             end
@@ -29,6 +32,7 @@ module Lucid
     end
 
     module SpecLoader
+      # @param files [Array] test specs to be executed
       def load(*files, &block)
         puts "Loading: #{files}" if ENV['LUCID_TRACE']
 
@@ -39,11 +43,22 @@ module Lucid
         end
       end
     end
+
+    module SpecRunner
+      include Lucid::StepRunner
+
+      # @param test_spec [String] full path for test spec
+      # @param step [Struct Lucid::Builder::Step] the step to execute
+      def run(test_spec, step)
+        step(step)
+      end
+    end
   end
 end
 
 RSpec::Core::Configuration.send(:include, Lucid::RSpec::SpecLoader)
 
 RSpec.configure do |config|
+  config.include Lucid::RSpec::SpecRunner
   config.pattern << ',**/*.feature,**/*.spec,**/*.story'
 end
