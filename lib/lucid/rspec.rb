@@ -50,7 +50,11 @@ module Lucid
       # @param test_spec [String] full path for test spec
       # @param step [Struct Lucid::Builder::Step] the step to execute
       def run(test_spec, step)
-        step(step)
+        begin
+          step(step)
+        rescue Lucid::Pending => e
+          skip("No matcher for step: '#{e}'")
+        end
       end
     end
   end
