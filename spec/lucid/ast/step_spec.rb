@@ -20,7 +20,7 @@ module Lucid
         cells = invocation_table.cells_rows[1]
         step_invocation = step.step_invocation_from_cells(cells)
 
-        step_invocation.name.should == 'a passing test'
+        expect(step_invocation.name).to eq('a passing test')
       end
 
       it 'should use empty string for the replacement of arguments in name when replace value is nil' do
@@ -34,7 +34,7 @@ module Lucid
         cells = invocation_table.cells_rows[1]
         step_invocation = step.step_invocation_from_cells(cells)
 
-        step_invocation.name.should == 'a  test'
+        expect(step_invocation.name).to eq('a  test')
       end
 
       it 'should replace arguments in provided table arguments' do
@@ -49,7 +49,7 @@ module Lucid
         cells = invocation_table.cells_rows[1]
         step_invocation = step.step_invocation_from_cells(cells)
 
-        step_invocation.instance_variable_get('@multiline_arg').raw.should == [%w{status_passing type_regression}]
+        expect(step_invocation.instance_variable_get('@multiline_arg').raw).to eq([%w{status_passing type_regression}])
       end
 
       it 'should replace arguments in a doc string argument' do
@@ -64,7 +64,7 @@ module Lucid
         cells = invocation_table.cells_rows[1]
         step_invocation = step.step_invocation_from_cells(cells)
 
-        step_invocation.instance_variable_get('@multiline_arg').to_step_definition_arg.should == 'status_passing type_regression'
+        expect(step_invocation.instance_variable_get('@multiline_arg').to_step_definition_arg).to eq('status_passing type_regression')
       end
 
     end

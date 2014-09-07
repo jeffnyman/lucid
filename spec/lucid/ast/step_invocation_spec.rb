@@ -11,14 +11,14 @@ module Lucid
 
       describe 'filtering backtraces' do
         context 'when enabled' do
-          before { Lucid.stub use_full_backtrace: false }
+          before { allow(Lucid).to receive(:use_full_backtrace).and_return(false) }
 
           it "removes lines with 'gems' in the path" do
             original_backtrace = ['/foo/bar/gems/baz', '/path/to/my/file.rb']
             exception = StandardError.new
             exception.set_backtrace(original_backtrace)
             result = step_invocation.filter_backtrace(exception).backtrace
-            result.should == ['/path/to/my/file.rb']
+            expect(result).to eq(['/path/to/my/file.rb'])
           end
 
           it "removes lines with '.gem' in the path" do
@@ -26,20 +26,20 @@ module Lucid
             exception = StandardError.new
             exception.set_backtrace(original_backtrace)
             result = step_invocation.filter_backtrace(exception).backtrace
-            result.should == ['/path/to/my/file.rb']
+            expect(result).to eq(['/path/to/my/file.rb'])
           end
         end
 
         context 'when disabled' do
-          before { Lucid.stub use_full_backtrace: true }
+          before { allow(Lucid).to receive(:use_full_backtrace).and_return(true) }
 
           it 'return the exception unmodified' do
             exception = double
-            step_invocation.filter_backtrace(exception).should == exception
+            expect(step_invocation.filter_backtrace(exception)).to eq(exception)
           end
         end
       end
-      
+
     end
   end
 end

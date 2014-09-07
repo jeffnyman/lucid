@@ -3,7 +3,7 @@ require_relative '../../../lib/lucid/sequence/sequence_template'
 
 module Sequence
   module SequenceTemplate
-    
+
     describe Engine do
 
       let(:example_template) do
@@ -14,7 +14,7 @@ module Sequence
           And   login is clicked
         EXAMPLE
       end
-      
+
       let(:conditional_template) do
         example = <<-EXAMPLE
           When  the first name is "<first_name>"
@@ -27,14 +27,14 @@ module Sequence
           </ssn>
         EXAMPLE
       end
-      
+
       subject { Engine.new(example_template) }
-      
+
       context 'parsing' do
         def strip_chevrons(text)
           text.gsub(/^<|>$/, '')
         end
-        
+
         it 'should parse an empty text line' do
           expect(Engine.parse('')).to be_empty
         end
@@ -43,7 +43,7 @@ module Sequence
           sample_text = 'a TDL statement'
           result = Engine.parse(sample_text)
 
-          expect(result).to have(1).items
+          expect(result.size).to eq(1)
           expect(result[0]).to eq([:static, sample_text])
         end
 
@@ -51,7 +51,7 @@ module Sequence
           sample_text = '<some_parameter>'
           result = Engine.parse(sample_text)
 
-          expect(result).to have(1).items
+          expect(result.size).to eq(1)
           expect(result[0]).to eq([:dynamic, strip_chevrons(sample_text)])
         end
 
@@ -59,7 +59,7 @@ module Sequence
           sample_text = '<some_parameter> in a TDL statement'
           result = Engine.parse(sample_text)
 
-          expect(result).to have(2).items
+          expect(result.size).to eq(2)
           expect(result[0]).to eq([:dynamic, 'some_parameter'])
           expect(result[1]).to eq([:static,  ' in a TDL statement'])
         end
@@ -68,7 +68,7 @@ module Sequence
           sample_text = 'a TDL statement with <some_parameter>'
           result = Engine.parse(sample_text)
 
-          expect(result).to have(2).items
+          expect(result.size).to eq(2)
           expect(result[0]).to eq([:static,  'a TDL statement with '])
           expect(result[1]).to eq([:dynamic, 'some_parameter'])
         end
@@ -77,7 +77,7 @@ module Sequence
           sample_text = 'a TDL statement with <some_parameter> in it'
           result = Engine.parse(sample_text)
 
-          expect(result).to have(3).items
+          expect(result.size).to eq(3)
           expect(result[0]).to eq([:static,  'a TDL statement with '])
           expect(result[1]).to eq([:dynamic, 'some_parameter'])
           expect(result[2]).to eq([:static,  ' in it'])
@@ -87,7 +87,7 @@ module Sequence
           sample_text = 'TDL with <one_parameter> and with <another_parameter> in it'
           result = Engine.parse(sample_text)
 
-          expect(result).to have(5).items
+          expect(result.size).to eq(5)
           expect(result[0]).to eq([:static ,  'TDL with '])
           expect(result[1]).to eq([:dynamic, 'one_parameter'])
           expect(result[2]).to eq([:static , ' and with '])
@@ -99,7 +99,7 @@ module Sequence
           sample_text = 'TDL with <one_parameter> <another_parameter> in it'
           result = Engine.parse(sample_text)
 
-          expect(result).to have(5).items
+          expect(result.size).to eq(5)
           expect(result[0]).to eq([:static,  'TDL with '])
           expect(result[1]).to eq([:dynamic, 'one_parameter'])
           expect(result[2]).to eq([:static,  ' '])
@@ -110,8 +110,8 @@ module Sequence
         it 'should parse a text line with escaped chevrons' do
           sample_text = 'A TDL \<parameter\> is escaped'
           result = Engine.parse(sample_text)
-          
-          expect(result).to have(1).items
+
+          expect(result.size).to eq(1)
           expect(result[0]).to eq([:static, sample_text])
         end
 
@@ -119,7 +119,7 @@ module Sequence
           sample_text = 'A TDL with <some_\<\\>escaped\>_parameter> in it'
           result = Engine.parse(sample_text)
 
-          expect(result).to have(3).items
+          expect(result.size).to eq(3)
           expect(result[0]).to eq([:static,  'A TDL with '])
           expect(result[1]).to eq([:dynamic, 'some_\<\\>escaped\>_parameter'])
           expect(result[2]).to eq([:static,  ' in it'])
@@ -143,7 +143,7 @@ module Sequence
           expect { Engine.parse(sample_text) }.to raise_error(StandardError, error_message)
         end
       end
-      
+
       context 'creation of source template' do
         it 'should accept an empty template text' do
           expect { Engine.new '' }.not_to raise_error
@@ -198,7 +198,7 @@ module Sequence
           expect { Engine.new(text) }.to raise_error(StandardError, msg)
         end
       end
-      
+
       context 'rendering a template' do
         it 'should know the parameters it contains' do
           expect(subject.variables).to be == ['user_name', 'password']
@@ -247,7 +247,7 @@ module Sequence
 
           expect(generated_text).to eq(expected)
         end
-        
+
         it 'should handle an empty source template' do
           instance = Engine.new('')
           expect(instance.output(nil, {})).to be_empty
@@ -266,7 +266,7 @@ module Sequence
           And   the age is "41"
           RESULT
           expect(generated_text).to eq(expected)
-          
+
           locals['age'] = nil
           locals['ssn'] = '000-00-0000'
           generated_text = instance.output(Object.new, locals)
@@ -291,8 +291,8 @@ module Sequence
           expect(generated_text).to eq(expected)
         end
       end
-      
+
     end
-    
+
   end
 end

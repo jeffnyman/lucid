@@ -13,7 +13,8 @@ module Lucid::AST
 
         it 'should raise an error if you try to call #failed?' do
           @row.accept_plain double('visitor', :visit_table_cell => nil)
-          lambda{ @row.failed? }.should raise_error(NoMethodError, /cannot pass or fail/)
+          #lambda{ @row.failed? }.should raise_error(NoMethodError, /cannot pass or fail/)
+          expect { @row.failed? }.to raise_error(NoMethodError, /cannot pass or fail/)
         end
       end
     end

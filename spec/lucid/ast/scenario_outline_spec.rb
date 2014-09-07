@@ -24,11 +24,11 @@ module Lucid
         end
 
         @dsl.Then(/^there should be (\d+) tests$/) do |n|
-          (@initial - @tested).should == n.to_i
+          expect(@initial - @tested).to eq(n.to_i)
         end
 
         @dsl.Then(/^there should be (\d+) tests completed$/) do |n|
-          @tested.should == n.to_i
+          expect(@tested).to eq(n.to_i)
         end
 
         location = AST::Location.new('test.spec', 19)
@@ -70,7 +70,8 @@ module Lucid
 
       it 'should replace all variables and call outline once for each table row' do
         visitor = Walker.new(@runtime)
-        visitor.should_receive(:visit_table_row).exactly(3).times
+        #visitor.should_receive(:visit_table_row).exactly(3).times
+        expect(visitor).to receive(:visit_table_row).exactly(3).times
         @scenario_outline.feature = double.as_null_object
         @scenario_outline.accept(visitor)
       end

@@ -9,12 +9,12 @@ module Lucid::AST
     let(:features) { double('features', :accept => nil) }
 
     it 'should visit features' do
-      tdl_walker.should_not_receive(:warn)
+      expect(tdl_walker).not_to receive(:warn)
       tdl_walker.visit_features(features)
     end
 
     it 'should return self' do
-      tdl_walker.visit_features(features).should == tdl_walker
+      expect(tdl_walker.visit_features(features)).to eq(tdl_walker)
     end
   end
 

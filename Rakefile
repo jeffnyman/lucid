@@ -7,7 +7,6 @@ namespace :spec do
     options  = %w(--color)
     options += %w(--format documentation)
     options += %w(--format html --out spec/reports/unit-test-report.html)
-    options += %w(--format nested --out spec/reports/unit-test-report.txt)
 
     config.rspec_opts = options
   end

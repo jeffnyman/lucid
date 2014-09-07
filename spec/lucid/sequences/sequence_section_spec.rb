@@ -3,7 +3,7 @@ require_relative '../../../lib/lucid/sequence/sequence_template'
 
 module Sequence
   module SequenceTemplate
-    
+
     describe Section do
       subject { Section.new('testing') }
 
@@ -24,7 +24,7 @@ module Sequence
         end
 
         it 'should have no child elements by default' do
-          expect(subject).to have(0).children
+          expect(subject.children.size).to eq(0)
         end
       end
 
@@ -40,7 +40,7 @@ module Sequence
         it 'should know the names of all child placeholders' do
           example_child_elements.each { |child| subject.add_child(child) }
           expect(subject.variables).to eq([ 'content' ])
-          
+
           parent = Section.new('added')
           [ subject,
             StaticText.new('Content '),
@@ -56,6 +56,6 @@ module Sequence
         end
       end
     end
-    
+
   end
 end

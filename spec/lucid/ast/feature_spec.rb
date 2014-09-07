@@ -19,7 +19,8 @@ module Lucid
           feature_file_path = 'specs/test.spec'
         end
 
-        feature.to_sexp.should ==
+        #feature.to_sexp.should ==
+        expect(feature.to_sexp).to eq(
             [
                 :feature,
                 feature_file_path,
@@ -45,6 +46,7 @@ module Lucid
                   [:doc_string, "\n Testing with\nLucid tools\n"]],
                  [:step_invocation, 12, 'Given', 'a non-passing step']]
             ]
+        )
       end
 
       it 'should store operating system specific file paths' do
@@ -55,9 +57,9 @@ module Lucid
         feature = create_feature(dsl)
 
         if Lucid::WINDOWS
-          feature.file.should == 'specs\test.spec'
+          expect(feature.file).to eq('specs\test.spec')
         else
-          feature.file.should == 'specs/test.spec'
+          expect(feature.file).to eq('specs/test.spec')
         end
       end
 

@@ -41,7 +41,8 @@ Feature:
       | 8 |
         GHERKIN
 
-        spec.step_count.should == (2 + 3) + (3 * (2 + 2))
+        #spec.step_count.should == (2 + 3) + (3 * (2 + 2))
+        expect(spec.step_count).to eq((2 + 3) + (3 * (2 + 2)))
       end
     end
   end

@@ -49,17 +49,17 @@ module Lucid
       end
 
       it 'should require driver.rb files first' do
-        with_these_files('/common/support/browser.rb', '/common/support/driver.rb')
+        with_these_files('/common/support/browser.rb', '/common/support/env.rb')
         config.parse_options(%w{--require /common})
 
         config.library_context.should == %w(
-            /common/support/driver.rb
+            /common/support/env.rb
             /common/support/browser.rb
         )
       end
 
       it 'should not require driver.rb files when a dry run is attempted' do
-        with_these_files('/common/support/browser.rb', '/common/support/driver.rb')
+        with_these_files('/common/support/browser.rb', '/common/support/env.rb')
         config.parse_options(%w{--require /common --dry-run})
 
         config.library_context.should == %w(

@@ -12,7 +12,7 @@ module Sequence
         expect(singleton.sequence_steps).to be_empty
       end
     end
-    
+
     context 'basic operation' do
       let(:example_steps) do
         example = <<-EXAMPLE
@@ -27,9 +27,9 @@ module Sequence
         phrase = '[enter credentials]'
         args = [phrase, example_steps, true]
         expect { singleton.add_sequence(*args) }.not_to raise_error
-        expect(singleton).to have(1).sequence_steps
+        expect(singleton.sequence_steps.size).to eq(1)
       end
-      
+
       it 'should not accept the addition of an existing sequence phrase' do
         phrase = '[enter credentials]'
         args = [phrase, example_steps, true]
@@ -50,6 +50,6 @@ module Sequence
         expect(generated).to eq(expected)
       end
     end
-    
+
   end
 end
