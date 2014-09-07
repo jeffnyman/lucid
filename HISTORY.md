@@ -1,6 +1,13 @@
 Change Log and History
 ======================
 
+Version 0.5.0 / 2014-09-07
+--------------------------
+
+This version of Lucid allows it to act more like Cucumber by recognizing the same type of `features` directory as Cucumber does. Lucid still defaults to a `specs` directory but now if you are using a `features` directory, the standard structure will be recognized. The driver file has been changed to Cucumber's default of `env.rb`. Previously this was `driver.rb` but there was little reason to diverge from Cucumber here. You can still set up a custom driver file via the command line.
+ 
+Note that with the upcoming final release of Cucumber 2.x it's up in the air how much and to what extent I'll support Lucid in its current incarnation. So far Cucumber 2.x doesn't seem to offer anything much but the hexagonal architecture might be worth exploring. In preparation for this the strict build and code coverage process for Lucid has been removed as have the unit tests.
+
 Version 0.4.1 / 2013-02-18
 --------------------------
 
