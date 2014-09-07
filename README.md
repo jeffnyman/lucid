@@ -1,8 +1,6 @@
 Lucid
 =====
 
-[![Build Status](https://secure.travis-ci.org/jnyman/lucid.png)](http://travis-ci.org/jnyman/lucid)
-[![Coverage Status](https://coveralls.io/repos/jnyman/lucid/badge.png?branch=master)](https://coveralls.io/r/jnyman/lucid)
 [![Code Climate](https://codeclimate.com/github/jnyman/lucid.png)](https://codeclimate.com/github/jnyman/lucid)
 [![Dependency Status](https://gemnasium.com/jnyman/lucid.png)](https://gemnasium.com/jnyman/lucid)
 [![Gem Version](https://badge.fury.io/rb/lucid.png)](http://badge.fury.io/rb/lucid)
