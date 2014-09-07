@@ -177,6 +177,8 @@ module Lucid
         specs_path(dirs)
       end
 
+      alias_method :feature_dirs, :spec_location
+
       def spec_type
         @options[:spec_types]
       end

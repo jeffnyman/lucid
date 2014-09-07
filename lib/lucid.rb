@@ -15,6 +15,10 @@ module Lucid
   class << self
     attr_accessor :wants_to_quit
 
+    def version
+      "Lucid v#{Lucid::VERSION}"
+    end
+
     def breakdown(*args)
       current_output = $stdout
       begin

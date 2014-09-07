@@ -45,7 +45,7 @@ module Lucid
 
     def default_options
       {
-        :autoload_code_paths => %w(common steps pages)
+        :autoload_code_paths => %w(features/support features/step_definitions features/steps common steps pages)
       }
     end
   end
