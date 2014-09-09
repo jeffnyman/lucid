@@ -9,7 +9,9 @@ Lucid
 Description
 -----------
 
-Lucid is a Test Description Language (TDL) specification and execution engine. It is a clone of the popular tool [Cucumber](http://cukes.info/). Lucid is diverging in many ways from Cucumber but it does owe much of its initial structure to it. Lucid will also be incorporating some of the good ideas that have come to light in tools like [Spinach](https://github.com/codegram/spinach) and [Turnip](https://github.com/jnicklas/turnip).
+Lucid is a Description Language specification and execution engine.  Here the Description Language can be considered a TDL (Test Description Language) or BDL (Business Description Language). I'm not even sure if those are official terms but they are the terms I use to indicate the language whereby elaborated requirements and tests become largely the same artifact.
+
+Lucid is a clone of the popular tool [Cucumber](http://cukes.info/). Lucid is diverging in many ways from Cucumber but it does owe much of its initial structure to it. Lucid will also be incorporating some of the good ideas that have come to light in tools like [Spinach](https://github.com/codegram/spinach) and [Turnip](https://github.com/jnicklas/turnip).
 
 Lucid is currently in an extended beta period, essentially becoming its own entity in the world of BDD tools.
 
@@ -19,13 +21,15 @@ Installation
 
 Add this line to your application's Gemfile:
 
-    gem 'lucid'
+```ruby
+gem 'lucid'
+```
 
 And then execute:
 
     $ bundle
 
-Or install it yourself as:
+Or install it yourself with:
 
     $ gem install lucid
 
