@@ -25,8 +25,8 @@ module Lucid
         log.debug('Options:')
         log.debug(@options)
 
-        set_formatter
-        raise('You cannot use both --strict and --wip tags.') if strict? && wip?
+        set_formatters
+        raise('You are using the --strict and --wip options together but they are mutually exclusive.') if strict? && wip?
 
         @options[:tag_expression] = Gherkin::TagExpression.new(@options[:tag_expressions])
 
@@ -157,8 +157,8 @@ module Lucid
             end
 
             files_to_sort
-          elsif path[0..0] == '@' and # @listfile.txt
-            File.file?(path[1..-1]) # listfile.txt is a file
+          elsif path[0..0] == '@' and
+            File.file?(path[1..-1])
             IO.read(path[1..-1]).split
           else
             path
@@ -250,7 +250,7 @@ module Lucid
         end
       end
 
-      def set_formatter
+      def set_formatters
         @options[:formats] << ['standard', @out_stream] if @options[:formats].empty?
         @options[:formats] = @options[:formats].sort_by{|f| f[1] == @out_stream ? -1 : 1}
         @options[:formats].uniq!
@@ -258,7 +258,7 @@ module Lucid
         streams = @options[:formats].map { |(_, stream)| stream }
 
         if streams != streams.uniq
-          raise 'All but one formatter must use --out, only one can print to each stream (or STDOUT)'
+          raise 'Lucid allows only one formatter to output to the STDOUT stream. All other formatters must redirect output to a file.'
         end
       end
 

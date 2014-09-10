@@ -23,7 +23,7 @@ Defined profiles in lucid.yml:
         case(args_from_yml)
           when String
             raise YmlLoadError, ["The '#{profile}' profile in lucid.yml was blank. You must define",
-                                 "command line arguments if you are are going to include a profile",
+                                 'command line arguments if you are are going to include a profile',
                                  "in lucid.yml.\n"].join("\n") if args_from_yml =~ /^\s*$/
             if(Lucid::WINDOWS)
               args_from_yml = args_from_yml.split
@@ -37,7 +37,7 @@ Defined profiles in lucid.yml:
                                  "You must define any command line arguments within the array.\n"].join("\n") if args_from_yml.empty?
           else
             raise YmlLoadError, ["The '#{profile}' profile in lucid.yml was a #{args_from_yml.class}.",
-                                 "A profile must be a a String or an Array."].join("\n")
+                                 'A profile must be a a String or an Array.'].join("\n")
         end
         args_from_yml
       end
@@ -57,7 +57,7 @@ Defined profiles in lucid.yml:
         return @lucid_yml if @lucid_yml
         unless lucid_yml_defined?
           raise ProfilesNotDefinedError, ["A lucid.yml file was not found. The current directory is #{Dir.pwd}.",
-                                          "Refer to Lucid's documentation on defining profiles in lucid.yml.",
+                                          'Refer to the Lucid documentation on defining profiles in lucid.yml.',
                                           "You must define a 'default' profile to use the lucid command without",
                                           "any arguments.\nType 'lucid --help' for usage.\n"].join("\n")
         end
@@ -67,22 +67,22 @@ Defined profiles in lucid.yml:
         begin
           @lucid_erb = ERB.new(IO.read(lucid_file)).result(binding)
         rescue Exception => e
-          raise YmlLoadError, ["A lucid.yml file was found, but could not be parsed. Double-check",
-                               "the contents of the file. Refer to Lucid's documentation on correct",
+          raise YmlLoadError, ['A lucid.yml file was found, but could not be parsed. Double-check',
+                               'the contents of the file. Refer to the Lucid documentation on correct',
                                "profile usage.\n#{$!.inspect}"].join("\n")
         end
 
         begin
           @lucid_yml = YAML::load(@lucid_erb)
         rescue StandardError => e
-          raise YmlLoadError, ["A lucid.yml file was found, but could not be parsed. Double-check",
-                               "the contents of the file. Refer to Lucid's documentation on correct",
+          raise YmlLoadError, ['A lucid.yml file was found, but could not be parsed. Double-check',
+                               'the contents of the file. Refer to the Lucid documentation on correct',
                                "profile usage.\n"].join("\n")
         end
 
         if @lucid_yml.nil? || !@lucid_yml.is_a?(Hash)
-          raise YmlLoadError, ["The lucid.yml file was found, but was blank or malformed. Please",
-                               "refer to Lucid's documentation on defining profiles in lucid.yml.\n"].join("\n")
+          raise YmlLoadError, ['The lucid.yml file was found, but was blank or malformed. Please',
+                               "refer to the Lucid documentation on defining profiles in lucid.yml.\n"].join("\n")
         end
 
         return @lucid_yml
