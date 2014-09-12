@@ -488,10 +488,10 @@ module Lucid
           :env_vars         => {},
           :diff_enabled     => true,
           :spec_types       => %w(feature spec story),
-          :library_path     => %w(common support),
+          :library_path     => 'common',
           :definitions_path => 'pages',
           :steps_path       => 'steps',
-          :driver_file      => 'env'
+          :driver_file      => 'driver'
         }
       end
     end
