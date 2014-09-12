@@ -1,6 +1,11 @@
 Change Log and History
 ======================
 
+Version 0.5.1 / 2014-09-12
+--------------------------
+
+Backed out some of the Cucumber-like changes.
+
 Version 0.5.0 / 2014-09-07
 --------------------------
 
