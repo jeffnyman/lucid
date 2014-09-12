@@ -1,8 +1,7 @@
 module Lucid
   module InterfaceRb
     module Matcher
-
-      ARGUMENT_PATTERNS = ['"(.*?)"', '(\d+)']
+      ARGUMENT_PATTERNS = ['"([^"]*)"', '(\d+)']
 
       class BaseMatcher
 

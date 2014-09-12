@@ -13,10 +13,6 @@ module Lucid
       end
 
       def initialize(args, stdin=STDIN, out=STDOUT, err=STDERR, kernel=Kernel)
-        raise "args can't be nil" unless args
-        raise "out can't be nil" unless out
-        raise "err can't be nil" unless err
-        raise "kernel can't be nil" unless kernel
         @args   = args
         @out    = out
         @err    = err
@@ -24,7 +20,7 @@ module Lucid
         @context = nil
       end
 
-      def start!(existing_context = nil)
+      def start!(existing_context=nil)
         trap_interrupt
 
         context_loader = if existing_context
